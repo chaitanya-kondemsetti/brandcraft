@@ -7,6 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
+/* =============================================
+   RESET & ROOT VARIABLES
+   ============================================= */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#060914;
@@ -31,391 +34,894 @@
   --r:20px;--r-md:14px;--r-sm:10px;--r-xs:7px;
   --ease:.22s cubic-bezier(.4,0,.2,1);
   --spring:.4s cubic-bezier(.34,1.56,.64,1);
-  --topbar:60px;--bottombar:68px;
-  --max:840px;
+  --topbar:64px;--bottombar:68px;
+  --max:860px;
+  --glow-accent: 0 0 40px rgba(0,224,188,0.15), 0 0 80px rgba(0,224,188,0.05);
 }
 html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
 body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;min-height:100dvh;overflow-x:hidden;font-size:15px;line-height:1.65}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--border-h);border-radius:2px}
 
-/* BG mesh — teal + magenta + deep orange nodes */
-body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+/* =============================================
+   ANIMATED BACKGROUND SYSTEM
+   ============================================= */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   background:
-    radial-gradient(ellipse 70% 55% at 15% -5%, rgba(0,224,188,.18), transparent),
-    radial-gradient(ellipse 55% 45% at 88% 92%, rgba(255,95,126,.12), transparent),
-    radial-gradient(ellipse 45% 40% at 55% 55%, rgba(255,183,0,.06), transparent),
-    radial-gradient(ellipse 30% 30% at 80% 15%, rgba(0,224,188,.08), transparent)}
+    radial-gradient(ellipse 70% 55% at 15% -5%, rgba(0,224,188,.2), transparent),
+    radial-gradient(ellipse 55% 45% at 88% 92%, rgba(255,95,126,.14), transparent),
+    radial-gradient(ellipse 45% 40% at 55% 55%, rgba(255,183,0,.07), transparent),
+    radial-gradient(ellipse 30% 30% at 80% 15%, rgba(0,224,188,.1), transparent);
+  animation: bgShift 20s ease-in-out infinite alternate;
+}
+@keyframes bgShift {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.8; }
+  100% { opacity: 1; }
+}
 
-/* subtle noise grain overlay */
-body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.025;
+/* Animated gradient orbs */
+.orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(80px);animation:orbFloat linear infinite}
+.orb-1{width:600px;height:600px;top:-200px;left:-150px;background:radial-gradient(circle,rgba(0,224,188,.07),transparent 70%);animation-duration:30s}
+.orb-2{width:500px;height:500px;bottom:-150px;right:-100px;background:radial-gradient(circle,rgba(255,95,126,.07),transparent 70%);animation-duration:25s;animation-direction:reverse}
+.orb-3{width:400px;height:400px;top:40%;left:50%;background:radial-gradient(circle,rgba(255,183,0,.04),transparent 70%);animation-duration:35s}
+@keyframes orbFloat{0%{transform:translate(0,0) rotate(0deg)}25%{transform:translate(30px,-20px) rotate(90deg)}50%{transform:translate(-10px,30px) rotate(180deg)}75%{transform:translate(-30px,-10px) rotate(270deg)}100%{transform:translate(0,0) rotate(360deg)}}
+
+/* Noise texture */
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.028;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size:200px 200px}
 
-/* TOPBAR */
+/* =============================================
+   TOPBAR
+   ============================================= */
 .topbar{
   position:fixed;top:0;left:0;right:0;z-index:100;
   height:var(--topbar);
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 20px;
-  background:rgba(6,9,20,0.88);
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid rgba(0,224,188,.1);
+  padding:0 24px;
+  background:rgba(6,9,20,0.75);
+  backdrop-filter:blur(28px) saturate(180%);
+  -webkit-backdrop-filter:blur(28px) saturate(180%);
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  transition:box-shadow .3s ease, border-color .3s ease;
 }
-.topbar-logo{display:flex;align-items:center;gap:10px;cursor:pointer}
-.logo-mark{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--amber));border-radius:10px;display:grid;place-items:center;font-size:15px;transition:transform var(--spring);box-shadow:0 0 18px rgba(0,224,188,.35)}
-.logo-mark:hover{transform:rotate(15deg) scale(1.1)}
-.logo-name{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;letter-spacing:-.03em;background:linear-gradient(135deg,var(--accent-l),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.topbar-center{position:absolute;left:50%;transform:translateX(-50%);font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--muted);letter-spacing:-.01em;transition:all var(--ease);pointer-events:none}
-.topbar-right{display:flex;align-items:center;gap:10px}
-.icon-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--glass);color:var(--muted);display:grid;place-items:center;cursor:pointer;font-size:15px;transition:all var(--ease);flex-shrink:0}
+.topbar.scrolled{
+  border-bottom-color:rgba(0,224,188,.12);
+  box-shadow:0 4px 40px rgba(0,0,0,.5), 0 1px 0 rgba(0,224,188,.06);
+}
+.topbar-logo{display:flex;align-items:center;gap:11px;cursor:pointer}
+.logo-mark{
+  width:36px;height:36px;
+  background:linear-gradient(135deg,var(--accent),var(--amber));
+  border-radius:11px;
+  display:grid;place-items:center;
+  font-size:16px;
+  transition:transform var(--spring), box-shadow var(--ease);
+  box-shadow:0 0 24px rgba(0,224,188,.4), inset 0 1px 0 rgba(255,255,255,.2);
+}
+.logo-mark:hover{transform:rotate(15deg) scale(1.12);box-shadow:0 0 36px rgba(0,224,188,.6)}
+.logo-name{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:18px;
+  letter-spacing:-.04em;
+  background:linear-gradient(135deg,var(--accent-l) 0%,var(--amber) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.topbar-center{
+  position:absolute;left:50%;transform:translateX(-50%);
+  font-family:'Syne',sans-serif;font-size:14px;font-weight:700;
+  color:var(--muted);letter-spacing:-.01em;
+  transition:all var(--ease);pointer-events:none;
+  opacity:0.8;
+}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.icon-btn{
+  width:38px;height:38px;border-radius:11px;
+  border:1px solid var(--border);
+  background:var(--glass);
+  color:var(--muted);
+  display:grid;place-items:center;
+  cursor:pointer;font-size:15px;
+  transition:all var(--ease);flex-shrink:0;
+  position:relative;overflow:hidden;
+}
+.icon-btn::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(0,224,188,.15),transparent);
+  opacity:0;transition:opacity var(--ease);
+}
 .icon-btn:hover{border-color:var(--border-h);color:var(--text);background:var(--accent-g)}
-.status-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2.5s infinite;flex-shrink:0;box-shadow:0 0 6px var(--accent)}
+.icon-btn:hover::after{opacity:1}
+.status-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--accent);
+  animation:pulse 2.5s infinite;
+  flex-shrink:0;
+  box-shadow:0 0 8px var(--accent);
+}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
 
-/* MAIN SCROLL */
-.app{padding-top:var(--topbar);padding-bottom:calc(var(--bottombar) + env(safe-area-inset-bottom,0px));min-height:100dvh;position:relative;z-index:1}
-.content-wrap{max-width:var(--max);margin:0 auto;padding:24px 16px}
+/* =============================================
+   APP LAYOUT
+   ============================================= */
+.app{
+  padding-top:var(--topbar);
+  padding-bottom:calc(var(--bottombar) + env(safe-area-inset-bottom,0px));
+  min-height:100dvh;position:relative;z-index:1;
+}
+.content-wrap{max-width:var(--max);margin:0 auto;padding:28px 18px}
 
-/* TABS (views) */
-.view{display:none;animation:viewIn .3s cubic-bezier(.4,0,.2,1)}
+/* =============================================
+   VIEW TRANSITIONS
+   ============================================= */
+.view{display:none;animation:viewIn .35s cubic-bezier(.4,0,.2,1)}
 .view.active{display:block}
-@keyframes viewIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes viewIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 
-/* BOTTOM NAV */
+/* =============================================
+   BOTTOM NAVIGATION
+   ============================================= */
 .bottom-nav{
   position:fixed;bottom:0;left:0;right:0;z-index:100;
-  height:var(--bottombar);padding-bottom:env(safe-area-inset-bottom,0px);
-  background:rgba(6,9,20,0.95);
-  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-  border-top:1px solid rgba(0,224,188,.1);
+  height:var(--bottombar);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  background:rgba(6,9,20,0.92);
+  backdrop-filter:blur(28px) saturate(160%);
+  -webkit-backdrop-filter:blur(28px) saturate(160%);
+  border-top:1px solid rgba(255,255,255,0.05);
   display:flex;align-items:stretch;
 }
-.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;position:relative;transition:all var(--ease);border:none;background:transparent;color:var(--dim);font-family:'Outfit',sans-serif;padding:8px 4px 6px;-webkit-tap-highlight-color:transparent}
-.nav-item:active{transform:scale(.92)}
-.nav-icon{font-size:19px;transition:all var(--spring);line-height:1}
+.nav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;cursor:pointer;position:relative;
+  transition:all var(--ease);border:none;background:transparent;
+  color:var(--dim);font-family:'Outfit',sans-serif;
+  padding:8px 4px 6px;-webkit-tap-highlight-color:transparent;
+}
+.nav-item:active{transform:scale(.90)}
+.nav-icon{font-size:20px;transition:all var(--spring);line-height:1}
 .nav-label{font-size:10px;font-weight:600;letter-spacing:.03em;transition:all var(--ease);line-height:1}
 .nav-item.active{color:var(--accent)}
-.nav-item.active .nav-icon{transform:translateY(-2px) scale(1.15);filter:drop-shadow(0 0 6px var(--accent))}
-.nav-item::after{content:'';position:absolute;top:0;left:20%;right:20%;height:2px;background:linear-gradient(90deg,var(--accent),var(--amber));border-radius:0 0 3px 3px;opacity:0;transition:opacity var(--ease)}
+.nav-item.active .nav-icon{
+  transform:translateY(-3px) scale(1.18);
+  filter:drop-shadow(0 0 8px var(--accent));
+}
+.nav-item::after{
+  content:'';position:absolute;top:0;left:20%;right:20%;
+  height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--amber));
+  border-radius:0 0 4px 4px;opacity:0;
+  transition:opacity var(--ease);
+}
 .nav-item.active::after{opacity:1}
+/* nav ripple */
+.nav-item::before{
+  content:'';position:absolute;inset:4px;border-radius:10px;
+  background:rgba(0,224,188,.06);
+  transform:scale(0);opacity:0;
+  transition:transform .25s, opacity .25s;
+}
+.nav-item.active::before{transform:scale(1);opacity:1}
 
-/* CARDS */
-.card{background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:24px;position:relative;overflow:hidden;transition:border-color var(--ease)}
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,224,188,.5),transparent);opacity:0;transition:opacity var(--ease)}
-.card:hover{border-color:rgba(0,224,188,.15)}
+/* =============================================
+   CARDS
+   ============================================= */
+.card{
+  background:var(--glass);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:24px;
+  position:relative;overflow:hidden;
+  transition:border-color var(--ease), transform var(--ease), box-shadow var(--ease);
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,224,188,.6),transparent);
+  opacity:0;transition:opacity var(--ease);
+}
+.card:hover{border-color:rgba(0,224,188,.18);box-shadow:0 12px 48px rgba(0,0,0,.3), var(--glow-accent)}
 .card:hover::before{opacity:1}
 .card+.card{margin-top:14px}
-.card-glass{background:rgba(13,18,32,.7);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
-
-/* HERO / DASHBOARD */
-.hero{text-align:center;padding:32px 0 28px}
-.hero-label{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;background:var(--accent-gs);border:1px solid rgba(0,224,188,.25);font-size:11.5px;font-weight:600;color:var(--accent);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px;box-shadow:0 0 20px rgba(0,224,188,.1)}
-.hero-title{font-family:'Syne',sans-serif;font-size:clamp(28px,6vw,40px);font-weight:800;letter-spacing:-.04em;line-height:1.15;margin-bottom:12px;background:linear-gradient(160deg,var(--text) 30%,var(--accent) 65%,var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero-sub{font-size:15px;color:var(--muted);max-width:440px;margin:0 auto;line-height:1.7}
-
-/* QUICK ACTIONS */
-.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:28px}
-.qa-card{background:var(--glass);border:1px solid var(--border);border-radius:var(--r-md);padding:18px 16px;cursor:pointer;transition:all var(--ease);display:flex;flex-direction:column;gap:8px;text-align:left;position:relative;overflow:hidden}
-.qa-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,224,188,.06),transparent);opacity:0;transition:opacity var(--ease)}
-.qa-card:hover{border-color:rgba(0,224,188,.3);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,224,188,.08)}
-.qa-card:hover::after{opacity:1}
-.qa-card:active{transform:scale(.97)}
-.qa-icon{font-size:22px;line-height:1}
-.qa-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;letter-spacing:-.02em}
-.qa-desc{font-size:12px;color:var(--muted);line-height:1.5}
-
-/* STATS ROW */
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
-.stat-chip{background:var(--glass);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px 12px;text-align:center;cursor:pointer;transition:all var(--ease)}
-.stat-chip:hover{border-color:rgba(0,224,188,.25);transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,224,188,.06)}
-.stat-v{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.03em}
-.stat-l{font-size:10px;color:var(--dim);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
-
-/* GET STARTED */
-.gs-list{display:flex;flex-direction:column;gap:10px;margin-top:6px}
-.gs-item{display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--glass);border:1px solid var(--border);border-radius:var(--r-sm);transition:all var(--ease)}
-.gs-item:hover{border-color:rgba(0,224,188,.2)}
-.gs-num{width:24px;height:24px;border-radius:50%;background:rgba(0,224,188,.1);border:1px solid rgba(0,224,188,.3);color:var(--accent);font-size:11px;font-weight:700;display:grid;place-items:center;flex-shrink:0;margin-top:1px}
-.gs-text{font-size:13.5px;color:var(--muted);line-height:1.6}
-.gs-text code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:11.5px;color:var(--accent)}
-
-/* SECTION HEADING */
-.section-h{margin-bottom:20px}
-.section-title{font-family:'Syne',sans-serif;font-size:21px;font-weight:800;letter-spacing:-.03em;margin-bottom:4px}
-.section-sub{font-size:13px;color:var(--muted);line-height:1.6}
-.view-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-bottom:14px}
-.pill-p{background:rgba(0,224,188,.08);color:var(--accent);border:1px solid rgba(0,224,188,.25)}
-.pill-g{background:rgba(0,224,188,.06);color:var(--accent-l);border:1px solid rgba(0,224,188,.18)}
-.pill-pk{background:rgba(255,95,126,.07);color:var(--pink);border:1px solid rgba(255,95,126,.22)}
-.pill-a{background:rgba(255,183,0,.07);color:var(--amber);border:1px solid rgba(255,183,0,.22)}
-
-/* FORMS */
-.fg{margin-bottom:14px}
-.fg label{display:block;font-size:12px;font-weight:500;color:var(--muted);margin-bottom:7px;transition:color var(--ease)}
-.fg:focus-within label{color:var(--accent)}
-input[type=text],textarea,select{
-  width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);
-  border-radius:var(--r-sm);color:var(--text);font-family:'Outfit',sans-serif;
-  font-size:15px;padding:12px 14px;outline:none;
-  transition:border-color var(--ease),box-shadow var(--ease),background var(--ease)
+.card-glass{
+  background:rgba(13,18,32,.72);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
 }
-input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,224,188,.1);background:rgba(0,224,188,.03)}
+
+/* =============================================
+   HERO SECTION
+   ============================================= */
+.hero{text-align:center;padding:40px 0 32px;position:relative}
+.hero-label{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:6px 16px;border-radius:20px;
+  background:var(--accent-gs);
+  border:1px solid rgba(0,224,188,.3);
+  font-size:11.5px;font-weight:600;color:var(--accent);
+  letter-spacing:.06em;text-transform:uppercase;
+  margin-bottom:22px;
+  box-shadow:0 0 24px rgba(0,224,188,.12), inset 0 1px 0 rgba(0,224,188,.1);
+  animation:labelGlow 3s ease-in-out infinite alternate;
+}
+@keyframes labelGlow{
+  from{box-shadow:0 0 24px rgba(0,224,188,.12), inset 0 1px 0 rgba(0,224,188,.1)}
+  to{box-shadow:0 0 36px rgba(0,224,188,.22), inset 0 1px 0 rgba(0,224,188,.2)}
+}
+.hero-title{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(30px,7vw,46px);
+  font-weight:800;letter-spacing:-.05em;line-height:1.12;
+  margin-bottom:14px;
+  background:linear-gradient(160deg,var(--text) 20%,var(--accent-l) 55%,var(--amber) 90%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-size:200% 200%;
+  animation:titleGradient 6s ease infinite;
+}
+@keyframes titleGradient{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+.hero-sub{
+  font-size:clamp(14px,2.5vw,16px);
+  color:var(--muted);max-width:460px;margin:0 auto;line-height:1.75;
+}
+
+/* =============================================
+   QUICK ACCESS GRID
+   ============================================= */
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:32px}
+.qa-card{
+  background:var(--glass);
+  border:1px solid var(--border);
+  border-radius:var(--r-md);padding:20px 17px;
+  cursor:pointer;
+  transition:all .28s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;gap:9px;text-align:left;
+  position:relative;overflow:hidden;
+}
+.qa-card::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(0,224,188,.08),rgba(255,183,0,.03));
+  opacity:0;transition:opacity .28s;
+}
+.qa-card::before{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--amber));
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .35s cubic-bezier(.4,0,.2,1);
+}
+.qa-card:hover{
+  border-color:rgba(0,224,188,.35);
+  transform:translateY(-4px);
+  box-shadow:0 16px 48px rgba(0,0,0,.3), 0 0 0 1px rgba(0,224,188,.08), var(--glow-accent);
+}
+.qa-card:hover::after{opacity:1}
+.qa-card:hover::before{transform:scaleX(1)}
+.qa-card:active{transform:scale(.96) translateY(-2px)}
+.qa-icon{
+  font-size:24px;line-height:1;
+  transition:transform var(--spring), filter var(--ease);
+}
+.qa-card:hover .qa-icon{transform:center;filter:drop-shadow(0 0 8px var(--accent))}
+.qa-name{font-family:'Syne',sans-serif;font-size:14.5px;font-weight:700;letter-spacing:-.025em}
+.qa-desc{font-size:12px;color:var(--muted);line-height:1.55}
+
+/* =============================================
+   STATS ROW
+   ============================================= */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.stat-chip{
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:16px 12px;text-align:center;cursor:pointer;
+  transition:all .25s cubic-bezier(.4,0,.2,1);
+  position:relative;overflow:hidden;
+}
+.stat-chip::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 0%, rgba(0,224,188,.1), transparent 70%);
+  opacity:0;transition:opacity .25s;
+}
+.stat-chip:hover{
+  border-color:rgba(0,224,188,.3);
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(0,224,188,.08);
+}
+.stat-chip:hover::after{opacity:1}
+.stat-v{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.04em}
+.stat-l{font-size:10px;color:var(--dim);font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-top:3px}
+
+/* =============================================
+   GETTING STARTED LIST
+   ============================================= */
+.gs-list{display:flex;flex-direction:column;gap:11px;margin-top:8px}
+.gs-item{
+  display:flex;align-items:flex-start;gap:13px;padding:15px;
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:var(--r-sm);
+  transition:all var(--ease);
+  position:relative;overflow:hidden;
+}
+.gs-item::after{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:linear-gradient(180deg,var(--accent),var(--amber));
+  transform:scaleY(0);transform-origin:top;
+  transition:transform .35s cubic-bezier(.4,0,.2,1);
+}
+.gs-item:hover{border-color:rgba(0,224,188,.2);background:rgba(0,224,188,.03)}
+.gs-item:hover::after{transform:scaleY(1)}
+.gs-num{
+  width:26px;height:26px;border-radius:50%;
+  background:rgba(0,224,188,.1);border:1px solid rgba(0,224,188,.3);
+  color:var(--accent);font-size:11px;font-weight:700;
+  display:grid;place-items:center;flex-shrink:0;margin-top:1px;
+  transition:all var(--spring);
+}
+.gs-item:hover .gs-num{background:rgba(0,224,188,.2);box-shadow:0 0 12px rgba(0,224,188,.3)}
+.gs-text{font-size:13.5px;color:var(--muted);line-height:1.65}
+.gs-text code{background:var(--bg3);padding:2px 7px;border-radius:5px;font-size:11.5px;color:var(--accent);border:1px solid rgba(0,224,188,.15)}
+
+/* =============================================
+   SECTION HEADERS
+   ============================================= */
+.section-h{margin-bottom:22px}
+.section-title{font-family:'Syne',sans-serif;font-size:clamp(20px,4vw,24px);font-weight:800;letter-spacing:-.04em;margin-bottom:5px}
+.section-sub{font-size:13.5px;color:var(--muted);line-height:1.65}
+.view-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 12px;border-radius:20px;
+  font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  margin-bottom:16px;
+  transition:all var(--ease);
+}
+.pill-p{background:rgba(0,224,188,.08);color:var(--accent);border:1px solid rgba(0,224,188,.28)}
+.pill-g{background:rgba(0,224,188,.06);color:var(--accent-l);border:1px solid rgba(0,224,188,.18)}
+.pill-pk{background:rgba(255,95,126,.07);color:var(--pink);border:1px solid rgba(255,95,126,.25)}
+.pill-a{background:rgba(255,183,0,.07);color:var(--amber);border:1px solid rgba(255,183,0,.25)}
+
+/* =============================================
+   FORM ELEMENTS
+   ============================================= */
+.fg{margin-bottom:16px}
+.fg label{
+  display:block;font-size:12px;font-weight:600;
+  color:var(--muted);margin-bottom:8px;
+  transition:color var(--ease);letter-spacing:.02em;
+}
+.fg:focus-within label{color:var(--accent)}
+input[type=text],textarea{
+  width:100%;background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+  border-radius:var(--r-sm);color:var(--text);
+  font-family:'Outfit',sans-serif;
+  font-size:15px;padding:13px 15px;outline:none;
+  transition:border-color var(--ease),box-shadow var(--ease),background var(--ease);
+}
+input:focus,textarea:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(0,224,188,.12), 0 0 20px rgba(0,224,188,.06);
+  background:rgba(0,224,188,.03);
+}
 input::placeholder,textarea::placeholder{color:var(--dim)}
 textarea{resize:vertical;min-height:100px;line-height:1.65}
-select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a9e98' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
-select option{background:#0d1220}
 
-/* BUTTONS */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 22px;border-radius:var(--r-sm);border:none;font-family:'Outfit',sans-serif;font-size:14.5px;font-weight:600;cursor:pointer;transition:all var(--ease);white-space:nowrap;position:relative;overflow:hidden}
+/* =============================================
+   CUSTOM DROPDOWN
+   ============================================= */
+.custom-select{position:relative;width:100%;user-select:none;font-family:'Outfit',sans-serif}
+.custom-select select{display:none}
+.cs-trigger{
+  width:100%;background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+  border-radius:var(--r-sm);color:var(--text);
+  font-size:15px;padding:13px 46px 13px 15px;
+  cursor:pointer;display:flex;align-items:center;position:relative;outline:none;
+  transition:border-color var(--ease), box-shadow var(--ease), background var(--ease);
+}
+.cs-trigger:hover{border-color:rgba(0,224,188,.3);background:rgba(0,224,188,.03)}
+.cs-trigger.open{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(0,224,188,.12), 0 0 20px rgba(0,224,188,.06);
+  background:rgba(0,224,188,.04);
+  border-bottom-left-radius:0;border-bottom-right-radius:0;
+}
+.cs-trigger.open::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1.5px;
+  background:linear-gradient(90deg,var(--accent),var(--amber));
+  border-radius:var(--r-sm) var(--r-sm) 0 0;
+}
+.cs-arrow{
+  position:absolute;right:15px;top:50%;transform:translateY(-50%);
+  width:18px;height:18px;display:grid;place-items:center;
+  color:var(--muted);font-size:10px;pointer-events:none;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1), color .2s;
+}
+.cs-trigger.open ~ .cs-dropdown .cs-arrow,
+.cs-trigger.open .cs-arrow{transform:translateY(-50%) rotate(180deg);color:var(--accent)}
+.cs-dropdown{
+  position:absolute;top:calc(100% - 1px);left:0;right:0;z-index:300;
+  background:rgba(13,18,32,.98);
+  border:1px solid var(--accent);border-top:none;
+  border-bottom-left-radius:var(--r-sm);border-bottom-right-radius:var(--r-sm);
+  overflow-y:auto;overflow-x: hidden;max-height:0;opacity:0;transform:translateY(-6px);
+  transition:max-height .32s cubic-bezier(.4,0,.2,1),opacity .22s ease,transform .28s cubic-bezier(.34,1.56,.64,1);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  box-shadow:0 20px 56px rgba(0,0,0,.6), 0 0 0 1px rgba(0,224,188,.08);
+  pointer-events:none;
+}
+.custom-select.open .cs-dropdown{max-height:260px;opacity:1;transform:translateY(0);pointer-events:all}
+.cs-list{overflow-y:auto;max-height:260px;padding:6px}
+.cs-list::-webkit-scrollbar{width:3px}
+.cs-list::-webkit-scrollbar-thumb{background:rgba(0,224,188,.3);border-radius:2px}
+.cs-list::before{
+  content:'';display:block;height:1.5px;margin:-6px -6px 6px;
+  background:linear-gradient(90deg,var(--accent),var(--amber));opacity:.5;
+}
+.cs-option{
+  display:flex;align-items:center;gap:10px;padding:11px 12px;
+  border-radius:8px;font-size:14.5px;color:var(--muted);cursor:pointer;
+  transition:all .16s ease;position:relative;overflow:hidden;margin-bottom:2px;
+}
+.cs-option:last-child{margin-bottom:0}
+.cs-option::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(0,224,188,.09),transparent);
+  opacity:0;transition:opacity .18s;border-radius:8px;
+}
+.cs-option:hover{color:var(--text);transform:translateX(4px)}
+.cs-option:hover::before{opacity:1}
+.cs-option.selected{color:var(--accent);font-weight:600}
+.cs-option.selected::before{opacity:.6}
+.cs-check{
+  width:18px;height:18px;border-radius:50%;
+  border:1.5px solid var(--dim);display:grid;place-items:center;
+  font-size:8px;color:transparent;flex-shrink:0;
+  position:relative;z-index:1;transition:all .2s ease;
+}
+.cs-option.selected .cs-check{
+  background:linear-gradient(135deg,var(--accent),var(--amber));
+  border-color:transparent;color:#060914;
+  box-shadow:0 0 10px rgba(0,224,188,.45);
+}
+.cs-option-label{position:relative;z-index:1}
+
+/* =============================================
+   BUTTONS
+   ============================================= */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  padding:13px 24px;border-radius:var(--r-sm);border:none;
+  font-family:'Outfit',sans-serif;font-size:14.5px;font-weight:600;
+  cursor:pointer;transition:all var(--ease);white-space:nowrap;
+  position:relative;overflow:hidden;
+}
+/* ripple effect on click */
+.btn::after{
+  content:'';position:absolute;inset:0;
+  background:rgba(255,255,255,.15);
+  border-radius:inherit;
+  transform:scale(0);opacity:0;
+  transition:transform .4s, opacity .4s;
+}
+.btn:active::after{transform:scale(3);opacity:0;transition:none}
 .btn:active{transform:scale(.96)}
-.btn-p{background:linear-gradient(135deg,var(--accent),var(--accent-d));color:#060914;box-shadow:0 4px 28px rgba(0,224,188,.35);font-weight:700}
-.btn-p:hover{box-shadow:0 6px 36px rgba(0,224,188,.55);transform:translateY(-1px);filter:brightness(1.08)}
+.btn-p{
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent-d) 100%);
+  color:#060914;font-weight:700;
+  box-shadow:0 4px 24px rgba(0,224,188,.35), inset 0 1px 0 rgba(255,255,255,.2);
+}
+.btn-p:hover{
+  box-shadow:0 8px 40px rgba(0,224,188,.55), inset 0 1px 0 rgba(255,255,255,.2);
+  transform:translateY(-2px);filter:brightness(1.08);
+}
 .btn-s{background:var(--glass-b);border:1px solid var(--border);color:var(--text)}
-.btn-s:hover{border-color:rgba(0,224,188,.3);background:rgba(0,224,188,.06)}
+.btn-s:hover{border-color:rgba(0,224,188,.35);background:rgba(0,224,188,.07)}
 .btn-g{background:transparent;color:var(--muted);border:1px solid transparent}
 .btn-g:hover{color:var(--text);border-color:var(--border)}
-.btn-d{background:rgba(255,95,126,.08);border:1px solid rgba(255,95,126,.2);color:var(--pink)}
-.btn-d:hover{background:rgba(255,95,126,.15)}
-.btn-sm{padding:8px 14px;font-size:12.5px}
+.btn-d{background:rgba(255,95,126,.08);border:1px solid rgba(255,95,126,.22);color:var(--pink)}
+.btn-d:hover{background:rgba(255,95,126,.16)}
+.btn-sm{padding:8px 15px;font-size:12.5px}
 .btn-full{width:100%}
 .btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;box-shadow:none!important}
 
-/* TONE CHIPS */
-.chip-grp{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
-.chip{padding:6px 13px;border-radius:20px;font-size:12.5px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all var(--ease);font-family:'Outfit',sans-serif;font-weight:500}
-.chip:hover{border-color:rgba(0,224,188,.35);color:var(--accent)}
-.chip.sel{background:rgba(0,224,188,.1);border-color:rgba(0,224,188,.45);color:var(--accent)}
-.chip-q{padding:5px 11px;border-radius:20px;font-size:12px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all var(--ease);font-family:'Outfit',sans-serif}
-.chip-q:hover{border-color:var(--accent);color:var(--accent)}
+/* =============================================
+   CHIPS & TAGS
+   ============================================= */
+.chip-grp{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px}
+.chip{
+  padding:7px 14px;border-radius:20px;font-size:12.5px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  color:var(--muted);cursor:pointer;
+  transition:all var(--ease);font-family:'Outfit',sans-serif;font-weight:500;
+}
+.chip:hover{border-color:rgba(0,224,188,.4);color:var(--accent);background:rgba(0,224,188,.06)}
+.chip.sel{
+  background:rgba(0,224,188,.1);border-color:rgba(0,224,188,.5);
+  color:var(--accent);
+  box-shadow:0 0 12px rgba(0,224,188,.12);
+}
+.chip-q{
+  padding:5px 12px;border-radius:20px;font-size:12px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  color:var(--muted);cursor:pointer;transition:all var(--ease);font-family:'Outfit',sans-serif;
+}
+.chip-q:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,224,188,.06);transform:translateY(-1px)}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:22px 0}
 
-/* DIVIDER */
-.divider{height:1px;background:var(--border);margin:20px 0}
-
-/* LOADING */
-.loading{display:none;align-items:center;gap:12px;padding:20px 0;color:var(--muted);font-size:14px}
+/* =============================================
+   LOADING STATES
+   ============================================= */
+.loading{display:none;align-items:center;gap:13px;padding:24px 0;color:var(--muted);font-size:14px}
 .loading.show{display:flex;animation:fadeIn .25s ease}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;box-shadow:0 0 8px rgba(0,224,188,.2)}
+.spinner{
+  width:22px;height:22px;
+  border:2px solid var(--border);border-top-color:var(--accent);
+  border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;
+  box-shadow:0 0 10px rgba(0,224,188,.25);
+}
 @keyframes spin{to{transform:rotate(360deg)}}
 .spin-dots{display:flex;gap:5px;margin-left:4px}
 .sdot{width:5px;height:5px;border-radius:50%;background:var(--dim);animation:sdPulse 1.4s infinite}
 .sdot:nth-child(2){animation-delay:.2s}.sdot:nth-child(3){animation-delay:.4s}
-@keyframes sdPulse{0%,60%,100%{background:var(--dim);transform:scale(1)}30%{background:var(--accent);transform:scale(1.4)}}
+@keyframes sdPulse{0%,60%,100%{background:var(--dim);transform:scale(1)}30%{background:var(--accent);transform:scale(1.5)}}
 
-/* RESULTS */
-.results-wrap{margin-top:20px}
-.results-grid{display:grid;grid-template-columns:1fr;gap:12px}
+/* Skeleton shimmer */
+.skeleton{
+  background:linear-gradient(90deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 100%);
+  background-size:200% 100%;
+  animation:shimmer 1.5s ease-in-out infinite;
+  border-radius:var(--r-sm);
+}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* =============================================
+   RESULTS & NAME CARDS
+   ============================================= */
+.results-wrap{margin-top:22px}
+.results-grid{display:grid;grid-template-columns:1fr;gap:13px}
 @media(min-width:600px){.results-grid{grid-template-columns:1fr 1fr}}
-.rcard{background:rgba(13,18,32,.8);border:1px solid var(--border);border-radius:var(--r-md);padding:20px;position:relative;overflow:hidden;transition:all var(--ease);animation:cardIn .4s cubic-bezier(.4,0,.2,1) both;opacity:0}
-.rcard:hover{border-color:rgba(0,224,188,.25);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.4),0 0 0 1px rgba(0,224,188,.06)}
-.rcard::before{content:'';position:absolute;top:0;left:0;right:0;height:1.5px;background:linear-gradient(90deg,var(--accent),var(--amber));opacity:0;transition:opacity var(--ease)}
+.rcard{
+  background:rgba(13,18,32,.82);
+  border:1px solid var(--border);border-radius:var(--r-md);
+  padding:22px;position:relative;overflow:hidden;
+  transition:all .28s cubic-bezier(.4,0,.2,1);
+  animation:cardIn .45s cubic-bezier(.4,0,.2,1) both;opacity:0;
+}
+.rcard:hover{
+  border-color:rgba(0,224,188,.3);
+  transform:translateY(-3px);
+  box-shadow:0 12px 40px rgba(0,0,0,.45), 0 0 0 1px rgba(0,224,188,.08), var(--glow-accent);
+}
+.rcard::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--amber));
+  opacity:0;transition:opacity var(--ease);
+}
 .rcard:hover::before{opacity:1}
-@keyframes cardIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-.brand-n{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.04em;margin-bottom:4px;background:linear-gradient(135deg,var(--text),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.brand-tl{font-size:13px;color:var(--muted);font-style:italic;margin-bottom:8px}
-.brand-m{font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:12px}
-.brand-badge{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:3px 9px;border-radius:20px;background:rgba(0,224,188,.08);color:var(--accent);border:1px solid rgba(0,224,188,.2)}
-.rcard-actions{display:flex;gap:6px;margin-top:12px;opacity:0;transition:opacity var(--ease)}
-.rcard:hover .rcard-actions{opacity:1}
-.cbtn{position:absolute;top:12px;right:12px;width:28px;height:28px;display:grid;place-items:center;border-radius:7px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);cursor:pointer;font-size:13px;transition:all var(--ease);opacity:0}
+@keyframes cardIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.brand-n{
+  font-family:'Syne',sans-serif;font-size:24px;font-weight:800;
+  letter-spacing:-.05em;margin-bottom:5px;
+  background:linear-gradient(135deg,var(--text) 40%,var(--accent));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.brand-tl{font-size:13px;color:var(--muted);font-style:italic;margin-bottom:9px}
+.brand-m{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:13px}
+.brand-badge{
+  display:inline-block;font-size:10px;font-weight:700;
+  letter-spacing:.07em;text-transform:uppercase;
+  padding:3px 10px;border-radius:20px;
+  background:rgba(0,224,188,.08);color:var(--accent);
+  border:1px solid rgba(0,224,188,.22);
+}
+.rcard-actions{display:flex;gap:7px;margin-top:13px;opacity:0;transition:opacity .2s;transform:translateY(4px);transition:opacity .2s, transform .2s}
+.rcard:hover .rcard-actions{opacity:1;transform:translateY(0)}
+.cbtn{
+  position:absolute;top:13px;right:13px;width:30px;height:30px;
+  display:grid;place-items:center;border-radius:8px;
+  border:1px solid var(--border);background:var(--bg2);
+  color:var(--muted);cursor:pointer;font-size:13px;
+  transition:all var(--ease);opacity:0;
+}
 .rcard:hover .cbtn{opacity:1}
-.cbtn:hover{border-color:var(--accent);color:var(--accent)}
+.cbtn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-g)}
 
-/* CONTENT OUTPUT */
-.cout{background:rgba(13,18,32,.6);border:1px solid var(--border);border-radius:var(--r-md);padding:20px;margin-top:16px;animation:cardIn .3s ease}
-.cout-title{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:12px}
-.citem{padding:14px 16px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:10px;line-height:1.7;transition:border-color var(--ease)}
+/* =============================================
+   CONTENT RESULTS
+   ============================================= */
+.cout{
+  background:rgba(13,18,32,.65);border:1px solid var(--border);
+  border-radius:var(--r-md);padding:22px;margin-top:18px;
+  animation:cardIn .3s ease;
+  backdrop-filter:blur(12px);
+}
+.cout-title{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:13px}
+.citem{
+  padding:15px 17px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);border-radius:var(--r-sm);
+  margin-bottom:10px;line-height:1.7;
+  transition:border-color var(--ease), background var(--ease);
+}
 .citem:last-child{margin-bottom:0}
-.citem:hover{border-color:rgba(0,224,188,.15)}
-.citem-label{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
-.citem-text{color:var(--text);line-height:1.75;white-space:pre-wrap;word-break:break-word;font-size:14px}
+.citem:hover{border-color:rgba(0,224,188,.18);background:rgba(0,224,188,.02)}
+.citem-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+.citem-text{color:var(--text);line-height:1.78;white-space:pre-wrap;word-break:break-word;font-size:14px}
 
-/* LOGO */
-.logo-res{display:flex;flex-direction:column;gap:16px;margin-top:20px}
+/* =============================================
+   LOGO SECTION
+   ============================================= */
+.logo-res{display:flex;flex-direction:column;gap:18px;margin-top:22px}
 @media(min-width:600px){.logo-res{flex-direction:row}}
-.logo-prev{width:100%;aspect-ratio:1;max-width:280px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--r);display:grid;place-items:center;overflow:hidden;position:relative;transition:all var(--ease);align-self:flex-start}
-@media(min-width:600px){.logo-prev{width:220px;height:220px;flex-shrink:0}}
-.logo-prev img{width:100%;height:100%;object-fit:contain;transition:transform var(--ease)}
-.logo-prev:hover img{transform:scale(1.04)}
-.logo-prev-ov{position:absolute;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;gap:8px;opacity:0;transition:opacity var(--ease);border-radius:var(--r)}
+.logo-prev{
+  width:100%;aspect-ratio:1;max-width:280px;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--border);border-radius:var(--r);
+  display:grid;place-items:center;overflow:hidden;position:relative;
+  transition:all var(--ease);align-self:flex-start;
+}
+@media(min-width:600px){.logo-prev{width:230px;height:230px;flex-shrink:0}}
+.logo-prev img{width:100%;height:100%;object-fit:contain;transition:transform .4s cubic-bezier(.4,0,.2,1)}
+.logo-prev:hover img{transform:scale(1.06)}
+.logo-prev-ov{
+  position:absolute;inset:0;
+  background:rgba(0,0,0,.72);
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  opacity:0;transition:opacity .25s;border-radius:var(--r);
+}
 .logo-prev:hover .logo-prev-ov{opacity:1}
 .logo-info{flex:1}
 
-/* SENTIMENT */
-.sent-res{margin-top:20px;animation:cardIn .3s ease}
-.score-bar{height:7px;background:rgba(255,255,255,.06);border-radius:4px;margin:10px 0;overflow:hidden}
-.score-fill{height:100%;border-radius:4px;transition:width 1s cubic-bezier(.4,0,.2,1)}
-.emo-list{display:flex;flex-direction:column;gap:11px;margin-top:14px}
-.emo-row{display:flex;align-items:center;gap:10px}
-.emo-name{font-size:12.5px;color:var(--muted);width:68px;flex-shrink:0;text-transform:capitalize}
-.emo-bar-bg{flex:1;height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
-.emo-bar{height:100%;border-radius:3px;transition:width 1s ease}
-.emo-val{font-size:11px;color:var(--dim);width:33px;text-align:right;flex-shrink:0}
-.sent-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:30px;font-size:15px;font-weight:700;font-family:'Syne',sans-serif;transition:transform var(--ease)}
-.sent-badge:hover{transform:scale(1.04)}
-.badge-pos{background:rgba(0,224,188,.08);color:var(--accent);border:1px solid rgba(0,224,188,.2)}
-.badge-neg{background:rgba(255,95,126,.08);color:var(--pink);border:1px solid rgba(255,95,126,.2)}
-.badge-neu{background:rgba(255,183,0,.07);color:var(--amber);border:1px solid rgba(255,183,0,.2)}
-.insight{padding:10px 13px;background:rgba(255,255,255,.03);border-left:2.5px solid var(--accent);border-radius:0 var(--r-sm) var(--r-sm) 0;margin-bottom:9px;font-size:13.5px;line-height:1.65;transition:border-color var(--ease)}
-.insight:hover{border-color:var(--amber)}
-
-/* TWO-COL on big screens */
+/* =============================================
+   SENTIMENT ANALYSIS
+   ============================================= */
+.sent-res{margin-top:22px;animation:cardIn .3s ease}
+.score-bar{height:8px;background:rgba(255,255,255,.06);border-radius:4px;margin:11px 0;overflow:hidden}
+.score-fill{height:100%;border-radius:4px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.emo-list{display:flex;flex-direction:column;gap:12px;margin-top:15px}
+.emo-row{display:flex;align-items:center;gap:11px}
+.emo-name{font-size:12.5px;color:var(--muted);width:70px;flex-shrink:0;text-transform:capitalize}
+.emo-bar-bg{flex:1;height:7px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
+.emo-bar{height:100%;border-radius:4px;transition:width 1.2s ease}
+.emo-val{font-size:11px;color:var(--dim);width:34px;text-align:right;flex-shrink:0}
+.sent-badge{
+  display:inline-flex;align-items:center;gap:9px;padding:9px 18px;border-radius:30px;
+  font-size:15px;font-weight:700;font-family:'Syne',sans-serif;
+  transition:transform var(--ease), box-shadow var(--ease);
+}
+.sent-badge:hover{transform:scale(1.05);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.badge-pos{background:rgba(0,224,188,.09);color:var(--accent);border:1px solid rgba(0,224,188,.22)}
+.badge-neg{background:rgba(255,95,126,.09);color:var(--pink);border:1px solid rgba(255,95,126,.22)}
+.badge-neu{background:rgba(255,183,0,.08);color:var(--amber);border:1px solid rgba(255,183,0,.22)}
+.insight{
+  padding:11px 14px;background:rgba(255,255,255,.03);
+  border-left:2.5px solid var(--accent);
+  border-radius:0 var(--r-sm) var(--r-sm) 0;
+  margin-bottom:10px;font-size:13.5px;line-height:1.68;
+  transition:border-color var(--ease), background var(--ease);
+}
+.insight:hover{border-color:var(--amber);background:rgba(255,183,0,.03)}
 .two-col{display:grid;grid-template-columns:1fr;gap:14px}
 @media(min-width:680px){.two-col{grid-template-columns:1fr 1fr}}
 
-/* CHAT */
-.chat-view{display:flex;flex-direction:column;height:calc(100dvh - var(--topbar) - var(--bottombar) - env(safe-area-inset-bottom,0px));margin:0;padding:0}
-.chat-msgs{flex:1;overflow-y:auto;padding:20px 16px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
+/* =============================================
+   CHAT VIEW
+   ============================================= */
+.chat-view{
+  display:flex;flex-direction:column;
+  height:calc(100dvh - var(--topbar) - var(--bottombar) - env(safe-area-inset-bottom,0px));
+  margin:0;padding:0;
+}
+.chat-msgs{
+  flex:1;overflow-y:auto;padding:22px 18px;
+  display:flex;flex-direction:column;gap:16px;scroll-behavior:smooth;
+}
 .chat-msgs::-webkit-scrollbar{width:3px}
-.msg{display:flex;gap:10px;max-width:84%;animation:msgIn .25s ease}
+.msg{display:flex;gap:11px;max-width:86%;animation:msgIn .3s cubic-bezier(.4,0,.2,1)}
 .msg.user{margin-left:auto;flex-direction:row-reverse}
-@keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.avatar{width:33px;height:33px;border-radius:50%;display:grid;place-items:center;font-size:13px;flex-shrink:0;align-self:flex-end}
-.msg.user .avatar{background:linear-gradient(135deg,var(--pink),var(--orange))}
-.msg.assistant .avatar{background:linear-gradient(135deg,var(--accent),var(--amber));box-shadow:0 0 14px rgba(0,224,188,.4)}
-.bubble{padding:12px 16px;border-radius:18px;font-size:14px;line-height:1.72;max-width:100%;word-break:break-word}
-.msg.user .bubble{background:linear-gradient(135deg,var(--orange),var(--pink));color:#fff;border-bottom-right-radius:5px}
-.msg.assistant .bubble{background:rgba(13,18,32,.95);border:1px solid rgba(0,224,188,.12);color:var(--text);border-bottom-left-radius:5px;backdrop-filter:blur(12px)}
-.sugg-row{padding:0 16px 10px;display:flex;flex-wrap:wrap;gap:7px}
-.schip{padding:7px 13px;border-radius:20px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);cursor:pointer;font-size:12.5px;font-family:'Outfit',sans-serif;transition:all var(--ease)}
-.schip:hover{border-color:rgba(0,224,188,.35);color:var(--accent);background:rgba(0,224,188,.07);transform:translateY(-1px)}
-.chat-bottom{padding:12px 16px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid rgba(0,224,188,.08);background:rgba(6,9,20,.95);backdrop-filter:blur(20px);display:flex;gap:10px;align-items:flex-end}
+@keyframes msgIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.avatar{
+  width:34px;height:34px;border-radius:50%;
+  display:grid;place-items:center;font-size:13px;
+  flex-shrink:0;align-self:flex-end;
+  transition:transform var(--spring);
+}
+.avatar:hover{transform:scale(1.1)}
+.msg.user .avatar{background:linear-gradient(135deg,var(--pink),var(--orange));box-shadow:0 4px 14px rgba(255,95,126,.35)}
+.msg.assistant .avatar{background:linear-gradient(135deg,var(--accent),var(--amber));box-shadow:0 4px 18px rgba(0,224,188,.45)}
+.bubble{
+  padding:13px 17px;border-radius:18px;font-size:14px;
+  line-height:1.75;max-width:100%;word-break:break-word;
+  transition:box-shadow var(--ease);
+}
+.bubble:hover{box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.msg.user .bubble{
+  background:linear-gradient(135deg,var(--orange),var(--pink));
+  color:#fff;border-bottom-right-radius:5px;
+  box-shadow:0 4px 20px rgba(255,95,126,.25);
+}
+.msg.assistant .bubble{
+  background:rgba(13,18,32,.95);
+  border:1px solid rgba(0,224,188,.14);
+  color:var(--text);border-bottom-left-radius:5px;
+  backdrop-filter:blur(14px);
+}
+.sugg-row{padding:0 18px 12px;display:flex;flex-wrap:wrap;gap:8px}
+.schip{
+  padding:8px 14px;border-radius:20px;
+  border:1px solid var(--border);background:rgba(255,255,255,.04);
+  color:var(--muted);cursor:pointer;font-size:12.5px;
+  font-family:'Outfit',sans-serif;transition:all .22s;
+}
+.schip:hover{
+  border-color:rgba(0,224,188,.4);color:var(--accent);
+  background:rgba(0,224,188,.08);transform:translateY(-2px);
+  box-shadow:0 6px 20px rgba(0,224,188,.1);
+}
+.chat-bottom{
+  padding:13px 18px;
+  padding-bottom:calc(13px + env(safe-area-inset-bottom,0px));
+  border-top:1px solid rgba(0,224,188,.1);
+  background:rgba(6,9,20,.93);backdrop-filter:blur(24px);
+  display:flex;gap:11px;align-items:flex-end;
+}
 .chat-input-wrap{flex:1}
-#chatInput{width:100%;background:rgba(13,18,32,.9);border:1px solid var(--border);border-radius:14px;color:var(--text);font-family:'Outfit',sans-serif;font-size:14.5px;padding:11px 14px;outline:none;resize:none;min-height:46px;max-height:120px;line-height:1.5;overflow-y:auto;transition:border-color var(--ease),box-shadow var(--ease)}
-#chatInput:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,224,188,.08)}
-.send-btn{width:44px;height:44px;border-radius:13px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent-d));color:#060914;display:grid;place-items:center;cursor:pointer;font-size:16px;transition:all var(--ease);flex-shrink:0;box-shadow:0 4px 18px rgba(0,224,188,.4);font-weight:700}
-.send-btn:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(0,224,188,.55)}
+#chatInput{
+  width:100%;background:rgba(13,18,32,.92);
+  border:1px solid var(--border);border-radius:14px;
+  color:var(--text);font-family:'Outfit',sans-serif;font-size:14.5px;
+  padding:12px 15px;outline:none;resize:none;
+  min-height:48px;max-height:120px;line-height:1.55;overflow-y:auto;
+  transition:border-color var(--ease),box-shadow var(--ease);
+}
+#chatInput:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,224,188,.1), 0 0 20px rgba(0,224,188,.06)}
+.send-btn{
+  width:46px;height:46px;border-radius:14px;border:none;
+  background:linear-gradient(135deg,var(--accent),var(--accent-d));
+  color:#060914;display:grid;place-items:center;cursor:pointer;
+  font-size:17px;transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  flex-shrink:0;box-shadow:0 4px 20px rgba(0,224,188,.45);font-weight:700;
+}
+.send-btn:hover{transform:scale(1.1) translateY(-1px);box-shadow:0 8px 32px rgba(0,224,188,.6)}
+.send-btn:active{transform:scale(.95)}
 .send-btn:disabled{opacity:.4;transform:none;cursor:not-allowed;box-shadow:none}
-.typing-ind{display:flex;gap:5px;align-items:center;padding:12px 16px;background:rgba(13,18,32,.95);border:1px solid rgba(0,224,188,.1);border-radius:18px;border-bottom-left-radius:5px;width:fit-content}
-.tdot{width:6px;height:6px;background:var(--dim);border-radius:50%;animation:tB 1.3s infinite}
+.typing-ind{
+  display:flex;gap:6px;align-items:center;padding:13px 17px;
+  background:rgba(13,18,32,.95);border:1px solid rgba(0,224,188,.12);
+  border-radius:18px;border-bottom-left-radius:5px;width:fit-content;
+}
+.tdot{width:7px;height:7px;background:var(--dim);border-radius:50%;animation:tB 1.3s infinite}
 .tdot:nth-child(2){animation-delay:.22s}.tdot:nth-child(3){animation-delay:.44s}
-@keyframes tB{0%,60%,100%{transform:translateY(0);background:var(--dim)}30%{transform:translateY(-7px);background:var(--accent)}}
+@keyframes tB{0%,60%,100%{transform:translateY(0);background:var(--dim)}30%{transform:translateY(-8px);background:var(--accent);box-shadow:0 0 8px rgba(0,224,188,.5)}}
 
-/* TOAST */
-.toast{position:fixed;bottom:calc(var(--bottombar) + 12px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(80px) scale(.9);z-index:200;padding:11px 20px;background:rgba(13,18,32,.98);border:1px solid var(--border);border-radius:var(--r-sm);font-size:13.5px;color:var(--text);display:flex;align-items:center;gap:8px;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.5);backdrop-filter:blur(20px);opacity:0;transition:all .35s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+/* =============================================
+   TOAST NOTIFICATIONS
+   ============================================= */
+.toast{
+  position:fixed;
+  bottom:calc(var(--bottombar) + 14px + env(safe-area-inset-bottom,0px));
+  left:50%;transform:translateX(-50%) translateY(80px) scale(.88);
+  z-index:200;padding:12px 22px;
+  background:rgba(13,18,32,.98);
+  border:1px solid var(--border);border-radius:var(--r-sm);
+  font-size:13.5px;color:var(--text);
+  display:flex;align-items:center;gap:9px;
+  white-space:nowrap;
+  box-shadow:0 12px 40px rgba(0,0,0,.6), 0 2px 8px rgba(0,0,0,.4);
+  backdrop-filter:blur(24px);opacity:0;
+  transition:all .4s cubic-bezier(.34,1.56,.64,1);
+  pointer-events:none;
+}
 .toast.show{transform:translateX(-50%) translateY(0) scale(1);opacity:1}
-.toast.ok{border-color:rgba(0,224,188,.3);box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 16px rgba(0,224,188,.1)}
-.toast.err{border-color:rgba(255,95,126,.3)}
+.toast.ok{border-color:rgba(0,224,188,.35);box-shadow:0 12px 40px rgba(0,0,0,.6), 0 0 24px rgba(0,224,188,.14)}
+.toast.err{border-color:rgba(255,95,126,.35);box-shadow:0 12px 40px rgba(0,0,0,.6), 0 0 20px rgba(255,95,126,.12)}
 
-/* RESULTS HEADER */
-.results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+/* =============================================
+   RESULTS HEADER
+   ============================================= */
+.results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .results-count{font-size:13px;color:var(--muted)}
-
-/* EMPTY */
-.empty{text-align:center;padding:48px 20px;color:var(--dim)}
-.empty-ico{font-size:40px;margin-bottom:12px;opacity:.25}
-.empty-t{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--muted);margin-bottom:5px}
+.empty{text-align:center;padding:56px 22px;color:var(--dim)}
+.empty-ico{font-size:44px;margin-bottom:14px;opacity:.22;display:block;filter:grayscale(0.3)}
+.empty-t{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--muted);margin-bottom:6px}
 .empty-s{font-size:13px}
 
-/* FORM GRID */
+/* =============================================
+   FORM ROW
+   ============================================= */
 .form-row{display:grid;grid-template-columns:1fr;gap:0}
-@media(min-width:600px){.form-row{grid-template-columns:1fr 1fr;gap:14px}}
+@media(min-width:600px){.form-row{grid-template-columns:1fr 1fr;gap:16px}}
 
-/* TABS (content types) */
-.tab-grp{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:18px}
-.ctab{padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;transition:all var(--ease)}
-.ctab:hover{border-color:rgba(0,224,188,.3);color:var(--text)}
-.ctab.active{background:rgba(0,224,188,.1);border-color:rgba(0,224,188,.4);color:var(--accent);font-weight:600}
+/* =============================================
+   CONTENT TABS
+   ============================================= */
+.tab-grp{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
+.ctab{
+  padding:7px 15px;border-radius:20px;
+  border:1px solid var(--border);background:transparent;
+  color:var(--muted);font-family:'Outfit',sans-serif;font-size:12.5px;
+  font-weight:500;cursor:pointer;transition:all var(--ease);
+}
+.ctab:hover{border-color:rgba(0,224,188,.35);color:var(--text)}
+.ctab.active{
+  background:rgba(0,224,188,.1);border-color:rgba(0,224,188,.45);
+  color:var(--accent);font-weight:700;
+  box-shadow:0 0 16px rgba(0,224,188,.1);
+}
 
-/* DESKTOP rearrangement */
+/* =============================================
+   RESPONSIVE — DESKTOP NAV
+   ============================================= */
 @media(min-width:900px){
   body{font-size:15px}
   .bottom-nav{
-    top:var(--topbar);bottom:auto;height:52px;
-    border-top:none;border-bottom:1px solid rgba(0,224,188,.1);
-    background:rgba(6,9,20,.95);backdrop-filter:blur(20px)
+    top:var(--topbar);bottom:auto;height:54px;
+    border-top:none;border-bottom:1px solid rgba(255,255,255,.05);
+    background:rgba(6,9,20,.88);backdrop-filter:blur(24px);
   }
-  .nav-item{flex-direction:row;gap:8px;justify-content:center;padding:0 16px;height:100%}
+  .nav-item{flex-direction:row;gap:9px;justify-content:center;padding:0 18px;height:100%}
   .nav-item::after{top:auto;bottom:0;left:15%;right:15%;height:2px;border-radius:2px 2px 0 0}
+  .nav-item::before{inset:8px;border-radius:8px}
   .nav-item.active .nav-icon{transform:none}
-  .nav-label{font-size:13px}
-  .app{padding-top:calc(var(--topbar) + 52px);padding-bottom:0}
-  .chat-view{height:calc(100dvh - var(--topbar) - 52px)}
-  .toast{bottom:20px}
-  .content-wrap{padding:28px 20px}
+  .nav-label{font-size:13.5px}
+  .app{padding-top:calc(var(--topbar) + 54px);padding-bottom:0}
+  .chat-view{height:calc(100dvh - var(--topbar) - 54px)}
+  .toast{bottom:22px}
+  .content-wrap{padding:32px 24px}
 }
 @media(min-width:1100px){
-  :root{--max:900px}
+  :root{--max:940px}
   .results-grid{grid-template-columns:1fr 1fr 1fr}
 }
 
-@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+/* =============================================
+   UTILITY ANIMATIONS
+   ============================================= */
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+
+/* Intersection Observer reveal */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s cubic-bezier(.4,0,.2,1), transform .6s cubic-bezier(.4,0,.2,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
 </style>
 </head>
 <body>
 
-<!-- TOP HEADER -->
-<header class="topbar">
+<!-- Background orbs for depth -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<header class="topbar" id="topbar">
   <div class="topbar-logo" onclick="switchTab('home')">
     <div class="logo-mark">✦</div>
     <div class="logo-name">BrandCraft</div>
   </div>
-  <span class="topbar-center" id="topbarTitle">Dashboard</span>
   <div class="topbar-right">
     <div class="status-dot" title="API Connected"></div>
-    <button class="icon-btn" title="Notifications">🔔</button>
-    <button class="icon-btn" title="Account">◉</button>
+    <div>API connected</div>
   </div>
 </header>
 
-<!-- APP BODY -->
 <div class="app">
 
-  <!-- HOME / DASHBOARD -->
+  <!-- HOME -->
   <div class="view active" id="view-home">
     <div class="content-wrap">
-      <div class="hero">
+      <div class="hero reveal">
         <div class="hero-label">✦ AI Branding System</div>
         <h1 class="hero-title">Build brands<br>that matter</h1>
         <p class="hero-sub">Generate names, logos, content, and strategy — all powered by AI in one place.</p>
       </div>
-
-      <div class="qa-grid">
-        <div class="qa-card" onclick="switchTab('names')">
-          <div class="qa-icon">✎</div>
-          <div class="qa-name">Brand Names</div>
-          <div class="qa-desc">AI-generated names tailored to your niche and tone</div>
-        </div>
-        <div class="qa-card" onclick="switchTab('logo')">
-          <div class="qa-icon">◈</div>
-          <div class="qa-name">Logo Generator</div>
-          <div class="qa-desc">Stable Diffusion logos for your brand identity</div>
-        </div>
-        <div class="qa-card" onclick="switchTab('content')">
-          <div class="qa-icon">❋</div>
-          <div class="qa-name">Content</div>
-          <div class="qa-desc">Taglines, bios, ads, emails and social posts</div>
-        </div>
-        <div class="qa-card" onclick="switchTab('sentiment')">
-          <div class="qa-icon">◎</div>
-          <div class="qa-name">Sentiment</div>
-          <div class="qa-desc">IBM Watson emotion analysis for brand copy</div>
-        </div>
+      <div class="qa-grid reveal">
+        <div class="qa-card" onclick="switchTab('names')"><div class="qa-icon">✎</div><div class="qa-name">Brand Names</div><div class="qa-desc">AI-generated names tailored to your niche and tone</div></div>
+        <div class="qa-card" onclick="switchTab('logo')"><div class="qa-icon">◈</div><div class="qa-name">Logo Generator</div><div class="qa-desc">Stable Diffusion logos for your brand identity</div></div>
+        <div class="qa-card" onclick="switchTab('content')"><div class="qa-icon">❋</div><div class="qa-name">Content</div><div class="qa-desc">Taglines, bios, ads, emails and social posts</div></div>
+        <div class="qa-card" onclick="switchTab('sentiment')"><div class="qa-icon">◎</div><div class="qa-name">Sentiment</div><div class="qa-desc">IBM Watson emotion analysis for brand copy</div></div>
       </div>
-
-      <div class="stats-row" style="margin-bottom:14px">
-        <div class="stat-chip" onclick="switchTab('names')">
-          <div class="stat-v" style="color:var(--accent)">AI</div>
-          <div class="stat-l">Naming</div>
-        </div>
-        <div class="stat-chip" onclick="switchTab('content')">
-          <div class="stat-v" style="color:var(--amber)">5</div>
-          <div class="stat-l">Content</div>
-        </div>
-        <div class="stat-chip" onclick="switchTab('sentiment')">
-          <div class="stat-v" style="color:var(--pink)">IBM</div>
-          <div class="stat-l">Sentiment</div>
-        </div>
-      </div>
-
-      <div class="card card-glass">
-        <div class="cout-title">Getting started</div>
-        <div class="gs-list">
-          <div class="gs-item"><div class="gs-num">1</div><div class="gs-text">Add API keys to your <code>.env</code> file (OpenRouter, HuggingFace, IBM Watson)</div></div>
-          <div class="gs-item"><div class="gs-num">2</div><div class="gs-text">Run <code>uvicorn main:app --reload --port 8000</code></div></div>
-          <div class="gs-item"><div class="gs-num">3</div><div class="gs-text">Open <strong>Brand Names</strong> tab and enter your niche to generate names</div></div>
-          <div class="gs-item"><div class="gs-num">4</div><div class="gs-text">Use <strong>Assistant</strong> tab for guided brand strategy conversations</div></div>
-        </div>
+      <div class="stats-row reveal" style="margin-bottom:16px">
+        <div class="stat-chip" onclick="switchTab('names')"><div class="stat-v" style="color:var(--accent)">AI</div><div class="stat-l">Naming</div></div>
+        <div class="stat-chip" onclick="switchTab('content')"><div class="stat-v" style="color:var(--amber)">5</div><div class="stat-l">Content</div></div>
+        <div class="stat-chip" onclick="switchTab('sentiment')"><div class="stat-v" style="color:var(--pink)">IBM</div><div class="stat-l">Sentiment</div></div>
       </div>
     </div>
   </div>
@@ -428,13 +934,8 @@ select option{background:#0d1220}
         <div class="section-title">Brand Name Generator</div>
         <div class="section-sub">Describe your business and get unique, meaningful brand names crafted by AI.</div>
       </div>
-
       <div class="card card-glass">
-        <div class="fg">
-          <label>Business Niche / Industry *</label>
-          <input type="text" id="nameNiche" placeholder="e.g. sustainable fashion, AI productivity tools"/>
-        </div>
-
+        <div class="fg"><label>Business Niche / Industry *</label><input type="text" id="nameNiche" placeholder="e.g. sustainable fashion, AI productivity tools"/></div>
         <div class="fg">
           <label>Brand Tone</label>
           <div class="chip-grp" id="toneChips">
@@ -448,15 +949,10 @@ select option{background:#0d1220}
             <span class="chip" data-val="trustworthy">Trustworthy</span>
           </div>
         </div>
-
-        <div class="fg">
-          <label>Target Audience</label>
-          <input type="text" id="nameAudience" placeholder="e.g. millennials, B2B companies, health-conscious families"/>
-        </div>
-
-        <div style="margin-bottom:16px">
-          <label style="font-size:12px;font-weight:500;color:var(--muted);display:block;margin-bottom:8px">Quick niches</label>
-          <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <div class="fg"><label>Target Audience</label><input type="text" id="nameAudience" placeholder="e.g. millennials, B2B companies, health-conscious families"/></div>
+        <div style="margin-bottom:18px">
+          <label style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:9px;letter-spacing:.02em">Quick niches</label>
+          <div style="display:flex;flex-wrap:wrap;gap:7px">
             <button class="chip-q" onclick="setNiche('sustainable fashion')">Sustainable fashion</button>
             <button class="chip-q" onclick="setNiche('AI productivity tools')">AI productivity</button>
             <button class="chip-q" onclick="setNiche('wellness and meditation')">Wellness</button>
@@ -464,10 +960,8 @@ select option{background:#0d1220}
             <button class="chip-q" onclick="setNiche('organic skincare')">Skincare</button>
           </div>
         </div>
-
         <button class="btn btn-p btn-full" onclick="generateNames()" id="namingBtn">✦ Generate Names</button>
       </div>
-
       <div class="loading" id="namesLoading"><div class="spinner"></div><span>Crafting brand names with AI...</span><div class="spin-dots"><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div></div>
       <div id="namesResults"></div>
     </div>
@@ -478,10 +972,9 @@ select option{background:#0d1220}
     <div class="content-wrap">
       <div class="section-h">
         <span class="view-pill pill-pk">◈ Stable Diffusion</span>
-        <div class="section-title">Logo Generator</div>
+        <div class="section-title">Brand Logo Generator</div>
         <div class="section-sub">Generate unique logos with Stable Diffusion via HuggingFace. Takes 20–60 seconds.</div>
       </div>
-
       <div class="card card-glass">
         <div class="form-row">
           <div>
@@ -489,52 +982,64 @@ select option{background:#0d1220}
             <div class="fg"><label>Industry</label><input type="text" id="logoIndustry" placeholder="e.g. technology, wellness"/></div>
           </div>
           <div>
-            <div class="fg"><label>Logo Style</label>
-              <select id="logoStyle">
-                <option value="minimalist">Minimalist — Clean, simple</option>
-                <option value="modern" selected>Modern — Bold, professional</option>
-                <option value="playful">Playful — Colorful, fun</option>
-                <option value="luxury">Luxury — Elegant, premium</option>
-                <option value="tech">Tech — Futuristic, gradient</option>
-                <option value="organic">Organic — Natural, earthy</option>
-              </select>
+            <div class="fg">
+              <label>Logo Style</label>
+              <div class="custom-select" id="cs-logoStyle">
+                <div class="cs-trigger" tabindex="0">
+                  <span class="cs-value">Modern — Bold, professional</span>
+                  <span class="cs-arrow">▾</span>
+                </div>
+                <div class="cs-dropdown">
+                  <div class="cs-list">
+                    <div class="cs-option" data-val="minimalist"><span class="cs-check">✓</span><span class="cs-option-label">Minimalist — Clean, simple</span></div>
+                    <div class="cs-option selected" data-val="modern"><span class="cs-check">✓</span><span class="cs-option-label">Modern — Bold, professional</span></div>
+                    <div class="cs-option" data-val="playful"><span class="cs-check">✓</span><span class="cs-option-label">Playful — Colorful, fun</span></div>
+                    <div class="cs-option" data-val="luxury"><span class="cs-check">✓</span><span class="cs-option-label">Luxury — Elegant, premium</span></div>
+                    <div class="cs-option" data-val="tech"><span class="cs-check">✓</span><span class="cs-option-label">Tech — Futuristic, gradient</span></div>
+                    <div class="cs-option" data-val="organic"><span class="cs-check">✓</span><span class="cs-option-label">Organic — Natural, earthy</span></div>
+                  </div>
+                </div>
+              </div>
+              <input type="hidden" id="logoStyle" value="modern"/>
             </div>
-            <div class="fg"><label>Color Direction</label>
-              <select id="logoColor">
-                <option value="deep blue and white">Deep blue & white</option>
-                <option value="black and gold">Black & gold</option>
-                <option value="vibrant purple and pink gradient">Purple & pink</option>
-                <option value="forest green and cream">Forest green & cream</option>
-                <option value="coral and warm white">Coral & warm white</option>
-                <option value="midnight black and electric blue">Midnight & electric blue</option>
-                <option value="terracotta and beige">Terracotta & beige</option>
-                <option value="monochrome">Monochrome</option>
-              </select>
+            <div class="fg">
+              <label>Color Direction</label>
+              <div class="custom-select" id="cs-logoColor">
+                <div class="cs-trigger" tabindex="0">
+                  <span class="cs-value">Deep blue &amp; white</span>
+                  <span class="cs-arrow">▾</span>
+                </div>
+                <div class="cs-dropdown">
+                  <div class="cs-list">
+                    <div class="cs-option selected" data-val="deep blue and white"><span class="cs-check">✓</span><span class="cs-option-label">Deep blue &amp; white</span></div>
+                    <div class="cs-option" data-val="black and gold"><span class="cs-check">✓</span><span class="cs-option-label">Black &amp; gold</span></div>
+                    <div class="cs-option" data-val="vibrant purple and pink gradient"><span class="cs-check">✓</span><span class="cs-option-label">Purple &amp; pink</span></div>
+                    <div class="cs-option" data-val="forest green and cream"><span class="cs-check">✓</span><span class="cs-option-label">Forest green &amp; cream</span></div>
+                    <div class="cs-option" data-val="coral and warm white"><span class="cs-check">✓</span><span class="cs-option-label">Coral &amp; warm white</span></div>
+                    <div class="cs-option" data-val="midnight black and electric blue"><span class="cs-check">✓</span><span class="cs-option-label">Midnight &amp; electric blue</span></div>
+                    <div class="cs-option" data-val="terracotta and beige"><span class="cs-check">✓</span><span class="cs-option-label">Terracotta &amp; beige</span></div>
+                    <div class="cs-option" data-val="monochrome"><span class="cs-check">✓</span><span class="cs-option-label">Monochrome</span></div>
+                  </div>
+                </div>
+              </div>
+              <input type="hidden" id="logoColor" value="deep blue and white"/>
             </div>
           </div>
         </div>
         <button class="btn btn-p btn-full" onclick="generateLogo()" id="logoBtn">◈ Generate Logo</button>
       </div>
-
       <div class="loading" id="logoLoading"><div class="spinner"></div><span>Generating with Stable Diffusion...</span></div>
-
-      <div id="logoResult" style="display:none;margin-top:20px">
+      <div id="logoResult" style="display:none;margin-top:22px">
         <div class="card card-glass">
           <div class="logo-res">
-            <div class="logo-prev">
-              <img id="logoImg" src="" alt="Generated logo"/>
-              <div class="logo-prev-ov">
-                <button class="btn btn-s btn-sm" onclick="downloadLogo()">↓ Save</button>
-                <button class="btn btn-s btn-sm" onclick="generateLogo()">↺ Redo</button>
-              </div>
-            </div>
+            <div class="logo-prev"><img id="logoImg" src="" alt="Generated logo"/><div class="logo-prev-ov"><button class="btn btn-s btn-sm" onclick="downloadLogo()">↓ Save</button><button class="btn btn-s btn-sm" onclick="generateLogo()">↺ Redo</button></div></div>
             <div class="logo-info">
               <div class="cout-title">Generated Logo</div>
-              <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:3px" id="logoResultName"></div>
-              <div style="font-size:12px;color:var(--muted);margin-bottom:16px" id="logoResultStyle"></div>
+              <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:4px" id="logoResultName"></div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:18px" id="logoResultStyle"></div>
               <div class="cout-title">Prompt Used</div>
-              <div id="logoPromptText" style="font-size:12.5px;color:var(--muted);line-height:1.65;margin-bottom:16px"></div>
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <div id="logoPromptText" style="font-size:12.5px;color:var(--muted);line-height:1.7;margin-bottom:18px"></div>
+              <div style="display:flex;gap:9px;flex-wrap:wrap">
                 <button class="btn btn-p btn-sm" onclick="downloadLogo()">↓ Download PNG</button>
                 <button class="btn btn-s btn-sm" onclick="generateLogo()">↺ Regenerate</button>
               </div>
@@ -550,25 +1055,34 @@ select option{background:#0d1220}
     <div class="content-wrap">
       <div class="section-h">
         <span class="view-pill pill-g">❋ AI Powered</span>
-        <div class="section-title">Content Automation</div>
+        <div class="section-title">Brand Content Automation</div>
         <div class="section-sub">Generate taglines, bios, ad copy, emails, and social posts for your brand.</div>
       </div>
-
       <div class="card card-glass">
         <div class="form-row">
           <div class="fg"><label>Brand Name *</label><input type="text" id="contentBrand" placeholder="e.g. Zenith"/></div>
           <div class="fg"><label>Niche / Industry *</label><input type="text" id="contentNiche" placeholder="e.g. AI productivity tools"/></div>
         </div>
-        <div class="fg"><label>Brand Tone</label>
-          <select id="contentTone">
-            <option value="professional">Professional</option>
-            <option value="playful and fun">Playful & Fun</option>
-            <option value="bold and energetic">Bold & Energetic</option>
-            <option value="warm and friendly">Warm & Friendly</option>
-            <option value="luxurious and refined">Luxurious & Refined</option>
-            <option value="minimalist and clean">Minimalist & Clean</option>
-            <option value="innovative and forward-thinking">Innovative</option>
-          </select>
+        <div class="fg">
+          <label>Brand Tone</label>
+          <div class="custom-select" id="cs-contentTone">
+            <div class="cs-trigger" tabindex="0">
+              <span class="cs-value">Professional</span>
+              <span class="cs-arrow">▾</span>
+            </div>
+            <div class="cs-dropdown">
+              <div class="cs-list">
+                <div class="cs-option selected" data-val="professional"><span class="cs-check">✓</span><span class="cs-option-label">Professional</span></div>
+                <div class="cs-option" data-val="playful and fun"><span class="cs-check">✓</span><span class="cs-option-label">Playful &amp; Fun</span></div>
+                <div class="cs-option" data-val="bold and energetic"><span class="cs-check">✓</span><span class="cs-option-label">Bold &amp; Energetic</span></div>
+                <div class="cs-option" data-val="warm and friendly"><span class="cs-check">✓</span><span class="cs-option-label">Warm &amp; Friendly</span></div>
+                <div class="cs-option" data-val="luxurious and refined"><span class="cs-check">✓</span><span class="cs-option-label">Luxurious &amp; Refined</span></div>
+                <div class="cs-option" data-val="minimalist and clean"><span class="cs-check">✓</span><span class="cs-option-label">Minimalist &amp; Clean</span></div>
+                <div class="cs-option" data-val="innovative and forward-thinking"><span class="cs-check">✓</span><span class="cs-option-label">Innovative</span></div>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" id="contentTone" value="professional"/>
         </div>
         <div class="fg">
           <label>Content Type</label>
@@ -582,7 +1096,6 @@ select option{background:#0d1220}
         </div>
         <button class="btn btn-p btn-full" onclick="generateContent()" id="contentBtn">❋ Generate Content</button>
       </div>
-
       <div class="loading" id="contentLoading"><div class="spinner"></div><span>Writing brand content with AI...</span></div>
       <div id="contentResults"></div>
     </div>
@@ -593,30 +1106,25 @@ select option{background:#0d1220}
     <div class="content-wrap">
       <div class="section-h">
         <span class="view-pill pill-a">◎ IBM Watson</span>
-        <div class="section-title">Sentiment Analysis</div>
+        <div class="section-title">Brand Sentiment Analysis</div>
         <div class="section-sub">Analyze the emotional tone and sentiment of your brand copy.</div>
       </div>
-
       <div class="card card-glass">
-        <div class="fg"><label>Brand Text to Analyze</label>
-          <textarea id="sentimentText" placeholder="Paste your brand description, mission statement, tagline..." style="min-height:130px"></textarea>
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <div class="fg"><label>Brand Text to Analyze</label><textarea id="sentimentText" placeholder="Paste your brand description, mission statement, tagline..." style="min-height:130px"></textarea></div>
+        <div style="display:flex;gap:9px;flex-wrap:wrap;align-items:center">
           <button class="btn btn-p" onclick="analyzeSentiment()" id="sentimentBtn">◎ Analyze Sentiment</button>
           <button class="btn btn-s btn-sm" onclick="loadSample()">Load Sample</button>
           <button class="btn btn-g btn-sm" onclick="document.getElementById('sentimentText').value='';document.getElementById('sentimentResults').innerHTML=''">Clear</button>
         </div>
-
         <div class="divider"></div>
         <div class="cout-title">What this analyzes</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
           <div class="insight" style="margin:0">😊 Overall sentiment score</div>
           <div class="insight" style="margin:0">❤️ Emotional breakdown</div>
           <div class="insight" style="margin:0">🔑 Power keywords</div>
           <div class="insight" style="margin:0">💡 Brand insights</div>
         </div>
       </div>
-
       <div class="loading" id="sentimentLoading"><div class="spinner"></div><span>Analyzing with IBM Watson...</span></div>
       <div id="sentimentResults"></div>
     </div>
@@ -645,35 +1153,15 @@ select option{background:#0d1220}
       </div>
     </div>
   </div>
+</div>
 
-</div><!-- end .app -->
-
-<!-- BOTTOM NAVIGATION -->
 <nav class="bottom-nav">
-  <button class="nav-item active" data-tab="home" onclick="switchTab('home')">
-    <span class="nav-icon">⬡</span>
-    <span class="nav-label">Home</span>
-  </button>
-  <button class="nav-item" data-tab="names" onclick="switchTab('names')">
-    <span class="nav-icon">✎</span>
-    <span class="nav-label">Names</span>
-  </button>
-  <button class="nav-item" data-tab="logo" onclick="switchTab('logo')">
-    <span class="nav-icon">◈</span>
-    <span class="nav-label">Logo</span>
-  </button>
-  <button class="nav-item" data-tab="content" onclick="switchTab('content')">
-    <span class="nav-icon">❋</span>
-    <span class="nav-label">Content</span>
-  </button>
-  <button class="nav-item" data-tab="sentiment" onclick="switchTab('sentiment')">
-    <span class="nav-icon">◎</span>
-    <span class="nav-label">Sentiment</span>
-  </button>
-  <button class="nav-item" data-tab="assistant" onclick="switchTab('assistant')">
-    <span class="nav-icon">◬</span>
-    <span class="nav-label">Assistant</span>
-  </button>
+  <button class="nav-item active" data-tab="home" onclick="switchTab('home')"><span class="nav-icon">⬡</span><span class="nav-label">Home</span></button>
+  <button class="nav-item" data-tab="names" onclick="switchTab('names')"><span class="nav-icon">✎</span><span class="nav-label">Name Generator</span></button>
+  <button class="nav-item" data-tab="logo" onclick="switchTab('logo')"><span class="nav-icon">◈</span><span class="nav-label">Logo Generator</span></button>
+  <button class="nav-item" data-tab="content" onclick="switchTab('content')"><span class="nav-icon">❋</span><span class="nav-label">Content Generator</span></button>
+  <button class="nav-item" data-tab="sentiment" onclick="switchTab('sentiment')"><span class="nav-icon">◎</span><span class="nav-label">Sentiment Analysis</span></button>
+  <button class="nav-item" data-tab="assistant" onclick="switchTab('assistant')"><span class="nav-icon">◬</span><span class="nav-label">Assistant</span></button>
 </nav>
 
 <div class="toast" id="toast"></div>
@@ -681,8 +1169,66 @@ select option{background:#0d1220}
 <script>
 // ===== STATE =====
 let chatHistory=[],currentContent='tagline',selectedTone='professional',logoB64=null;
-
 const tabTitles={home:'Dashboard',names:'Brand Names',logo:'Logo Generator',content:'Content',sentiment:'Sentiment',assistant:'Brand Assistant'};
+
+// ===== SCROLL — topbar shadow & reveal animations =====
+const topbar = document.getElementById('topbar');
+window.addEventListener('scroll', ()=>{
+  topbar.classList.toggle('scrolled', window.scrollY > 10);
+}, {passive:true});
+
+// Intersection Observer for reveal animations
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+// ===== CUSTOM SELECT ENGINE =====
+function initCustomSelects(){
+  document.querySelectorAll('.custom-select').forEach(cs=>{
+    const trigger = cs.querySelector('.cs-trigger');
+    const dropdown = cs.querySelector('.cs-dropdown');
+    const valueEl = cs.querySelector('.cs-value');
+    const options = cs.querySelectorAll('.cs-option');
+    const hiddenId = cs.id.replace('cs-','');
+    const hidden = document.getElementById(hiddenId);
+
+    trigger.addEventListener('click', e=>{
+      e.stopPropagation();
+      const isOpen = cs.classList.contains('open');
+      document.querySelectorAll('.custom-select.open').forEach(o=>{ o.classList.remove('open'); o.querySelector('.cs-trigger').classList.remove('open'); });
+      if(!isOpen){ cs.classList.add('open'); trigger.classList.add('open'); }
+    });
+    trigger.addEventListener('keydown', e=>{
+      if(e.key==='Enter'||e.key===' '){ e.preventDefault(); trigger.click(); }
+      if(e.key==='Escape'){ cs.classList.remove('open'); trigger.classList.remove('open'); }
+    });
+    options.forEach(opt=>{
+      opt.addEventListener('click', e=>{
+        e.stopPropagation();
+        options.forEach(o=>o.classList.remove('selected'));
+        opt.classList.add('selected');
+        valueEl.textContent = opt.querySelector('.cs-option-label').textContent;
+        if(hidden) hidden.value = opt.dataset.val;
+        cs.classList.remove('open');
+        trigger.classList.remove('open');
+        trigger.style.transform='scale(.98)';
+        setTimeout(()=>trigger.style.transform='', 180);
+      });
+    });
+  });
+  document.addEventListener('click', ()=>{
+    document.querySelectorAll('.custom-select.open').forEach(cs=>{
+      cs.classList.remove('open');
+      cs.querySelector('.cs-trigger').classList.remove('open');
+    });
+  });
+}
 
 // ===== TAB SWITCHING =====
 function switchTab(tab){
@@ -696,6 +1242,12 @@ function switchTab(tab){
   if(view&&view.querySelector('.content-wrap')){view.querySelector('.content-wrap').scrollTop=0}
   window.scrollTo({top:0,behavior:'instant'});
   if(navigator.vibrate)navigator.vibrate(8);
+  // re-run reveal on newly active view
+  setTimeout(()=>{
+    if(view) view.querySelectorAll('.reveal').forEach(el=>{
+      observer.observe(el);
+    });
+  }, 50);
 }
 
 // ===== TONE CHIPS =====
@@ -703,7 +1255,7 @@ document.querySelectorAll('#toneChips .chip').forEach(c=>{
   c.addEventListener('click',()=>{
     document.querySelectorAll('#toneChips .chip').forEach(x=>x.classList.remove('sel'));
     c.classList.add('sel');selectedTone=c.dataset.val;
-    c.style.transform='scale(1.12)';setTimeout(()=>c.style.transform='',220);
+    c.style.transform='scale(1.15)';setTimeout(()=>c.style.transform='',240);
   });
 });
 
@@ -717,20 +1269,17 @@ function setNiche(v){
   const el=document.getElementById('nameNiche');
   el.value=v;el.focus();
   el.style.borderColor='var(--amber)';
-  setTimeout(()=>el.style.borderColor='',800);
+  el.style.boxShadow='0 0 0 3px rgba(255,183,0,.12)';
+  setTimeout(()=>{el.style.borderColor='';el.style.boxShadow=''},900);
 }
 
 // ===== TOAST =====
 function showToast(msg,type='ok'){
   const t=document.getElementById('toast');
   t.textContent=msg;t.className='toast '+type+' show';
-  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3200);
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3400);
 }
-
-// ===== COPY =====
-function copy(text){
-  navigator.clipboard.writeText(text).then(()=>showToast('✓ Copied to clipboard','ok'));
-}
+function copy(text){navigator.clipboard.writeText(text).then(()=>showToast('✓ Copied to clipboard','ok'))}
 
 // ===== API =====
 async function apiCall(ep,data){
@@ -748,29 +1297,14 @@ async function generateNames(){
   try{
     const d=await apiCall('/brand-name',{niche,tone:selectedTone,audience:document.getElementById('nameAudience').value.trim()||'general consumers'});
     load.classList.remove('show');renderNames(d.names||[]);
-  }catch(e){
-    load.classList.remove('show');showToast('Error: '+e.message,'err');
-    res.innerHTML=`<div class="cout"><div style="color:var(--pink)">⚠ ${eh(e.message)}</div></div>`;
-  }
+  }catch(e){load.classList.remove('show');showToast('Error: '+e.message,'err');res.innerHTML=`<div class="cout"><div style="color:var(--pink)">⚠ ${eh(e.message)}</div></div>`}
   btn.disabled=false;
 }
-
 function renderNames(names){
   const c=document.getElementById('namesResults');
-  if(!names.length){c.innerHTML='<div class="empty"><div class="empty-ico">✎</div><div class="empty-t">No names generated</div><div class="empty-s">Try refining your niche</div></div>';return}
+  if(!names.length){c.innerHTML='<div class="empty"><span class="empty-ico">✎</span><div class="empty-t">No names generated</div><div class="empty-s">Try refining your niche</div></div>';return}
   let h=`<div class="results-wrap"><div class="results-header"><span class="results-count">${names.length} names generated</span><button class="btn btn-s btn-sm" onclick="generateNames()">↺ Regenerate</button></div><div class="results-grid">`;
-  names.forEach((n,i)=>{
-    h+=`<div class="rcard" style="animation-delay:${i*.07}s">
-      <button class="cbtn" onclick="copy('${ea(n.name)}')">⎘</button>
-      <div class="brand-n">${eh(n.name)}</div>
-      <div class="brand-tl">"${eh(n.tagline||'')}"</div>
-      <div class="brand-m">${eh(n.meaning||'')}</div>
-      <span class="brand-badge">${eh(n.style||'')}</span>
-      <div class="rcard-actions">
-        <button class="btn btn-s btn-sm" onclick="copy('${ea(n.name+'\n'+(n.tagline||''))}')">⎘ Copy</button>
-        <button class="btn btn-g btn-sm" onclick="document.getElementById('contentBrand').value='${ea(n.name)}';switchTab('content')">→ Use in Content</button>
-      </div></div>`;
-  });
+  names.forEach((n,i)=>{h+=`<div class="rcard" style="animation-delay:${i*.08}s"><button class="cbtn" onclick="copy('${ea(n.name)}')">⎘</button><div class="brand-n">${eh(n.name)}</div><div class="brand-tl">"${eh(n.tagline||'')}"</div><div class="brand-m">${eh(n.meaning||'')}</div><span class="brand-badge">${eh(n.style||'')}</span><div class="rcard-actions"><button class="btn btn-s btn-sm" onclick="copy('${ea(n.name+'\n'+(n.tagline||''))}')">⎘ Copy</button><button class="btn btn-g btn-sm" onclick="document.getElementById('contentBrand').value='${ea(n.name)}';switchTab('content')">→ Use in Content</button></div></div>`});
   h+='</div></div>';c.innerHTML=h;
   setTimeout(()=>c.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
 }
@@ -784,26 +1318,12 @@ async function generateLogo(){
   try{
     const d=await apiCall('/logo',{brand_name:bn,style:document.getElementById('logoStyle').value,primary_color:document.getElementById('logoColor').value,industry:document.getElementById('logoIndustry').value||'general'});
     load.classList.remove('show');
-    if(d.success){
-      logoB64=d.image_base64;
-      document.getElementById('logoImg').src='data:image/png;base64,'+d.image_base64;
-      document.getElementById('logoResultName').textContent=bn;
-      document.getElementById('logoResultStyle').textContent='Style: '+document.getElementById('logoStyle').value;
-      document.getElementById('logoPromptText').textContent=d.prompt_used||'';
-      res.style.display='block';
-      showToast('✓ Logo generated!','ok');
-      setTimeout(()=>res.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
-    }else showToast('Failed: '+(d.error||'Unknown error'),'err');
+    if(d.success){logoB64=d.image_base64;document.getElementById('logoImg').src='data:image/png;base64,'+d.image_base64;document.getElementById('logoResultName').textContent=bn;document.getElementById('logoResultStyle').textContent='Style: '+document.getElementById('logoStyle').value;document.getElementById('logoPromptText').textContent=d.prompt_used||'';res.style.display='block';showToast('✓ Logo generated!','ok');setTimeout(()=>res.scrollIntoView({behavior:'smooth',block:'nearest'}),100)}
+    else showToast('Failed: '+(d.error||'Unknown error'),'err');
   }catch(e){load.classList.remove('show');showToast('Error: '+e.message,'err')}
   btn.disabled=false;
 }
-
-function downloadLogo(){
-  if(!logoB64)return;
-  const a=document.createElement('a');a.href='data:image/png;base64,'+logoB64;
-  a.download=(document.getElementById('logoBrandName').value||'logo')+'_logo.png';a.click();
-  showToast('↓ Downloading logo...','ok');
-}
+function downloadLogo(){if(!logoB64)return;const a=document.createElement('a');a.href='data:image/png;base64,'+logoB64;a.download=(document.getElementById('logoBrandName').value||'logo')+'_logo.png';a.click();showToast('↓ Downloading logo...','ok')}
 
 // ===== CONTENT =====
 async function generateContent(){
@@ -814,37 +1334,20 @@ async function generateContent(){
   try{
     const d=await apiCall('/content',{brand_name:brand,niche,tone:document.getElementById('contentTone').value,content_type:currentContent});
     load.classList.remove('show');renderContent(d.content_type,d.data);
-  }catch(e){
-    load.classList.remove('show');showToast('Error: '+e.message,'err');
-    res.innerHTML=`<div class="cout"><div style="color:var(--pink)">⚠ ${eh(e.message)}</div></div>`;
-  }
+  }catch(e){load.classList.remove('show');showToast('Error: '+e.message,'err');res.innerHTML=`<div class="cout"><div style="color:var(--pink)">⚠ ${eh(e.message)}</div></div>`}
   btn.disabled=false;
 }
-
 function renderContent(type,data){
-  const c=document.getElementById('contentResults');
-  let h='<div class="cout">';
+  const c=document.getElementById('contentResults');let h='<div class="cout">';
   try{
-    if(type==='tagline'&&data.taglines){
-      h+=`<div class="cout-title">Generated Taglines</div>`;
-      data.taglines.forEach(t=>{h+=`<div class="citem"><div class="citem-label">${eh(t.use_case||'')}</div><div class="citem-text">${eh(t.text||t)}</div><button style="margin-top:10px" class="btn btn-s btn-sm" onclick="copy('${ea(t.text||t)}')">⎘ Copy</button></div>`});
-    }else if(type==='bio'&&data.bios){
-      ['short','medium','long'].forEach(l=>{if(data.bios[l])h+=`<div class="citem"><div class="citem-label">${l.charAt(0).toUpperCase()+l.slice(1)} Bio</div><div class="citem-text">${eh(data.bios[l])}</div><button style="margin-top:10px" class="btn btn-s btn-sm" onclick="copy('${ea(data.bios[l])}')">⎘ Copy</button></div>`});
-    }else if(type==='ad_copy'&&data.ads){
-      data.ads.forEach(a=>{h+=`<div class="citem"><div class="citem-label">${eh(a.platform||'Ad')}</div><div class="citem-text"><strong>${eh(a.headline||'')}</strong><br>${eh(a.body||'')}<br><em style="color:var(--accent)">${eh(a.cta||'')}</em></div><button style="margin-top:10px" class="btn btn-s btn-sm" onclick="copy('${ea((a.headline||'')+'\n'+(a.body||'')+'\n'+(a.cta||''))}')">⎘ Copy</button></div>`});
-    }else if(type==='email'&&data.subject){
-      h+=`<div class="citem"><div class="citem-label">Subject</div><div class="citem-text">${eh(data.subject)}</div></div>
-          <div class="citem"><div class="citem-label">Preview</div><div class="citem-text">${eh(data.preview||'')}</div></div>
-          <div class="citem"><div class="citem-label">Body</div><div class="citem-text">${eh(data.body||'')}</div><button style="margin-top:10px" class="btn btn-s btn-sm" onclick="copy('${ea(data.body||'')}')">⎘ Copy</button></div>`;
-    }else if(type==='social'&&data.posts){
-      data.posts.forEach(p=>{
-        const tags=(p.hashtags||[]).map(t=>eh(t)).join(' ');
-        h+=`<div class="citem"><div class="citem-label">${eh(p.platform||'Post')}</div><div class="citem-text">${eh(p.content||'')}</div><div style="margin-top:8px;color:var(--accent);font-size:12.5px">${tags}</div><button style="margin-top:10px" class="btn btn-s btn-sm" onclick="copy('${ea((p.content||'')+'\n'+(p.hashtags||[]).join(' '))}')">⎘ Copy</button></div>`;
-      });
-    }else{h+=`<div class="citem"><div class="citem-text">${eh(JSON.stringify(data,null,2))}</div></div>`}
+    if(type==='tagline'&&data.taglines){h+=`<div class="cout-title">Generated Taglines</div>`;data.taglines.forEach(t=>{h+=`<div class="citem"><div class="citem-label">${eh(t.use_case||'')}</div><div class="citem-text">${eh(t.text||t)}</div><button style="margin-top:10px" class="btn btn-s btn-sm" onclick="copy('${ea(t.text||t)}')">⎘ Copy</button></div>`})}
+    else if(type==='bio'&&data.bios){['short','medium','long'].forEach(l=>{if(data.bios[l])h+=`<div class="citem"><div class="citem-label">${l.charAt(0).toUpperCase()+l.slice(1)} Bio</div><div class="citem-text">${eh(data.bios[l])}</div><button style="margin-top:10px" class="btn btn-s btn-sm" onclick="copy('${ea(data.bios[l])}')">⎘ Copy</button></div>`})}
+    else if(type==='ad_copy'&&data.ads){data.ads.forEach(a=>{h+=`<div class="citem"><div class="citem-label">${eh(a.platform||'Ad')}</div><div class="citem-text"><strong>${eh(a.headline||'')}</strong><br>${eh(a.body||'')}<br><em style="color:var(--accent)">${eh(a.cta||'')}</em></div><button style="margin-top:10px" class="btn btn-s btn-sm" onclick="copy('${ea((a.headline||'')+'\n'+(a.body||'')+'\n'+(a.cta||''))}')">⎘ Copy</button></div>`})}
+    else if(type==='email'&&data.subject){h+=`<div class="citem"><div class="citem-label">Subject</div><div class="citem-text">${eh(data.subject)}</div></div><div class="citem"><div class="citem-label">Preview</div><div class="citem-text">${eh(data.preview||'')}</div></div><div class="citem"><div class="citem-label">Body</div><div class="citem-text">${eh(data.body||'')}</div><button style="margin-top:10px" class="btn btn-s btn-sm" onclick="copy('${ea(data.body||'')}')">⎘ Copy</button></div>`}
+    else if(type==='social'&&data.posts){data.posts.forEach(p=>{const tags=(p.hashtags||[]).map(t=>eh(t)).join(' ');h+=`<div class="citem"><div class="citem-label">${eh(p.platform||'Post')}</div><div class="citem-text">${eh(p.content||'')}</div><div style="margin-top:9px;color:var(--accent);font-size:12.5px">${tags}</div><button style="margin-top:10px" class="btn btn-s btn-sm" onclick="copy('${ea((p.content||'')+'\n'+(p.hashtags||[]).join(' '))}')">⎘ Copy</button></div>`})}
+    else{h+=`<div class="citem"><div class="citem-text">${eh(JSON.stringify(data,null,2))}</div></div>`}
   }catch(e){h+=`<div class="citem"><div class="citem-text">${eh(JSON.stringify(data,null,2))}</div></div>`}
-  h+='</div>';c.innerHTML=h;
-  setTimeout(()=>c.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+  h+='</div>';c.innerHTML=h;setTimeout(()=>c.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
 }
 
 // ===== SENTIMENT =====
@@ -853,104 +1356,50 @@ async function analyzeSentiment(){
   if(!text||text.length<10){showToast('Please enter at least 10 characters','err');return}
   const btn=document.getElementById('sentimentBtn'),load=document.getElementById('sentimentLoading'),res=document.getElementById('sentimentResults');
   btn.disabled=true;load.classList.add('show');res.innerHTML='';
-  try{
-    const d=await apiCall('/sentiment',{text});
-    load.classList.remove('show');renderSentiment(d);showToast('✓ Analysis complete!','ok');
-  }catch(e){load.classList.remove('show');showToast('Error: '+e.message,'err')}
+  try{const d=await apiCall('/sentiment',{text});load.classList.remove('show');renderSentiment(d);showToast('✓ Analysis complete!','ok')}
+  catch(e){load.classList.remove('show');showToast('Error: '+e.message,'err')}
   btn.disabled=false;
 }
-
-function loadSample(){
-  document.getElementById('sentimentText').value="We believe everyone deserves access to beautiful, sustainable products that don't compromise on quality. Our mission is to make eco-friendly living simple, joyful, and accessible for modern families who care about their impact on the planet.";
-  showToast('Sample text loaded','ok');
-}
-
+function loadSample(){document.getElementById('sentimentText').value="We believe everyone deserves access to beautiful, sustainable products that don't compromise on quality. Our mission is to make eco-friendly living simple, joyful, and accessible for modern families who care about their impact on the planet.";showToast('Sample text loaded','ok')}
 function renderSentiment(data){
   const c=document.getElementById('sentimentResults');
   const s=data.sentiment||{},emos=data.emotions||{};
   const label=s.label||'neutral',score=Math.abs(s.score||0);
   const eC={joy:'#ffb700',sadness:'#60a5fa',anger:'#ff5f7e',fear:'#a78bfa',disgust:'#00e0bc'};
-  let eBars='';
-  Object.entries(emos).forEach(([e,v])=>{const p=Math.round(v*100);eBars+=`<div class="emo-row"><div class="emo-name">${e}</div><div class="emo-bar-bg"><div class="emo-bar" style="width:${p}%;background:${eC[e]||'var(--accent)'}"></div></div><div class="emo-val">${p}%</div></div>`});
+  let eBars='';Object.entries(emos).forEach(([e,v])=>{const p=Math.round(v*100);eBars+=`<div class="emo-row"><div class="emo-name">${e}</div><div class="emo-bar-bg"><div class="emo-bar" style="width:${p}%;background:${eC[e]||'var(--accent)'}"></div></div><div class="emo-val">${p}%</div></div>`});
   const bC=label==='positive'?'badge-pos':label==='negative'?'badge-neg':'badge-neu';
   const bE=label==='positive'?'😊':label==='negative'?'😟':'😐';
   const ins=(data.brand_insights||[]).map(i=>`<div class="insight">${eh(i)}</div>`).join('');
   const kw=(data.keywords||[]).map(k=>`<span class="chip" style="pointer-events:none">${eh(k)}</span>`).join('');
-  c.innerHTML=`<div class="sent-res">
-    <div style="display:grid;grid-template-columns:1fr;gap:14px">
-      <div class="card card-glass">
-        <div class="cout-title">Overall Sentiment</div>
-        <div class="sent-badge ${bC}" style="margin-bottom:14px">${bE} ${label.charAt(0).toUpperCase()+label.slice(1)}</div>
-        <div class="score-bar"><div class="score-fill" style="width:${Math.round(score*100)}%;background:${label==='positive'?'var(--accent)':label==='negative'?'var(--pink)':'var(--amber)'}"></div></div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Confidence: ${Math.round(score*100)}%</div>
-        <div class="cout-title">Dominant Emotion</div>
-        <div style="font-size:20px;font-family:'Syne',sans-serif;font-weight:800;color:var(--amber);margin-bottom:${kw?'14px':'0'}">${(data.dominant_emotion||'neutral').charAt(0).toUpperCase()+(data.dominant_emotion||'neutral').slice(1)}</div>
-        ${kw?`<div class="cout-title">Key Words</div><div class="chip-grp">${kw}</div>`:''}
-        ${data.fallback?'<div style="margin-top:10px;font-size:11px;color:var(--dim)">ℹ Using fallback analysis.</div>':''}
-      </div>
-      <div class="card card-glass">
-        <div class="cout-title">Emotion Breakdown</div>
-        <div class="emo-list">${eBars}</div>
-      </div>
-      <div class="card card-glass">
-        <div class="cout-title">Brand Insights</div>
-        ${ins||'<div class="insight">No specific insights available</div>'}
-      </div>
-    </div>
-  </div>`;
+  c.innerHTML=`<div class="sent-res"><div style="display:grid;grid-template-columns:1fr;gap:14px"><div class="card card-glass"><div class="cout-title">Overall Sentiment</div><div class="sent-badge ${bC}" style="margin-bottom:14px">${bE} ${label.charAt(0).toUpperCase()+label.slice(1)}</div><div class="score-bar"><div class="score-fill" style="width:${Math.round(score*100)}%;background:${label==='positive'?'var(--accent)':label==='negative'?'var(--pink)':'var(--amber)'}"></div></div><div style="font-size:12px;color:var(--muted);margin-bottom:16px">Confidence: ${Math.round(score*100)}%</div><div class="cout-title">Dominant Emotion</div><div style="font-size:20px;font-family:'Syne',sans-serif;font-weight:800;color:var(--amber);margin-bottom:${kw?'14px':'0'}">${(data.dominant_emotion||'neutral').charAt(0).toUpperCase()+(data.dominant_emotion||'neutral').slice(1)}</div>${kw?`<div class="cout-title">Key Words</div><div class="chip-grp">${kw}</div>`:''}</div><div class="card card-glass"><div class="cout-title">Emotion Breakdown</div><div class="emo-list">${eBars}</div></div><div class="card card-glass"><div class="cout-title">Brand Insights</div>${ins||'<div class="insight">No specific insights available</div>'}</div></div></div>`;
   setTimeout(()=>c.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
 }
 
 // ===== CHAT =====
-function sendSugg(chip){
-  document.getElementById('chatInput').value=chip.textContent;
-  sendChat();
-}
-
+function sendSugg(chip){document.getElementById('chatInput').value=chip.textContent;sendChat()}
 async function sendChat(){
-  const inp=document.getElementById('chatInput');
-  const msg=inp.value.trim();if(!msg)return;
-  inp.value='';autoResize(inp);
-  document.getElementById('suggRow').style.display='none';
+  const inp=document.getElementById('chatInput');const msg=inp.value.trim();if(!msg)return;
+  inp.value='';autoResize(inp);document.getElementById('suggRow').style.display='none';
   addMsg('user',msg);chatHistory.push({role:'user',content:msg});
   const btn=document.getElementById('chatSendBtn');btn.disabled=true;showTyping();
-  try{
-    const d=await apiCall('/assistant',{messages:chatHistory.slice(-10),message:msg});
-    hideTyping();const r=d.response||"Sorry, I couldn't generate a response.";
-    addMsg('assistant',r);chatHistory.push({role:'assistant',content:r});
-  }catch(e){hideTyping();addMsg('assistant','⚠ Error: '+e.message)}
+  try{const d=await apiCall('/assistant',{messages:chatHistory.slice(-10),message:msg});hideTyping();const r=d.response||"Sorry, I couldn't generate a response.";addMsg('assistant',r);chatHistory.push({role:'assistant',content:r})}
+  catch(e){hideTyping();addMsg('assistant','⚠ Error: '+e.message)}
   btn.disabled=false;
 }
-
-function addMsg(role,content){
-  const m=document.getElementById('chatMessages');
-  const d=document.createElement('div');d.className='msg '+role;
-  d.innerHTML=`<div class="avatar">${role==='user'?'◉':'✦'}</div><div class="bubble">${eh(content).replace(/\n/g,'<br>')}</div>`;
-  m.appendChild(d);m.scrollTop=m.scrollHeight;
-}
-function showTyping(){
-  const m=document.getElementById('chatMessages');
-  const d=document.createElement('div');d.className='msg assistant';d.id='typing';
-  d.innerHTML=`<div class="avatar">✦</div><div class="typing-ind"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div>`;
-  m.appendChild(d);m.scrollTop=m.scrollHeight;
-}
+function addMsg(role,content){const m=document.getElementById('chatMessages');const d=document.createElement('div');d.className='msg '+role;d.innerHTML=`<div class="avatar">${role==='user'?'◉':'✦'}</div><div class="bubble">${eh(content).replace(/\n/g,'<br>')}</div>`;m.appendChild(d);m.scrollTop=m.scrollHeight}
+function showTyping(){const m=document.getElementById('chatMessages');const d=document.createElement('div');d.className='msg assistant';d.id='typing';d.innerHTML=`<div class="avatar">✦</div><div class="typing-ind"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div>`;m.appendChild(d);m.scrollTop=m.scrollHeight}
 function hideTyping(){const e=document.getElementById('typing');if(e)e.remove()}
-function clearChat(){
-  chatHistory=[];
-  document.getElementById('chatMessages').innerHTML=`<div class="msg assistant"><div class="avatar">✦</div><div class="bubble">Chat cleared. Ready to help you build your brand. What are you working on? ✦</div></div>`;
-  document.getElementById('suggRow').style.display='flex';
-}
+function clearChat(){chatHistory=[];document.getElementById('chatMessages').innerHTML=`<div class="msg assistant"><div class="avatar">✦</div><div class="bubble">Chat cleared. Ready to help you build your brand. What are you working on? ✦</div></div>`;document.getElementById('suggRow').style.display='flex'}
 function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat()}}
 function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px'}
 
 // ===== UTILS =====
-function shake(id){
-  const e=document.getElementById(id);
-  e.style.animation='shake .4s ease';e.focus();
-  setTimeout(()=>e.style.animation='',500);
-}
+function shake(id){const e=document.getElementById(id);e.style.animation='shake .4s ease';e.focus();setTimeout(()=>e.style.animation='',500)}
 function eh(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function ea(s){if(!s)return'';return String(s).replace(/'/g,"\\'").replace(/\n/g,'\\n')}
+
+// ===== INIT =====
+initCustomSelects();
 </script>
 </body>
 </html>
