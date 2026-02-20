@@ -1,674 +1,495 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>BrandCraft — AI Branding System</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>BrandCraft — AI Branding</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-/* ============================================
-   COSMIC NEON — Bold, Vivid, Eye-Catching
-   Electric cyan · Hot magenta · Acid lime
-   Deep violet · Blazing orange · Neon yellow
-   ============================================ */
-*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-
-:root {
-  --bg:  #03030d;
-  --bg2: #060618;
-  --bg3: #09091f;
-  --bg4: #0d0d28;
-  --border:        rgba(255,255,255,0.05);
-  --border-bright: rgba(255,255,255,0.1);
-  --text:       #f2f2ff;
-  --text-muted: #7a7aaa;
-  --text-dim:   #38385e;
-  /* VIVID PALETTE */
-  --cyan:    #00eaff;
-  --magenta: #ff1f99;
-  --orange:  #ff6820;
-  --lime:    #3dff72;
-  --yellow:  #ffe84a;
-  --violet:  #b040ff;
-  --pink:    #ff60c0;
-  /* Glow colors */
-  --glow-cyan:    rgba(0,234,255,0.2);
-  --glow-magenta: rgba(255,31,153,0.2);
-  --glow-violet:  rgba(176,64,255,0.2);
-  /* Shadows */
-  --shadow-sm:   0 2px 12px rgba(0,0,0,0.5);
-  --shadow-card: 0 4px 30px rgba(0,0,0,0.6);
-  --shadow-btn:  0 4px 20px rgba(0,234,255,0.35);
-  --shadow-hover:0 8px 36px rgba(0,234,255,0.55);
-  /* Layout */
-  --radius:    18px;
-  --radius-sm: 12px;
-  --radius-xs: 7px;
-  --font-display: 'Syne', sans-serif;
-  --font-body:    'Plus Jakarta Sans', sans-serif;
-  --sidebar-w: 268px;
-  --topbar-h:  64px;
-  --t:  .2s cubic-bezier(.4,0,.2,1);
-  --ts: .4s cubic-bezier(.4,0,.2,1);
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#060914;
+  --bg2:#0d1220;
+  --bg3:#121a2e;
+  --glass:rgba(255,255,255,0.04);
+  --glass-b:rgba(255,255,255,0.08);
+  --border:rgba(255,255,255,0.07);
+  --border-h:rgba(0,224,188,0.4);
+  --text:#eefaf8;
+  --muted:#7a9e98;
+  --dim:#334a47;
+  --accent:#00e0bc;
+  --accent-l:#5ffce0;
+  --accent-d:#00b898;
+  --accent-g:rgba(0,224,188,0.12);
+  --accent-gs:rgba(0,224,188,0.07);
+  --green:#00e0bc;
+  --pink:#ff5f7e;
+  --amber:#ffb700;
+  --orange:#ff7a3d;
+  --r:20px;--r-md:14px;--r-sm:10px;--r-xs:7px;
+  --ease:.22s cubic-bezier(.4,0,.2,1);
+  --spring:.4s cubic-bezier(.34,1.56,.64,1);
+  --topbar:60px;--bottombar:68px;
+  --max:840px;
 }
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;min-height:100dvh;overflow-x:hidden;font-size:15px;line-height:1.65}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--border-h);border-radius:2px}
 
-html { scroll-behavior:smooth; }
-
-body {
-  font-family:var(--font-body);
-  background:var(--bg); color:var(--text);
-  min-height:100vh; min-height:100dvh;
-  display:flex; overflow:hidden; position:relative;
-}
-
-/* ── AMBIENT GLOW BACKGROUND ── */
-body::before {
-  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+/* BG mesh — teal + magenta + deep orange nodes */
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   background:
-    radial-gradient(ellipse 70% 45% at 8%   2%,  rgba(0,234,255,.08)   0%,transparent 55%),
-    radial-gradient(ellipse 55% 55% at 92%  8%,  rgba(176,64,255,.10)  0%,transparent 50%),
-    radial-gradient(ellipse 65% 45% at 50% 100%, rgba(255,31,153,.07)  0%,transparent 55%),
-    radial-gradient(ellipse 40% 35% at 75%  50%, rgba(255,104,32,.04)  0%,transparent 50%);
+    radial-gradient(ellipse 70% 55% at 15% -5%, rgba(0,224,188,.18), transparent),
+    radial-gradient(ellipse 55% 45% at 88% 92%, rgba(255,95,126,.12), transparent),
+    radial-gradient(ellipse 45% 40% at 55% 55%, rgba(255,183,0,.06), transparent),
+    radial-gradient(ellipse 30% 30% at 80% 15%, rgba(0,224,188,.08), transparent)}
+
+/* subtle noise grain overlay */
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:200px 200px}
+
+/* TOPBAR */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  height:var(--topbar);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;
+  background:rgba(6,9,20,0.88);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(0,224,188,.1);
+}
+.topbar-logo{display:flex;align-items:center;gap:10px;cursor:pointer}
+.logo-mark{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--amber));border-radius:10px;display:grid;place-items:center;font-size:15px;transition:transform var(--spring);box-shadow:0 0 18px rgba(0,224,188,.35)}
+.logo-mark:hover{transform:rotate(15deg) scale(1.1)}
+.logo-name{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;letter-spacing:-.03em;background:linear-gradient(135deg,var(--accent-l),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.topbar-center{position:absolute;left:50%;transform:translateX(-50%);font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--muted);letter-spacing:-.01em;transition:all var(--ease);pointer-events:none}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.icon-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--glass);color:var(--muted);display:grid;place-items:center;cursor:pointer;font-size:15px;transition:all var(--ease);flex-shrink:0}
+.icon-btn:hover{border-color:var(--border-h);color:var(--text);background:var(--accent-g)}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2.5s infinite;flex-shrink:0;box-shadow:0 0 6px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+
+/* MAIN SCROLL */
+.app{padding-top:var(--topbar);padding-bottom:calc(var(--bottombar) + env(safe-area-inset-bottom,0px));min-height:100dvh;position:relative;z-index:1}
+.content-wrap{max-width:var(--max);margin:0 auto;padding:24px 16px}
+
+/* TABS (views) */
+.view{display:none;animation:viewIn .3s cubic-bezier(.4,0,.2,1)}
+.view.active{display:block}
+@keyframes viewIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* BOTTOM NAV */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  height:var(--bottombar);padding-bottom:env(safe-area-inset-bottom,0px);
+  background:rgba(6,9,20,0.95);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-top:1px solid rgba(0,224,188,.1);
+  display:flex;align-items:stretch;
+}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;position:relative;transition:all var(--ease);border:none;background:transparent;color:var(--dim);font-family:'Outfit',sans-serif;padding:8px 4px 6px;-webkit-tap-highlight-color:transparent}
+.nav-item:active{transform:scale(.92)}
+.nav-icon{font-size:19px;transition:all var(--spring);line-height:1}
+.nav-label{font-size:10px;font-weight:600;letter-spacing:.03em;transition:all var(--ease);line-height:1}
+.nav-item.active{color:var(--accent)}
+.nav-item.active .nav-icon{transform:translateY(-2px) scale(1.15);filter:drop-shadow(0 0 6px var(--accent))}
+.nav-item::after{content:'';position:absolute;top:0;left:20%;right:20%;height:2px;background:linear-gradient(90deg,var(--accent),var(--amber));border-radius:0 0 3px 3px;opacity:0;transition:opacity var(--ease)}
+.nav-item.active::after{opacity:1}
+
+/* CARDS */
+.card{background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:24px;position:relative;overflow:hidden;transition:border-color var(--ease)}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,224,188,.5),transparent);opacity:0;transition:opacity var(--ease)}
+.card:hover{border-color:rgba(0,224,188,.15)}
+.card:hover::before{opacity:1}
+.card+.card{margin-top:14px}
+.card-glass{background:rgba(13,18,32,.7);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+
+/* HERO / DASHBOARD */
+.hero{text-align:center;padding:32px 0 28px}
+.hero-label{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;background:var(--accent-gs);border:1px solid rgba(0,224,188,.25);font-size:11.5px;font-weight:600;color:var(--accent);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px;box-shadow:0 0 20px rgba(0,224,188,.1)}
+.hero-title{font-family:'Syne',sans-serif;font-size:clamp(28px,6vw,40px);font-weight:800;letter-spacing:-.04em;line-height:1.15;margin-bottom:12px;background:linear-gradient(160deg,var(--text) 30%,var(--accent) 65%,var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:15px;color:var(--muted);max-width:440px;margin:0 auto;line-height:1.7}
+
+/* QUICK ACTIONS */
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:28px}
+.qa-card{background:var(--glass);border:1px solid var(--border);border-radius:var(--r-md);padding:18px 16px;cursor:pointer;transition:all var(--ease);display:flex;flex-direction:column;gap:8px;text-align:left;position:relative;overflow:hidden}
+.qa-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,224,188,.06),transparent);opacity:0;transition:opacity var(--ease)}
+.qa-card:hover{border-color:rgba(0,224,188,.3);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,224,188,.08)}
+.qa-card:hover::after{opacity:1}
+.qa-card:active{transform:scale(.97)}
+.qa-icon{font-size:22px;line-height:1}
+.qa-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;letter-spacing:-.02em}
+.qa-desc{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.stat-chip{background:var(--glass);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px 12px;text-align:center;cursor:pointer;transition:all var(--ease)}
+.stat-chip:hover{border-color:rgba(0,224,188,.25);transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,224,188,.06)}
+.stat-v{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.03em}
+.stat-l{font-size:10px;color:var(--dim);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+
+/* GET STARTED */
+.gs-list{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.gs-item{display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--glass);border:1px solid var(--border);border-radius:var(--r-sm);transition:all var(--ease)}
+.gs-item:hover{border-color:rgba(0,224,188,.2)}
+.gs-num{width:24px;height:24px;border-radius:50%;background:rgba(0,224,188,.1);border:1px solid rgba(0,224,188,.3);color:var(--accent);font-size:11px;font-weight:700;display:grid;place-items:center;flex-shrink:0;margin-top:1px}
+.gs-text{font-size:13.5px;color:var(--muted);line-height:1.6}
+.gs-text code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:11.5px;color:var(--accent)}
+
+/* SECTION HEADING */
+.section-h{margin-bottom:20px}
+.section-title{font-family:'Syne',sans-serif;font-size:21px;font-weight:800;letter-spacing:-.03em;margin-bottom:4px}
+.section-sub{font-size:13px;color:var(--muted);line-height:1.6}
+.view-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-bottom:14px}
+.pill-p{background:rgba(0,224,188,.08);color:var(--accent);border:1px solid rgba(0,224,188,.25)}
+.pill-g{background:rgba(0,224,188,.06);color:var(--accent-l);border:1px solid rgba(0,224,188,.18)}
+.pill-pk{background:rgba(255,95,126,.07);color:var(--pink);border:1px solid rgba(255,95,126,.22)}
+.pill-a{background:rgba(255,183,0,.07);color:var(--amber);border:1px solid rgba(255,183,0,.22)}
+
+/* FORMS */
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:12px;font-weight:500;color:var(--muted);margin-bottom:7px;transition:color var(--ease)}
+.fg:focus-within label{color:var(--accent)}
+input[type=text],textarea,select{
+  width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:var(--r-sm);color:var(--text);font-family:'Outfit',sans-serif;
+  font-size:15px;padding:12px 14px;outline:none;
+  transition:border-color var(--ease),box-shadow var(--ease),background var(--ease)
+}
+input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,224,188,.1);background:rgba(0,224,188,.03)}
+input::placeholder,textarea::placeholder{color:var(--dim)}
+textarea{resize:vertical;min-height:100px;line-height:1.65}
+select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a9e98' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+select option{background:#0d1220}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 22px;border-radius:var(--r-sm);border:none;font-family:'Outfit',sans-serif;font-size:14.5px;font-weight:600;cursor:pointer;transition:all var(--ease);white-space:nowrap;position:relative;overflow:hidden}
+.btn:active{transform:scale(.96)}
+.btn-p{background:linear-gradient(135deg,var(--accent),var(--accent-d));color:#060914;box-shadow:0 4px 28px rgba(0,224,188,.35);font-weight:700}
+.btn-p:hover{box-shadow:0 6px 36px rgba(0,224,188,.55);transform:translateY(-1px);filter:brightness(1.08)}
+.btn-s{background:var(--glass-b);border:1px solid var(--border);color:var(--text)}
+.btn-s:hover{border-color:rgba(0,224,188,.3);background:rgba(0,224,188,.06)}
+.btn-g{background:transparent;color:var(--muted);border:1px solid transparent}
+.btn-g:hover{color:var(--text);border-color:var(--border)}
+.btn-d{background:rgba(255,95,126,.08);border:1px solid rgba(255,95,126,.2);color:var(--pink)}
+.btn-d:hover{background:rgba(255,95,126,.15)}
+.btn-sm{padding:8px 14px;font-size:12.5px}
+.btn-full{width:100%}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+
+/* TONE CHIPS */
+.chip-grp{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.chip{padding:6px 13px;border-radius:20px;font-size:12.5px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all var(--ease);font-family:'Outfit',sans-serif;font-weight:500}
+.chip:hover{border-color:rgba(0,224,188,.35);color:var(--accent)}
+.chip.sel{background:rgba(0,224,188,.1);border-color:rgba(0,224,188,.45);color:var(--accent)}
+.chip-q{padding:5px 11px;border-radius:20px;font-size:12px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all var(--ease);font-family:'Outfit',sans-serif}
+.chip-q:hover{border-color:var(--accent);color:var(--accent)}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:20px 0}
+
+/* LOADING */
+.loading{display:none;align-items:center;gap:12px;padding:20px 0;color:var(--muted);font-size:14px}
+.loading.show{display:flex;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;box-shadow:0 0 8px rgba(0,224,188,.2)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin-dots{display:flex;gap:5px;margin-left:4px}
+.sdot{width:5px;height:5px;border-radius:50%;background:var(--dim);animation:sdPulse 1.4s infinite}
+.sdot:nth-child(2){animation-delay:.2s}.sdot:nth-child(3){animation-delay:.4s}
+@keyframes sdPulse{0%,60%,100%{background:var(--dim);transform:scale(1)}30%{background:var(--accent);transform:scale(1.4)}}
+
+/* RESULTS */
+.results-wrap{margin-top:20px}
+.results-grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:600px){.results-grid{grid-template-columns:1fr 1fr}}
+.rcard{background:rgba(13,18,32,.8);border:1px solid var(--border);border-radius:var(--r-md);padding:20px;position:relative;overflow:hidden;transition:all var(--ease);animation:cardIn .4s cubic-bezier(.4,0,.2,1) both;opacity:0}
+.rcard:hover{border-color:rgba(0,224,188,.25);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.4),0 0 0 1px rgba(0,224,188,.06)}
+.rcard::before{content:'';position:absolute;top:0;left:0;right:0;height:1.5px;background:linear-gradient(90deg,var(--accent),var(--amber));opacity:0;transition:opacity var(--ease)}
+.rcard:hover::before{opacity:1}
+@keyframes cardIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.brand-n{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.04em;margin-bottom:4px;background:linear-gradient(135deg,var(--text),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.brand-tl{font-size:13px;color:var(--muted);font-style:italic;margin-bottom:8px}
+.brand-m{font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:12px}
+.brand-badge{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:3px 9px;border-radius:20px;background:rgba(0,224,188,.08);color:var(--accent);border:1px solid rgba(0,224,188,.2)}
+.rcard-actions{display:flex;gap:6px;margin-top:12px;opacity:0;transition:opacity var(--ease)}
+.rcard:hover .rcard-actions{opacity:1}
+.cbtn{position:absolute;top:12px;right:12px;width:28px;height:28px;display:grid;place-items:center;border-radius:7px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);cursor:pointer;font-size:13px;transition:all var(--ease);opacity:0}
+.rcard:hover .cbtn{opacity:1}
+.cbtn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* CONTENT OUTPUT */
+.cout{background:rgba(13,18,32,.6);border:1px solid var(--border);border-radius:var(--r-md);padding:20px;margin-top:16px;animation:cardIn .3s ease}
+.cout-title{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:12px}
+.citem{padding:14px 16px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:10px;line-height:1.7;transition:border-color var(--ease)}
+.citem:last-child{margin-bottom:0}
+.citem:hover{border-color:rgba(0,224,188,.15)}
+.citem-label{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.citem-text{color:var(--text);line-height:1.75;white-space:pre-wrap;word-break:break-word;font-size:14px}
+
+/* LOGO */
+.logo-res{display:flex;flex-direction:column;gap:16px;margin-top:20px}
+@media(min-width:600px){.logo-res{flex-direction:row}}
+.logo-prev{width:100%;aspect-ratio:1;max-width:280px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--r);display:grid;place-items:center;overflow:hidden;position:relative;transition:all var(--ease);align-self:flex-start}
+@media(min-width:600px){.logo-prev{width:220px;height:220px;flex-shrink:0}}
+.logo-prev img{width:100%;height:100%;object-fit:contain;transition:transform var(--ease)}
+.logo-prev:hover img{transform:scale(1.04)}
+.logo-prev-ov{position:absolute;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;gap:8px;opacity:0;transition:opacity var(--ease);border-radius:var(--r)}
+.logo-prev:hover .logo-prev-ov{opacity:1}
+.logo-info{flex:1}
+
+/* SENTIMENT */
+.sent-res{margin-top:20px;animation:cardIn .3s ease}
+.score-bar{height:7px;background:rgba(255,255,255,.06);border-radius:4px;margin:10px 0;overflow:hidden}
+.score-fill{height:100%;border-radius:4px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.emo-list{display:flex;flex-direction:column;gap:11px;margin-top:14px}
+.emo-row{display:flex;align-items:center;gap:10px}
+.emo-name{font-size:12.5px;color:var(--muted);width:68px;flex-shrink:0;text-transform:capitalize}
+.emo-bar-bg{flex:1;height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+.emo-bar{height:100%;border-radius:3px;transition:width 1s ease}
+.emo-val{font-size:11px;color:var(--dim);width:33px;text-align:right;flex-shrink:0}
+.sent-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:30px;font-size:15px;font-weight:700;font-family:'Syne',sans-serif;transition:transform var(--ease)}
+.sent-badge:hover{transform:scale(1.04)}
+.badge-pos{background:rgba(0,224,188,.08);color:var(--accent);border:1px solid rgba(0,224,188,.2)}
+.badge-neg{background:rgba(255,95,126,.08);color:var(--pink);border:1px solid rgba(255,95,126,.2)}
+.badge-neu{background:rgba(255,183,0,.07);color:var(--amber);border:1px solid rgba(255,183,0,.2)}
+.insight{padding:10px 13px;background:rgba(255,255,255,.03);border-left:2.5px solid var(--accent);border-radius:0 var(--r-sm) var(--r-sm) 0;margin-bottom:9px;font-size:13.5px;line-height:1.65;transition:border-color var(--ease)}
+.insight:hover{border-color:var(--amber)}
+
+/* TWO-COL on big screens */
+.two-col{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:680px){.two-col{grid-template-columns:1fr 1fr}}
+
+/* CHAT */
+.chat-view{display:flex;flex-direction:column;height:calc(100dvh - var(--topbar) - var(--bottombar) - env(safe-area-inset-bottom,0px));margin:0;padding:0}
+.chat-msgs{flex:1;overflow-y:auto;padding:20px 16px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
+.chat-msgs::-webkit-scrollbar{width:3px}
+.msg{display:flex;gap:10px;max-width:84%;animation:msgIn .25s ease}
+.msg.user{margin-left:auto;flex-direction:row-reverse}
+@keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.avatar{width:33px;height:33px;border-radius:50%;display:grid;place-items:center;font-size:13px;flex-shrink:0;align-self:flex-end}
+.msg.user .avatar{background:linear-gradient(135deg,var(--pink),var(--orange))}
+.msg.assistant .avatar{background:linear-gradient(135deg,var(--accent),var(--amber));box-shadow:0 0 14px rgba(0,224,188,.4)}
+.bubble{padding:12px 16px;border-radius:18px;font-size:14px;line-height:1.72;max-width:100%;word-break:break-word}
+.msg.user .bubble{background:linear-gradient(135deg,var(--orange),var(--pink));color:#fff;border-bottom-right-radius:5px}
+.msg.assistant .bubble{background:rgba(13,18,32,.95);border:1px solid rgba(0,224,188,.12);color:var(--text);border-bottom-left-radius:5px;backdrop-filter:blur(12px)}
+.sugg-row{padding:0 16px 10px;display:flex;flex-wrap:wrap;gap:7px}
+.schip{padding:7px 13px;border-radius:20px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);cursor:pointer;font-size:12.5px;font-family:'Outfit',sans-serif;transition:all var(--ease)}
+.schip:hover{border-color:rgba(0,224,188,.35);color:var(--accent);background:rgba(0,224,188,.07);transform:translateY(-1px)}
+.chat-bottom{padding:12px 16px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid rgba(0,224,188,.08);background:rgba(6,9,20,.95);backdrop-filter:blur(20px);display:flex;gap:10px;align-items:flex-end}
+.chat-input-wrap{flex:1}
+#chatInput{width:100%;background:rgba(13,18,32,.9);border:1px solid var(--border);border-radius:14px;color:var(--text);font-family:'Outfit',sans-serif;font-size:14.5px;padding:11px 14px;outline:none;resize:none;min-height:46px;max-height:120px;line-height:1.5;overflow-y:auto;transition:border-color var(--ease),box-shadow var(--ease)}
+#chatInput:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,224,188,.08)}
+.send-btn{width:44px;height:44px;border-radius:13px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent-d));color:#060914;display:grid;place-items:center;cursor:pointer;font-size:16px;transition:all var(--ease);flex-shrink:0;box-shadow:0 4px 18px rgba(0,224,188,.4);font-weight:700}
+.send-btn:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(0,224,188,.55)}
+.send-btn:disabled{opacity:.4;transform:none;cursor:not-allowed;box-shadow:none}
+.typing-ind{display:flex;gap:5px;align-items:center;padding:12px 16px;background:rgba(13,18,32,.95);border:1px solid rgba(0,224,188,.1);border-radius:18px;border-bottom-left-radius:5px;width:fit-content}
+.tdot{width:6px;height:6px;background:var(--dim);border-radius:50%;animation:tB 1.3s infinite}
+.tdot:nth-child(2){animation-delay:.22s}.tdot:nth-child(3){animation-delay:.44s}
+@keyframes tB{0%,60%,100%{transform:translateY(0);background:var(--dim)}30%{transform:translateY(-7px);background:var(--accent)}}
+
+/* TOAST */
+.toast{position:fixed;bottom:calc(var(--bottombar) + 12px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(80px) scale(.9);z-index:200;padding:11px 20px;background:rgba(13,18,32,.98);border:1px solid var(--border);border-radius:var(--r-sm);font-size:13.5px;color:var(--text);display:flex;align-items:center;gap:8px;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.5);backdrop-filter:blur(20px);opacity:0;transition:all .35s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0) scale(1);opacity:1}
+.toast.ok{border-color:rgba(0,224,188,.3);box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 16px rgba(0,224,188,.1)}
+.toast.err{border-color:rgba(255,95,126,.3)}
+
+/* RESULTS HEADER */
+.results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.results-count{font-size:13px;color:var(--muted)}
+
+/* EMPTY */
+.empty{text-align:center;padding:48px 20px;color:var(--dim)}
+.empty-ico{font-size:40px;margin-bottom:12px;opacity:.25}
+.empty-t{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--muted);margin-bottom:5px}
+.empty-s{font-size:13px}
+
+/* FORM GRID */
+.form-row{display:grid;grid-template-columns:1fr;gap:0}
+@media(min-width:600px){.form-row{grid-template-columns:1fr 1fr;gap:14px}}
+
+/* TABS (content types) */
+.tab-grp{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:18px}
+.ctab{padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;transition:all var(--ease)}
+.ctab:hover{border-color:rgba(0,224,188,.3);color:var(--text)}
+.ctab.active{background:rgba(0,224,188,.1);border-color:rgba(0,224,188,.4);color:var(--accent);font-weight:600}
+
+/* DESKTOP rearrangement */
+@media(min-width:900px){
+  body{font-size:15px}
+  .bottom-nav{
+    top:var(--topbar);bottom:auto;height:52px;
+    border-top:none;border-bottom:1px solid rgba(0,224,188,.1);
+    background:rgba(6,9,20,.95);backdrop-filter:blur(20px)
+  }
+  .nav-item{flex-direction:row;gap:8px;justify-content:center;padding:0 16px;height:100%}
+  .nav-item::after{top:auto;bottom:0;left:15%;right:15%;height:2px;border-radius:2px 2px 0 0}
+  .nav-item.active .nav-icon{transform:none}
+  .nav-label{font-size:13px}
+  .app{padding-top:calc(var(--topbar) + 52px);padding-bottom:0}
+  .chat-view{height:calc(100dvh - var(--topbar) - 52px)}
+  .toast{bottom:20px}
+  .content-wrap{padding:28px 20px}
+}
+@media(min-width:1100px){
+  :root{--max:900px}
+  .results-grid{grid-template-columns:1fr 1fr 1fr}
 }
 
-/* scrollbars */
-::-webkit-scrollbar { width:4px; height:4px; }
-::-webkit-scrollbar-track { background:transparent; }
-::-webkit-scrollbar-thumb { background:rgba(0,234,255,.28); border-radius:2px; }
-::-webkit-scrollbar-thumb:hover { background:rgba(0,234,255,.5); }
-
-/* ============================================  KEYFRAMES  */
-@keyframes fadeUp    { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-@keyframes fadeIn    { from{opacity:0} to{opacity:1} }
-@keyframes spin      { to{transform:rotate(360deg)} }
-@keyframes shimmer   { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
-@keyframes bounce    { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-8px)} }
-@keyframes toastIn   { from{opacity:0;transform:translateY(14px) scale(.92)} to{opacity:1;transform:translateY(0) scale(1)} }
-@keyframes toastOut  { from{opacity:1;transform:translateY(0) scale(1)} to{opacity:0;transform:translateY(10px) scale(.92)} }
-@keyframes orbFloat  { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-26px) scale(1.07)} }
-@keyframes gradFlow  { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
-@keyframes pulseDot  { 0%,100%{box-shadow:0 0 0 0 rgba(61,255,114,.5)} 50%{box-shadow:0 0 0 6px rgba(61,255,114,0)} }
-@keyframes borderPulse { 0%,100%{border-color:rgba(0,234,255,.12)} 50%{border-color:rgba(0,234,255,.35)} }
-@keyframes scanline  { 0%{background-position:0 -100%} 100%{background-position:0 300%} }
-@keyframes neonFlicker { 0%,95%,100%{opacity:1} 96%,98%{opacity:.85} }
-
-/* ============================================  OVERLAY  */
-.overlay {
-  display:none; position:fixed; inset:0;
-  background:rgba(0,0,0,.72); z-index:90;
-  backdrop-filter:blur(6px);
-  animation:fadeIn .2s ease;
-}
-.overlay.show { display:block; }
-
-/* ============================================  SIDEBAR  */
-.sidebar {
-  width:var(--sidebar-w); min-height:100vh;
-  background:rgba(6,6,24,.95);
-  border-right:1px solid rgba(0,234,255,.07);
-  display:flex; flex-direction:column; flex-shrink:0;
-  position:fixed; left:0; top:0; bottom:0; z-index:100;
-  padding:24px 0 20px;
-  transition:transform var(--ts);
-  backdrop-filter:blur(24px);
-  box-shadow:1px 0 0 rgba(0,234,255,.05), 12px 0 60px rgba(0,0,0,.5);
-}
-/* Top rainbow line */
-.sidebar::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:2px;
-  background:linear-gradient(90deg, var(--cyan), var(--violet), var(--magenta), var(--orange));
-  background-size:200% 100%;
-  animation:gradFlow 3s ease infinite;
-}
-
-.logo { padding:0 20px 28px; display:flex; align-items:center; gap:13px; }
-.logo-icon {
-  width:42px; height:42px;
-  background:linear-gradient(135deg, var(--cyan), var(--violet));
-  border-radius:13px; display:grid; place-items:center;
-  font-size:18px; flex-shrink:0;
-  box-shadow:0 0 24px rgba(0,234,255,.5), 0 4px 16px rgba(0,0,0,.4);
-  position:relative; overflow:hidden;
-  animation:neonFlicker 5s ease infinite;
-}
-.logo-icon::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,.22),transparent 55%); }
-
-.logo-text {
-  font-family:var(--font-display); font-weight:800; font-size:21px; letter-spacing:-.03em;
-  background:linear-gradient(135deg, var(--cyan) 0%, #c0a0ff 55%, var(--magenta) 100%);
-  background-size:200% 200%; animation:gradFlow 4s ease infinite;
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-}
-.logo-sub { font-size:9.5px; color:var(--text-dim); font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-top:1px; }
-
-.nav-section { padding:0 10px; flex:1; overflow-y:auto; }
-.nav-label { font-size:9px; font-weight:700; letter-spacing:.15em; text-transform:uppercase; color:var(--text-dim); padding:0 10px; margin-bottom:4px; margin-top:22px; }
-
-.nav-btn {
-  width:100%; display:flex; align-items:center; gap:11px;
-  padding:10px 11px; border-radius:var(--radius-sm); border:none;
-  background:transparent; color:var(--text-muted);
-  cursor:pointer; font-family:var(--font-body); font-size:13.5px; font-weight:400;
-  transition:all var(--t); text-align:left; position:relative; overflow:hidden;
-}
-.nav-btn::before {
-  content:''; position:absolute; left:0; top:0; bottom:0; width:0;
-  background:linear-gradient(90deg, rgba(0,234,255,.1), rgba(176,64,255,.06), transparent);
-  transition:width .3s ease; border-radius:var(--radius-sm);
-}
-.nav-btn:hover { color:var(--text); transform:translateX(3px); }
-.nav-btn:hover::before { width:100%; }
-.nav-btn.active {
-  background:linear-gradient(90deg, rgba(0,234,255,.1), rgba(176,64,255,.06));
-  color:#fff; font-weight:600;
-  border:1px solid rgba(0,234,255,.18);
-  box-shadow:inset 0 0 24px rgba(0,234,255,.04);
-}
-.nav-btn.active .nav-icon { color:var(--cyan); text-shadow:0 0 10px var(--cyan); }
-.nav-btn.active::after {
-  content:''; position:absolute; left:0; top:18%; bottom:18%; width:3px;
-  background:linear-gradient(180deg, var(--cyan), var(--violet));
-  border-radius:0 3px 3px 0; box-shadow:2px 0 12px var(--cyan);
-}
-.nav-icon { font-size:15px; width:22px; text-align:center; flex-shrink:0; transition:all var(--t); }
-.nav-btn:hover .nav-icon { transform:scale(1.15); }
-
-.sidebar-footer { padding:16px 20px 0; border-top:1px solid rgba(255,255,255,.05); }
-.api-status { display:flex; align-items:center; gap:9px; font-size:11.5px; color:var(--text-muted); font-weight:500; }
-.status-dot { width:8px; height:8px; border-radius:50%; background:var(--lime); animation:pulseDot 2.5s infinite; flex-shrink:0; }
-
-/* ============================================  HAMBURGER  */
-.hamburger {
-  display:none; width:38px; height:38px; border-radius:var(--radius-sm);
-  border:1px solid var(--border); background:var(--bg2); color:var(--text);
-  cursor:pointer; align-items:center; justify-content:center;
-  font-size:17px; flex-shrink:0; transition:all var(--t);
-}
-.hamburger:hover { border-color:var(--cyan); color:var(--cyan); box-shadow:0 0 14px rgba(0,234,255,.3); }
-
-/* ============================================  MAIN  */
-.main { margin-left:var(--sidebar-w); flex:1; height:100vh; height:100dvh; overflow-y:auto; display:flex; flex-direction:column; min-width:0; position:relative; z-index:1; }
-
-/* ============================================  TOPBAR  */
-.topbar {
-  padding:0 28px; height:var(--topbar-h);
-  border-bottom:1px solid rgba(0,234,255,.07);
-  display:flex; align-items:center; justify-content:space-between; gap:12px;
-  background:rgba(3,3,13,.88);
-  position:sticky; top:0; z-index:50;
-  backdrop-filter:blur(24px); flex-shrink:0;
-}
-.topbar-left { display:flex; align-items:center; gap:12px; min-width:0; flex:1; }
-.page-title { font-family:var(--font-display); font-size:clamp(15px,2vw,18px); font-weight:700; letter-spacing:-.025em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.page-subtitle { font-size:11.5px; color:var(--text-muted); margin-top:2px; white-space:nowrap; }
-
-.tag { display:inline-flex; align-items:center; gap:5px; padding:4px 12px; border-radius:20px; font-size:10.5px; font-weight:700; letter-spacing:.05em; flex-shrink:0; border:1px solid transparent; }
-.tag-purple { background:rgba(176,64,255,.12); color:#d080ff; border-color:rgba(176,64,255,.25); text-shadow:0 0 10px rgba(176,64,255,.6); }
-.tag-pink   { background:rgba(255,31,153,.12); color:#ff80c8; border-color:rgba(255,31,153,.25); text-shadow:0 0 10px rgba(255,31,153,.6); }
-.tag-green  { background:rgba(61,255,114,.1);  color:#60ff90; border-color:rgba(61,255,114,.2);  text-shadow:0 0 10px rgba(61,255,114,.6); }
-
-/* ============================================  PANELS  */
-.panel { display:none; flex-direction:column; flex:1; min-width:0; }
-.panel.active { display:flex; animation:fadeUp .32s cubic-bezier(.4,0,.2,1); }
-.panel-body { padding:28px; flex:1; overflow-y:auto; }
-
-/* ============================================  CARDS  */
-.card {
-  background:rgba(9,9,31,.75);
-  border:1px solid rgba(255,255,255,.05);
-  border-radius:var(--radius); padding:22px;
-  transition:border-color var(--t), box-shadow var(--t), transform var(--t);
-  position:relative; overflow:hidden;
-  backdrop-filter:blur(10px);
-}
-/* Subtle corner glow */
-.card::before {
-  content:''; position:absolute; top:-1px; left:-1px; width:55%; height:55%;
-  background:radial-gradient(ellipse at 0 0, rgba(0,234,255,.05), transparent 65%);
-  pointer-events:none;
-}
-.card:hover { border-color:rgba(0,234,255,.2); box-shadow:0 0 0 1px rgba(0,234,255,.06), var(--shadow-card); transform:translateY(-1px); }
-.card-grid   { display:grid; grid-template-columns:1fr 1fr;     gap:18px; margin-bottom:20px; }
-.card-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; margin-bottom:20px; }
-
-/* ============================================  FORMS  */
-.form-group { margin-bottom:16px; }
-label { display:block; font-size:10px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--text-muted); margin-bottom:7px; }
-input[type="text"], textarea, select {
-  width:100%; background:rgba(6,6,24,.85); border:1px solid rgba(255,255,255,.06);
-  border-radius:var(--radius-sm); color:var(--text); font-family:var(--font-body);
-  font-size:14px; padding:11px 14px; outline:none;
-  transition:border-color var(--t), box-shadow var(--t), background var(--t); -webkit-appearance:none;
-}
-input:focus, textarea:focus, select:focus {
-  border-color:var(--cyan);
-  box-shadow:0 0 0 3px rgba(0,234,255,.13), inset 0 1px 3px rgba(0,0,0,.3);
-  background:rgba(0,234,255,.03);
-}
-input::placeholder, textarea::placeholder { color:var(--text-dim); }
-textarea { resize:vertical; min-height:90px; line-height:1.6; }
-select { cursor:pointer; }
-select option { background:#0a0a20; color:var(--text); }
-
-/* ============================================  BUTTONS  */
-.btn {
-  display:inline-flex; align-items:center; gap:8px;
-  padding:10px 22px; border-radius:var(--radius-sm); border:none;
-  font-family:var(--font-body); font-size:13.5px; font-weight:700;
-  cursor:pointer; transition:all var(--t); white-space:nowrap;
-  position:relative; overflow:hidden; letter-spacing:.01em;
-}
-.btn::after { content:''; position:absolute; inset:0; background:rgba(255,255,255,0); transition:background var(--t); }
-.btn:hover::after { background:rgba(255,255,255,.06); }
-
-/* Primary — eye-catching cyan-violet-magenta */
-.btn-primary {
-  background:linear-gradient(135deg, var(--cyan) 0%, #7050ff 55%, var(--violet) 100%);
-  color:#000; box-shadow:var(--shadow-btn);
-}
-.btn-primary:hover { transform:translateY(-2px); box-shadow:var(--shadow-hover); filter:brightness(1.08); }
-.btn-primary:active { transform:translateY(0); filter:none; }
-
-.btn-secondary {
-  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.09); color:var(--text-muted);
-}
-.btn-secondary:hover { border-color:rgba(0,234,255,.32); background:rgba(0,234,255,.07); color:var(--cyan); }
-.btn-sm   { padding:7px 14px; font-size:12px; gap:5px; }
-.btn-full { width:100%; justify-content:center; }
-.btn:disabled { opacity:.4; cursor:not-allowed; transform:none !important; box-shadow:none !important; filter:none !important; }
-
-/* ============================================  LOADING  */
-.loading { display:none; align-items:center; gap:14px; padding:22px 20px; color:var(--text-muted); font-size:13.5px; animation:fadeIn .2s ease; }
-.loading.show { display:flex; }
-.spinner { width:22px; height:22px; border:2px solid rgba(0,234,255,.15); border-top-color:var(--cyan); border-radius:50%; animation:spin .75s linear infinite; flex-shrink:0; box-shadow:0 0 10px rgba(0,234,255,.3); }
-
-/* ============================================  SECTION  */
-.section-title { font-family:var(--font-display); font-size:clamp(16px,2vw,20px); font-weight:800; letter-spacing:-.03em; }
-.section-desc  { font-size:13px; color:var(--text-muted); margin-top:5px; line-height:1.65; }
-
-/* ============================================  TABS  */
-.tab-group {
-  display:flex; gap:4px; flex-wrap:wrap; margin-bottom:18px;
-  padding:4px; background:rgba(0,0,0,.4); border:1px solid rgba(255,255,255,.05);
-  border-radius:50px; width:fit-content; max-width:100%;
-}
-.tab { padding:6px 16px; border-radius:50px; border:none; background:transparent; color:var(--text-muted); font-family:var(--font-body); font-size:12.5px; font-weight:500; cursor:pointer; transition:all var(--t); white-space:nowrap; }
-.tab:hover { color:var(--text); }
-.tab.active { background:linear-gradient(135deg, var(--cyan), var(--violet)); color:#000; font-weight:700; box-shadow:0 2px 14px rgba(0,234,255,.35); }
-
-/* ============================================  RESULTS  */
-.results-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; margin-top:20px; }
-.result-card {
-  background:rgba(9,9,31,.82); border:1px solid rgba(255,255,255,.05);
-  border-radius:var(--radius); padding:22px; position:relative; overflow:hidden;
-  transition:all var(--t); animation:fadeUp .4s ease both;
-  backdrop-filter:blur(8px);
-}
-.result-card:hover {
-  border-color:rgba(0,234,255,.28); transform:translateY(-4px);
-  box-shadow:0 0 0 1px rgba(0,234,255,.08), 0 18px 50px rgba(0,0,0,.5), 0 0 40px rgba(0,234,255,.04);
-}
-.result-card::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:2px;
-  background:linear-gradient(90deg, var(--cyan), var(--violet), var(--magenta));
-  opacity:0; transition:opacity var(--t);
-}
-.result-card:hover::before { opacity:1; }
-.result-card::after {
-  content:''; position:absolute; top:-30px; right:-30px; width:100px; height:100px; border-radius:50%;
-  background:radial-gradient(circle, rgba(0,234,255,.06), transparent 65%); pointer-events:none;
-}
-.brand-name-text {
-  font-family:var(--font-display); font-size:22px; font-weight:800; letter-spacing:-.03em; margin-bottom:5px;
-  background:linear-gradient(135deg, var(--text) 40%, rgba(0,234,255,.75));
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-}
-.brand-tagline { font-size:12.5px; color:var(--text-muted); font-style:italic; margin-bottom:10px; line-height:1.5; }
-.brand-meaning { font-size:12.5px; color:var(--text-muted); line-height:1.65; margin-bottom:14px; }
-.brand-style-badge {
-  display:inline-block; font-size:10px; font-weight:700; letter-spacing:.09em; text-transform:uppercase;
-  padding:3px 10px; border-radius:20px;
-  background:rgba(0,234,255,.1); color:var(--cyan); border:1px solid rgba(0,234,255,.2);
-}
-.copy-btn {
-  position:absolute; top:13px; right:13px; width:28px; height:28px;
-  display:grid; place-items:center; border-radius:var(--radius-xs);
-  border:1px solid rgba(255,255,255,.07); background:rgba(0,0,0,.45);
-  color:var(--text-muted); cursor:pointer; font-size:12px; transition:all var(--t); opacity:0;
-}
-.result-card:hover .copy-btn { opacity:1; }
-.copy-btn:hover { border-color:var(--cyan); color:var(--cyan); background:rgba(0,234,255,.08); transform:scale(1.08); box-shadow:0 0 10px rgba(0,234,255,.3); }
-
-/* ============================================  CONTENT OUTPUT  */
-.content-output { background:rgba(9,9,31,.82); border:1px solid rgba(255,255,255,.05); border-radius:var(--radius); padding:22px; margin-top:16px; animation:fadeUp .3s ease; backdrop-filter:blur(8px); }
-.content-output-title { font-size:9.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--text-dim); margin-bottom:14px; }
-.content-item { padding:14px 16px; background:rgba(6,6,24,.75); border:1px solid rgba(255,255,255,.05); border-radius:var(--radius-sm); margin-bottom:10px; line-height:1.7; transition:border-color var(--t); }
-.content-item:hover { border-color:rgba(0,234,255,.18); }
-.content-item-label { font-size:9.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--cyan); margin-bottom:6px; text-shadow:0 0 10px rgba(0,234,255,.4); }
-.content-item-text { color:var(--text); line-height:1.75; white-space:pre-wrap; word-break:break-word; font-size:13.5px; }
-
-/* ============================================  LOGO  */
-.logo-result { margin-top:20px; display:flex; gap:22px; flex-wrap:wrap; }
-.logo-preview { width:270px; height:270px; background:rgba(9,9,31,.8); border:1px solid rgba(255,255,255,.05); border-radius:var(--radius); display:grid; place-items:center; overflow:hidden; flex-shrink:0; transition:border-color var(--t); }
-.logo-preview:hover { border-color:rgba(0,234,255,.22); }
-.logo-preview img { width:100%; height:100%; object-fit:contain; }
-.logo-info { flex:1; min-width:200px; }
-.logo-prompt-text { font-size:12px; color:var(--text-muted); line-height:1.75; word-break:break-word; }
-
-/* ============================================  SENTIMENT  */
-.sentiment-result { margin-top:20px; animation:fadeUp .3s ease; }
-.sentiment-score-bar { height:8px; background:rgba(0,0,0,.5); border-radius:4px; margin:10px 0; overflow:hidden; }
-.sentiment-score-fill { height:100%; border-radius:4px; transition:width 1s cubic-bezier(.4,0,.2,1); position:relative; overflow:hidden; }
-.sentiment-score-fill::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent); animation:shimmer 2s infinite; }
-.emotion-bars { display:flex; flex-direction:column; gap:11px; margin-top:14px; }
-.emotion-row { display:flex; align-items:center; gap:10px; }
-.emotion-name { font-size:12px; color:var(--text-muted); width:65px; flex-shrink:0; text-transform:capitalize; font-weight:500; }
-.emotion-bar-bg { flex:1; height:6px; background:rgba(0,0,0,.5); border-radius:3px; overflow:hidden; }
-.emotion-bar-fill { height:100%; border-radius:3px; transition:width .9s cubic-bezier(.4,0,.2,1); }
-.emotion-val { font-size:11px; color:var(--text-dim); width:34px; text-align:right; flex-shrink:0; }
-.sentiment-badge { display:inline-flex; align-items:center; gap:8px; padding:8px 18px; border-radius:30px; font-size:14px; font-weight:700; font-family:var(--font-display); letter-spacing:-.01em; border:1px solid transparent; }
-.badge-positive { background:rgba(61,255,114,.1); color:var(--lime); border-color:rgba(61,255,114,.2); }
-.badge-negative { background:rgba(255,31,153,.1); color:var(--magenta); border-color:rgba(255,31,153,.2); }
-.badge-neutral  { background:rgba(0,234,255,.1); color:var(--cyan); border-color:rgba(0,234,255,.15); }
-.insight-item { padding:11px 15px; background:rgba(6,6,24,.7); border-left:3px solid var(--cyan); border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin-bottom:9px; font-size:13px; line-height:1.65; color:var(--text-muted); transition:all var(--t); }
-.insight-item:hover { color:var(--text); border-left-color:var(--magenta); background:rgba(0,234,255,.03); }
-
-/* ============================================  CHAT  */
-.chat-container { display:flex; flex-direction:column; flex:1; min-height:0; overflow:hidden; }
-.chat-messages {
-  flex:1; overflow-y:auto; padding:24px 20px; display:flex; flex-direction:column; gap:16px;
-  background:
-    radial-gradient(ellipse 65% 38% at 85% 8%, rgba(0,234,255,.04) 0%,transparent 55%),
-    radial-gradient(ellipse 55% 40% at 15% 92%, rgba(176,64,255,.04) 0%,transparent 55%);
-}
-.chat-msg { display:flex; gap:11px; max-width:80%; animation:fadeUp .25s ease; }
-.chat-msg.user { margin-left:auto; flex-direction:row-reverse; }
-.chat-avatar { width:34px; height:34px; border-radius:50%; display:grid; place-items:center; font-size:13px; flex-shrink:0; align-self:flex-end; }
-.chat-msg.user      .chat-avatar { background:linear-gradient(135deg,var(--magenta),var(--orange)); box-shadow:0 0 18px rgba(255,31,153,.45); }
-.chat-msg.assistant .chat-avatar { background:linear-gradient(135deg,var(--cyan),var(--violet));   box-shadow:0 0 18px rgba(0,234,255,.4); }
-.chat-bubble { padding:12px 16px; border-radius:18px; font-size:13.5px; line-height:1.72; max-width:100%; word-break:break-word; }
-.chat-msg.user .chat-bubble      { background:linear-gradient(135deg,var(--magenta),var(--orange)); color:#fff; border-bottom-right-radius:4px; box-shadow:0 4px 20px rgba(255,31,153,.32); }
-.chat-msg.assistant .chat-bubble { background:rgba(9,9,31,.92); border:1px solid rgba(0,234,255,.12); color:var(--text); border-bottom-left-radius:4px; box-shadow:var(--shadow-sm), inset 0 0 24px rgba(0,234,255,.02); }
-.chat-input-area { padding:14px 20px 20px; border-top:1px solid rgba(255,255,255,.05); background:rgba(3,3,13,.92); display:flex; gap:10px; align-items:flex-end; }
-.chat-input-wrap { flex:1; }
-#chatInput { width:100%; background:rgba(9,9,31,.92); border:1px solid rgba(255,255,255,.07); border-radius:14px; color:var(--text); font-family:var(--font-body); font-size:14px; padding:12px 16px; outline:none; resize:none; min-height:48px; max-height:120px; line-height:1.55; overflow-y:auto; transition:border-color var(--t), box-shadow var(--t); }
-#chatInput:focus { border-color:var(--cyan); box-shadow:0 0 0 3px rgba(0,234,255,.13); }
-.chat-send-btn { width:46px; height:46px; border-radius:14px; border:none; background:linear-gradient(135deg,var(--cyan),var(--violet)); color:#000; display:grid; place-items:center; cursor:pointer; font-size:16px; transition:all var(--t); flex-shrink:0; box-shadow:0 4px 18px rgba(0,234,255,.38); }
-.chat-send-btn:hover { transform:scale(1.08) rotate(12deg); box-shadow:0 6px 28px rgba(0,234,255,.6); }
-.chat-send-btn:active { transform:scale(.95); }
-.chat-send-btn:disabled { opacity:.4; transform:none; cursor:not-allowed; box-shadow:none; }
-.typing-indicator { display:flex; gap:5px; align-items:center; padding:13px 17px; background:rgba(9,9,31,.92); border:1px solid rgba(0,234,255,.12); border-radius:18px; border-bottom-left-radius:4px; width:fit-content; }
-.typing-dot { width:6px; height:6px; background:var(--cyan); border-radius:50%; animation:bounce 1.2s infinite ease-in-out; box-shadow:0 0 6px var(--cyan); }
-.typing-dot:nth-child(2){animation-delay:.2s} .typing-dot:nth-child(3){animation-delay:.4s}
-
-/* ============================================  DASHBOARD  */
-.welcome-banner {
-  border-radius:var(--radius); padding:32px 36px; margin-bottom:22px;
-  position:relative; overflow:hidden; border:1px solid rgba(0,234,255,.14);
-  background:linear-gradient(135deg,
-    rgba(0,234,255,.09) 0%,
-    rgba(176,64,255,.08) 35%,
-    rgba(255,31,153,.07) 70%,
-    rgba(255,104,32,.05) 100%);
-}
-/* Glowing orbs */
-.welcome-banner::before {
-  content:''; position:absolute; right:-70px; top:-70px;
-  width:280px; height:280px; border-radius:50%;
-  background:radial-gradient(circle, rgba(0,234,255,.18), transparent 65%);
-  animation:orbFloat 7s ease-in-out infinite; pointer-events:none;
-}
-.welcome-banner::after {
-  content:'✦'; position:absolute; right:36px; top:50%; transform:translateY(-50%);
-  font-size:90px; opacity:.05; font-family:var(--font-display); pointer-events:none;
-}
-.welcome-title {
-  font-family:var(--font-display); font-size:clamp(21px,3vw,28px); font-weight:800;
-  letter-spacing:-.04em; margin-bottom:8px;
-  background:linear-gradient(135deg, #ffffff 15%, var(--cyan) 50%, var(--magenta) 100%);
-  background-size:200% 200%; animation:gradFlow 4s ease infinite;
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-}
-.welcome-desc { font-size:13.5px; color:var(--text-muted); max-width:520px; line-height:1.65; }
-.welcome-actions { display:flex; gap:8px; margin-top:20px; flex-wrap:wrap; }
-.quick-action {
-  display:flex; align-items:center; gap:7px; padding:9px 16px;
-  background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.08);
-  border-radius:var(--radius-sm); font-size:12.5px; color:var(--text-muted);
-  cursor:pointer; transition:all var(--t); font-family:var(--font-body); font-weight:500;
-}
-.quick-action:hover {
-  background:rgba(0,234,255,.08); border-color:rgba(0,234,255,.32); color:var(--cyan);
-  transform:translateY(-2px); box-shadow:0 4px 20px rgba(0,234,255,.16), 0 0 0 1px rgba(0,234,255,.08);
-  text-shadow:0 0 10px rgba(0,234,255,.5);
-}
-.quick-action:active { transform:translateY(0); }
-
-/* Stats */
-.overview-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:22px; }
-.stat-card {
-  background:rgba(9,9,31,.78); border:1px solid rgba(255,255,255,.05);
-  border-radius:var(--radius); padding:22px; transition:all var(--t);
-  cursor:pointer; position:relative; overflow:hidden; backdrop-filter:blur(8px);
-}
-.stat-card::after { content:''; position:absolute; top:0; right:0; width:110px; height:110px; border-radius:50%; background:radial-gradient(circle at 100% 0%, rgba(0,234,255,.06),transparent 60%); pointer-events:none; }
-.stat-card:hover { border-color:rgba(0,234,255,.22); transform:translateY(-4px); box-shadow:0 0 0 1px rgba(0,234,255,.07), 0 14px 44px rgba(0,0,0,.45); }
-/* Vivid colored bottom borders */
-.stat-card:nth-child(1){ border-bottom:2px solid rgba(0,234,255,.5); }
-.stat-card:nth-child(2){ border-bottom:2px solid rgba(255,31,153,.5); }
-.stat-card:nth-child(3){ border-bottom:2px solid rgba(61,255,114,.5); }
-.stat-card:nth-child(4){ border-bottom:2px solid rgba(255,232,74,.5); }
-.stat-card:nth-child(5){ border-bottom:2px solid rgba(176,64,255,.5); }
-.stat-card:nth-child(6){ border-bottom:2px solid rgba(255,104,32,.5); }
-.stat-icon  { font-size:22px; margin-bottom:12px; display:block; }
-.stat-title { font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--text-dim); margin-bottom:4px; }
-.stat-value { font-family:var(--font-display); font-size:27px; font-weight:800; letter-spacing:-.025em; }
-.stat-desc  { font-size:11.5px; color:var(--text-muted); margin-top:4px; line-height:1.4; }
-
-/* ============================================  TOAST  */
-.toast {
-  position:fixed; bottom:24px; right:24px; padding:13px 20px;
-  background:rgba(9,9,31,.97); border:1px solid rgba(255,255,255,.07);
-  border-radius:var(--radius-sm); font-size:13px; color:var(--text);
-  display:flex; align-items:center; gap:10px;
-  z-index:1000; opacity:0; pointer-events:none; max-width:320px;
-  box-shadow:0 8px 40px rgba(0,0,0,.65); backdrop-filter:blur(20px);
-}
-.toast.show { animation:toastIn .3s cubic-bezier(.34,1.56,.64,1) forwards; pointer-events:auto; opacity:1; }
-.toast.hide { animation:toastOut .25s ease forwards; }
-.toast.success { border-color:rgba(61,255,114,.3); box-shadow:0 8px 40px rgba(0,0,0,.65), 0 0 24px rgba(61,255,114,.1); }
-.toast.success::before { content:'✓'; color:var(--lime); font-weight:800; text-shadow:0 0 10px var(--lime); }
-.toast.error   { border-color:rgba(255,31,153,.3); box-shadow:0 8px 40px rgba(0,0,0,.65), 0 0 24px rgba(255,31,153,.1); }
-.toast.error::before   { content:'✕'; color:var(--magenta); font-weight:800; text-shadow:0 0 10px var(--magenta); }
-
-/* ============================================  MISC  */
-.main::-webkit-scrollbar-thumb { background:rgba(0,234,255,.2); }
-.empty-state { text-align:center; padding:64px 20px; color:var(--text-dim); animation:fadeIn .4s ease; }
-.empty-icon { font-size:46px; margin-bottom:14px; opacity:.25; display:block; }
-.empty-text { font-size:14px; color:var(--text-muted); font-weight:600; }
-.empty-sub  { font-size:12.5px; color:var(--text-dim); margin-top:4px; }
-.chip-group { display:flex; flex-wrap:wrap; gap:7px; margin-top:8px; }
-.chip {
-  padding:5px 14px; border-radius:20px; font-size:12px;
-  background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.07);
-  color:var(--text-muted); cursor:pointer; transition:all var(--t); font-weight:500;
-}
-.chip:hover { border-color:rgba(0,234,255,.3); color:var(--cyan); background:rgba(0,234,255,.07); transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,234,255,.1); }
-.chip.selected { background:linear-gradient(135deg,rgba(0,234,255,.15),rgba(176,64,255,.1)); border-color:rgba(0,234,255,.35); color:var(--cyan); font-weight:600; box-shadow:0 0 14px rgba(0,234,255,.15); }
-code { background:rgba(0,234,255,.07); border:1px solid rgba(0,234,255,.15); padding:2px 7px; border-radius:5px; font-size:11.5px; font-family:'SF Mono','Fira Code',monospace; color:var(--cyan); text-shadow:0 0 8px rgba(0,234,255,.3); }
-
-/* ============================================  RESPONSIVE  */
-@media(min-width:1440px){.panel-body{padding:36px}.welcome-title{font-size:32px}}
-@media(max-width:1100px){:root{--sidebar-w:230px}.card-grid-3{grid-template-columns:1fr 1fr}}
-@media(max-width:900px){:root{--sidebar-w:250px}.card-grid{grid-template-columns:1fr}.card-grid-3{grid-template-columns:1fr 1fr}.overview-grid{grid-template-columns:1fr 1fr}.logo-result{flex-direction:column}.logo-preview{width:100%;height:260px}.logo-info{width:100%}.chat-msg{max-width:90%}}
-@media(max-width:768px){.sidebar{transform:translateX(-100%);box-shadow:8px 0 50px rgba(0,0,0,.75)}.sidebar.open{transform:translateX(0)}.hamburger{display:flex}.main{margin-left:0;width:100%}.topbar{padding:0 16px}.page-title{font-size:16px}.page-subtitle,.tag{display:none}.panel-body{padding:14px}.card{padding:16px}.card-grid,.card-grid-3{grid-template-columns:1fr}.overview-grid{grid-template-columns:1fr 1fr}.welcome-banner{padding:18px 20px}.welcome-banner::after{display:none}.results-grid{grid-template-columns:1fr}.logo-result{flex-direction:column}.logo-preview{width:100%;height:220px}.chat-messages{padding:14px}.chat-msg{max-width:92%}.chat-input-area{padding:10px 12px 16px}.tab-group{width:100%}.tab{padding:6px 12px;font-size:12px}.btn{padding:9px 16px;font-size:13px}.toast{bottom:16px;right:16px;max-width:calc(100vw - 32px)}}
-@media(max-width:480px){.overview-grid{grid-template-columns:1fr 1fr}.panel-body{padding:10px}.card{padding:14px}.results-grid{grid-template-columns:1fr}}
-@media(max-width:360px){.overview-grid{grid-template-columns:1fr}.page-title{font-size:14px}.welcome-actions{flex-direction:column}.quick-action{width:100%;justify-content:center}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
 </style>
 </head>
 <body>
 
-<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
-
-<!-- SIDEBAR -->
-<nav class="sidebar" id="sidebar">
-  <div class="logo">
-    <div class="logo-icon">✦</div>
-    <div>
-      <div class="logo-text">BrandCraft</div>
-      <div class="logo-sub">AI Branding System</div>
-    </div>
+<!-- TOP HEADER -->
+<header class="topbar">
+  <div class="topbar-logo" onclick="switchTab('home')">
+    <div class="logo-mark">✦</div>
+    <div class="logo-name">BrandCraft</div>
   </div>
-  <div class="nav-section">
-    <div class="nav-label">Overview</div>
-    <button class="nav-btn active" onclick="showPanel('dashboard')"><span class="nav-icon">⬡</span> Dashboard</button>
-    <div class="nav-label">Tools</div>
-    <button class="nav-btn" onclick="showPanel('names')"><span class="nav-icon">✎</span> Brand Name Generator</button>
-    <button class="nav-btn" onclick="showPanel('logo')"><span class="nav-icon">◈</span> Logo Generator</button>
-    <button class="nav-btn" onclick="showPanel('content')"><span class="nav-icon">❋</span> Content Automation</button>
-    <button class="nav-btn" onclick="showPanel('sentiment')"><span class="nav-icon">◎</span> Sentiment Analysis</button>
-    <button class="nav-btn" onclick="showPanel('assistant')"><span class="nav-icon">◬</span> Brand Assistant</button>
+  <span class="topbar-center" id="topbarTitle">Dashboard</span>
+  <div class="topbar-right">
+    <div class="status-dot" title="API Connected"></div>
+    <button class="icon-btn" title="Notifications">🔔</button>
+    <button class="icon-btn" title="Account">◉</button>
   </div>
-  <div class="sidebar-footer">
-    <div class="api-status"><div class="status-dot"></div>API Connected</div>
-  </div>
-</nav>
+</header>
 
-<main class="main">
+<!-- APP BODY -->
+<div class="app">
 
-  <!-- DASHBOARD -->
-  <div class="panel active" id="panel-dashboard">
-    <div class="topbar">
-      <div class="topbar-left">
-        <button class="hamburger" onclick="openSidebar()">☰</button>
-        <div><div class="page-title">Welcome to BrandCraft</div><div class="page-subtitle">Your AI-powered branding workspace</div></div>
+  <!-- HOME / DASHBOARD -->
+  <div class="view active" id="view-home">
+    <div class="content-wrap">
+      <div class="hero">
+        <div class="hero-label">✦ AI Branding System</div>
+        <h1 class="hero-title">Build brands<br>that matter</h1>
+        <p class="hero-sub">Generate names, logos, content, and strategy — all powered by AI in one place.</p>
       </div>
-      <span class="tag tag-purple">✦ Generative AI</span>
-    </div>
-    <div class="panel-body">
-      <div class="welcome-banner">
-        <div class="welcome-title">Build brands that matter ✦</div>
-        <div class="welcome-desc">From brand name to complete identity — generate, automate, and refine your brand with AI, Stable Diffusion, and IBM Watson.</div>
-        <div class="welcome-actions">
-          <button class="quick-action" onclick="showPanel('names')">✎ Generate Names</button>
-          <button class="quick-action" onclick="showPanel('logo')">◈ Create Logo</button>
-          <button class="quick-action" onclick="showPanel('content')">❋ Write Content</button>
-          <button class="quick-action" onclick="showPanel('assistant')">◬ Chat Assistant</button>
+
+      <div class="qa-grid">
+        <div class="qa-card" onclick="switchTab('names')">
+          <div class="qa-icon">✎</div>
+          <div class="qa-name">Brand Names</div>
+          <div class="qa-desc">AI-generated names tailored to your niche and tone</div>
         </div>
-      </div>
-      <div class="overview-grid">
-        <div class="stat-card" onclick="showPanel('names')">
-          <span class="stat-icon">✎</span>
-          <div class="stat-title">Brand Names</div>
-          <div class="stat-value" style="color:var(--cyan);text-shadow:0 0 20px rgba(0,234,255,.55)">AI</div>
-          <div class="stat-desc">Powered by OpenRouter</div>
+        <div class="qa-card" onclick="switchTab('logo')">
+          <div class="qa-icon">◈</div>
+          <div class="qa-name">Logo Generator</div>
+          <div class="qa-desc">Stable Diffusion logos for your brand identity</div>
         </div>
-        <div class="stat-card" onclick="showPanel('logo')">
-          <span class="stat-icon">◈</span>
-          <div class="stat-title">Logo Generation</div>
-          <div class="stat-value" style="color:var(--magenta);text-shadow:0 0 20px rgba(255,31,153,.55)">SD</div>
-          <div class="stat-desc">Stable Diffusion XL</div>
+        <div class="qa-card" onclick="switchTab('content')">
+          <div class="qa-icon">❋</div>
+          <div class="qa-name">Content</div>
+          <div class="qa-desc">Taglines, bios, ads, emails and social posts</div>
         </div>
-        <div class="stat-card" onclick="showPanel('content')">
-          <span class="stat-icon">❋</span>
-          <div class="stat-title">Content Types</div>
-          <div class="stat-value" style="color:var(--lime);text-shadow:0 0 20px rgba(61,255,114,.55)">5</div>
-          <div class="stat-desc">Taglines, Bios, Ads, Emails, Social</div>
-        </div>
-        <div class="stat-card" onclick="showPanel('sentiment')">
-          <span class="stat-icon">◎</span>
-          <div class="stat-title">Sentiment</div>
-          <div class="stat-value" style="color:var(--yellow);text-shadow:0 0 20px rgba(255,232,74,.55)">IBM</div>
-          <div class="stat-desc">Watson NLU</div>
-        </div>
-        <div class="stat-card" onclick="showPanel('assistant')">
-          <span class="stat-icon">◬</span>
-          <div class="stat-title">Brand Assistant</div>
-          <div class="stat-value" style="background:linear-gradient(135deg,var(--cyan),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">AI</div>
-          <div class="stat-desc">Conversational consultant</div>
-        </div>
-        <div class="stat-card">
-          <span class="stat-icon">⬡</span>
-          <div class="stat-title">Tech Stack</div>
-          <div class="stat-value" style="font-size:14px;color:var(--orange);-webkit-text-fill-color:var(--orange);text-shadow:0 0 16px rgba(255,104,32,.55)">FastAPI</div>
-          <div class="stat-desc">+ OpenRouter · HuggingFace · IBM</div>
+        <div class="qa-card" onclick="switchTab('sentiment')">
+          <div class="qa-icon">◎</div>
+          <div class="qa-name">Sentiment</div>
+          <div class="qa-desc">IBM Watson emotion analysis for brand copy</div>
         </div>
       </div>
-      <div class="card">
-        <div class="content-output-title">How to get started</div>
-        <div class="card-grid">
-          <div class="insight-item">1. Add API keys to your <code>.env</code> file</div>
-          <div class="insight-item">2. Run <code>uvicorn main:app --reload</code></div>
-          <div class="insight-item">3. Open <strong>Brand Name Generator</strong> to start</div>
-          <div class="insight-item">4. Use <strong>Brand Assistant</strong> for guided strategy</div>
+
+      <div class="stats-row" style="margin-bottom:14px">
+        <div class="stat-chip" onclick="switchTab('names')">
+          <div class="stat-v" style="color:var(--accent)">AI</div>
+          <div class="stat-l">Naming</div>
+        </div>
+        <div class="stat-chip" onclick="switchTab('content')">
+          <div class="stat-v" style="color:var(--amber)">5</div>
+          <div class="stat-l">Content</div>
+        </div>
+        <div class="stat-chip" onclick="switchTab('sentiment')">
+          <div class="stat-v" style="color:var(--pink)">IBM</div>
+          <div class="stat-l">Sentiment</div>
+        </div>
+      </div>
+
+      <div class="card card-glass">
+        <div class="cout-title">Getting started</div>
+        <div class="gs-list">
+          <div class="gs-item"><div class="gs-num">1</div><div class="gs-text">Add API keys to your <code>.env</code> file (OpenRouter, HuggingFace, IBM Watson)</div></div>
+          <div class="gs-item"><div class="gs-num">2</div><div class="gs-text">Run <code>uvicorn main:app --reload --port 8000</code></div></div>
+          <div class="gs-item"><div class="gs-num">3</div><div class="gs-text">Open <strong>Brand Names</strong> tab and enter your niche to generate names</div></div>
+          <div class="gs-item"><div class="gs-num">4</div><div class="gs-text">Use <strong>Assistant</strong> tab for guided brand strategy conversations</div></div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- BRAND NAMES -->
-  <div class="panel" id="panel-names">
-    <div class="topbar">
-      <div class="topbar-left">
-        <button class="hamburger" onclick="openSidebar()">☰</button>
-        <div><div class="page-title">Brand Name Generator</div><div class="page-subtitle">AI-powered brand naming</div></div>
+  <div class="view" id="view-names">
+    <div class="content-wrap">
+      <div class="section-h">
+        <span class="view-pill pill-p">✎ AI Powered</span>
+        <div class="section-title">Brand Name Generator</div>
+        <div class="section-sub">Describe your business and get unique, meaningful brand names crafted by AI.</div>
       </div>
-      <span class="tag tag-purple">✦ AI</span>
-    </div>
-    <div class="panel-body">
-      <div class="card-grid">
-        <div class="card">
-          <div class="section-title" style="margin-bottom:18px">Your Brand Brief</div>
-          <div class="form-group"><label>Business Niche / Industry *</label><input type="text" id="nameNiche" placeholder="e.g. sustainable fashion, AI productivity tools" /></div>
-          <div class="form-group">
-            <label>Brand Tone</label>
-            <div class="chip-group" id="toneChips">
-              <span class="chip selected" data-val="professional">Professional</span>
-              <span class="chip" data-val="playful">Playful</span>
-              <span class="chip" data-val="bold">Bold</span>
-              <span class="chip" data-val="minimalist">Minimalist</span>
-              <span class="chip" data-val="luxurious">Luxurious</span>
-              <span class="chip" data-val="friendly">Friendly</span>
-              <span class="chip" data-val="innovative">Innovative</span>
-              <span class="chip" data-val="trustworthy">Trustworthy</span>
-            </div>
+
+      <div class="card card-glass">
+        <div class="fg">
+          <label>Business Niche / Industry *</label>
+          <input type="text" id="nameNiche" placeholder="e.g. sustainable fashion, AI productivity tools"/>
+        </div>
+
+        <div class="fg">
+          <label>Brand Tone</label>
+          <div class="chip-grp" id="toneChips">
+            <span class="chip sel" data-val="professional">Professional</span>
+            <span class="chip" data-val="playful">Playful</span>
+            <span class="chip" data-val="bold">Bold</span>
+            <span class="chip" data-val="minimalist">Minimalist</span>
+            <span class="chip" data-val="luxurious">Luxurious</span>
+            <span class="chip" data-val="friendly">Friendly</span>
+            <span class="chip" data-val="innovative">Innovative</span>
+            <span class="chip" data-val="trustworthy">Trustworthy</span>
           </div>
-          <div class="form-group"><label>Target Audience</label><input type="text" id="nameAudience" placeholder="e.g. millennials, B2B companies, health-conscious families" /></div>
-          <button class="btn btn-primary btn-full" onclick="generateNames()" id="namingBtn"><span>✦</span> Generate Names</button>
         </div>
-        <div class="card">
-          <div style="font-size:9.5px;color:var(--text-dim);margin-bottom:14px;font-weight:700;letter-spacing:.12em;text-transform:uppercase">Pro Tips</div>
-          <div class="insight-item">Be specific — "sustainable footwear for athletes" works better than "shoes"</div>
-          <div class="insight-item">Your audience tunes the naming style — B2B vs casual D2C</div>
-          <div class="insight-item">Try different tone combos to explore name styles</div>
-          <div class="insight-item">Always check trademark availability before using a name</div>
+
+        <div class="fg">
+          <label>Target Audience</label>
+          <input type="text" id="nameAudience" placeholder="e.g. millennials, B2B companies, health-conscious families"/>
         </div>
+
+        <div style="margin-bottom:16px">
+          <label style="font-size:12px;font-weight:500;color:var(--muted);display:block;margin-bottom:8px">Quick niches</label>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <button class="chip-q" onclick="setNiche('sustainable fashion')">Sustainable fashion</button>
+            <button class="chip-q" onclick="setNiche('AI productivity tools')">AI productivity</button>
+            <button class="chip-q" onclick="setNiche('wellness and meditation')">Wellness</button>
+            <button class="chip-q" onclick="setNiche('fintech startup')">Fintech</button>
+            <button class="chip-q" onclick="setNiche('organic skincare')">Skincare</button>
+          </div>
+        </div>
+
+        <button class="btn btn-p btn-full" onclick="generateNames()" id="namingBtn">✦ Generate Names</button>
       </div>
-      <div class="loading" id="namesLoading"><div class="spinner"></div><span>Crafting brand names with AI...</span></div>
+
+      <div class="loading" id="namesLoading"><div class="spinner"></div><span>Crafting brand names with AI...</span><div class="spin-dots"><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div></div>
       <div id="namesResults"></div>
     </div>
   </div>
 
   <!-- LOGO -->
-  <div class="panel" id="panel-logo">
-    <div class="topbar">
-      <div class="topbar-left">
-        <button class="hamburger" onclick="openSidebar()">☰</button>
-        <div><div class="page-title">Logo Generator</div><div class="page-subtitle">Stable Diffusion via HuggingFace</div></div>
+  <div class="view" id="view-logo">
+    <div class="content-wrap">
+      <div class="section-h">
+        <span class="view-pill pill-pk">◈ Stable Diffusion</span>
+        <div class="section-title">Logo Generator</div>
+        <div class="section-sub">Generate unique logos with Stable Diffusion via HuggingFace. Takes 20–60 seconds.</div>
       </div>
-      <span class="tag tag-pink">◈ SD XL</span>
-    </div>
-    <div class="panel-body">
-      <div class="card" style="margin-bottom:20px">
-        <div class="section-title" style="margin-bottom:18px">Logo Configuration</div>
-        <div class="card-grid">
+
+      <div class="card card-glass">
+        <div class="form-row">
           <div>
-            <div class="form-group"><label>Brand Name *</label><input type="text" id="logoBrandName" placeholder="e.g. Zenith, Nexus, Bloom" /></div>
-            <div class="form-group"><label>Industry</label><input type="text" id="logoIndustry" placeholder="e.g. technology, wellness" /></div>
+            <div class="fg"><label>Brand Name *</label><input type="text" id="logoBrandName" placeholder="e.g. Zenith, Nexus, Bloom"/></div>
+            <div class="fg"><label>Industry</label><input type="text" id="logoIndustry" placeholder="e.g. technology, wellness"/></div>
           </div>
           <div>
-            <div class="form-group"><label>Logo Style</label>
+            <div class="fg"><label>Logo Style</label>
               <select id="logoStyle">
                 <option value="minimalist">Minimalist — Clean, simple</option>
                 <option value="modern" selected>Modern — Bold, professional</option>
@@ -678,7 +499,7 @@ code { background:rgba(0,234,255,.07); border:1px solid rgba(0,234,255,.15); pad
                 <option value="organic">Organic — Natural, earthy</option>
               </select>
             </div>
-            <div class="form-group"><label>Color Direction</label>
+            <div class="fg"><label>Color Direction</label>
               <select id="logoColor">
                 <option value="deep blue and white">Deep blue & white</option>
                 <option value="black and gold">Black & gold</option>
@@ -692,24 +513,32 @@ code { background:rgba(0,234,255,.07); border:1px solid rgba(0,234,255,.15); pad
             </div>
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-          <button class="btn btn-primary" onclick="generateLogo()" id="logoBtn">◈ Generate Logo</button>
-          <span style="font-size:11.5px;color:var(--text-dim)">⏱ 20–60 seconds · Requires HF_TOKEN</span>
-        </div>
+        <button class="btn btn-p btn-full" onclick="generateLogo()" id="logoBtn">◈ Generate Logo</button>
       </div>
+
       <div class="loading" id="logoLoading"><div class="spinner"></div><span>Generating with Stable Diffusion...</span></div>
-      <div class="logo-result" id="logoResult" style="display:none">
-        <div class="logo-preview"><img id="logoImg" src="" alt="Generated logo" /></div>
-        <div class="logo-info">
-          <div class="card" style="margin-bottom:14px">
-            <div class="content-output-title">Generated Logo</div>
-            <div style="font-size:19px;font-family:var(--font-display);font-weight:800;margin-bottom:4px;letter-spacing:-.02em" id="logoResultName"></div>
-            <div style="font-size:11.5px;color:var(--text-muted)" id="logoResultStyle"></div>
-          </div>
-          <div class="card"><div class="content-output-title">Prompt Used</div><div class="logo-prompt-text" id="logoPromptText"></div></div>
-          <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
-            <button class="btn btn-primary btn-sm" onclick="downloadLogo()">↓ Download</button>
-            <button class="btn btn-secondary btn-sm" onclick="generateLogo()">↺ Regenerate</button>
+
+      <div id="logoResult" style="display:none;margin-top:20px">
+        <div class="card card-glass">
+          <div class="logo-res">
+            <div class="logo-prev">
+              <img id="logoImg" src="" alt="Generated logo"/>
+              <div class="logo-prev-ov">
+                <button class="btn btn-s btn-sm" onclick="downloadLogo()">↓ Save</button>
+                <button class="btn btn-s btn-sm" onclick="generateLogo()">↺ Redo</button>
+              </div>
+            </div>
+            <div class="logo-info">
+              <div class="cout-title">Generated Logo</div>
+              <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:3px" id="logoResultName"></div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:16px" id="logoResultStyle"></div>
+              <div class="cout-title">Prompt Used</div>
+              <div id="logoPromptText" style="font-size:12.5px;color:var(--muted);line-height:1.65;margin-bottom:16px"></div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn btn-p btn-sm" onclick="downloadLogo()">↓ Download PNG</button>
+                <button class="btn btn-s btn-sm" onclick="generateLogo()">↺ Regenerate</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -717,245 +546,411 @@ code { background:rgba(0,234,255,.07); border:1px solid rgba(0,234,255,.15); pad
   </div>
 
   <!-- CONTENT -->
-  <div class="panel" id="panel-content">
-    <div class="topbar">
-      <div class="topbar-left">
-        <button class="hamburger" onclick="openSidebar()">☰</button>
-        <div><div class="page-title">Content Automation</div><div class="page-subtitle">Taglines, bios, ads, emails & social</div></div>
+  <div class="view" id="view-content">
+    <div class="content-wrap">
+      <div class="section-h">
+        <span class="view-pill pill-g">❋ AI Powered</span>
+        <div class="section-title">Content Automation</div>
+        <div class="section-sub">Generate taglines, bios, ad copy, emails, and social posts for your brand.</div>
       </div>
-      <span class="tag tag-green">❋ AI</span>
-    </div>
-    <div class="panel-body">
-      <div class="card" style="margin-bottom:20px">
-        <div class="card-grid">
-          <div>
-            <div class="form-group"><label>Brand Name *</label><input type="text" id="contentBrand" placeholder="e.g. Zenith" /></div>
-            <div class="form-group"><label>Niche / Industry *</label><input type="text" id="contentNiche" placeholder="e.g. AI productivity tools" /></div>
-          </div>
-          <div>
-            <div class="form-group"><label>Brand Tone</label>
-              <select id="contentTone">
-                <option value="professional">Professional</option>
-                <option value="playful and fun">Playful & Fun</option>
-                <option value="bold and energetic">Bold & Energetic</option>
-                <option value="warm and friendly">Warm & Friendly</option>
-                <option value="luxurious and refined">Luxurious & Refined</option>
-                <option value="minimalist and clean">Minimalist & Clean</option>
-                <option value="innovative and forward-thinking">Innovative</option>
-              </select>
-            </div>
+
+      <div class="card card-glass">
+        <div class="form-row">
+          <div class="fg"><label>Brand Name *</label><input type="text" id="contentBrand" placeholder="e.g. Zenith"/></div>
+          <div class="fg"><label>Niche / Industry *</label><input type="text" id="contentNiche" placeholder="e.g. AI productivity tools"/></div>
+        </div>
+        <div class="fg"><label>Brand Tone</label>
+          <select id="contentTone">
+            <option value="professional">Professional</option>
+            <option value="playful and fun">Playful & Fun</option>
+            <option value="bold and energetic">Bold & Energetic</option>
+            <option value="warm and friendly">Warm & Friendly</option>
+            <option value="luxurious and refined">Luxurious & Refined</option>
+            <option value="minimalist and clean">Minimalist & Clean</option>
+            <option value="innovative and forward-thinking">Innovative</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Content Type</label>
+          <div class="tab-grp" id="contentTabs">
+            <button class="ctab active" data-type="tagline" onclick="selectContent('tagline',this)">Taglines</button>
+            <button class="ctab" data-type="bio" onclick="selectContent('bio',this)">Brand Bio</button>
+            <button class="ctab" data-type="ad_copy" onclick="selectContent('ad_copy',this)">Ad Copy</button>
+            <button class="ctab" data-type="email" onclick="selectContent('email',this)">Email</button>
+            <button class="ctab" data-type="social" onclick="selectContent('social',this)">Social</button>
           </div>
         </div>
-        <div class="tab-group" id="contentTabs">
-          <button class="tab active" data-type="tagline" onclick="selectContentType('tagline',this)">Taglines</button>
-          <button class="tab" data-type="bio" onclick="selectContentType('bio',this)">Brand Bio</button>
-          <button class="tab" data-type="ad_copy" onclick="selectContentType('ad_copy',this)">Ad Copy</button>
-          <button class="tab" data-type="email" onclick="selectContentType('email',this)">Email</button>
-          <button class="tab" data-type="social" onclick="selectContentType('social',this)">Social</button>
-        </div>
-        <button class="btn btn-primary" onclick="generateContent()" id="contentBtn">❋ Generate Content</button>
+        <button class="btn btn-p btn-full" onclick="generateContent()" id="contentBtn">❋ Generate Content</button>
       </div>
+
       <div class="loading" id="contentLoading"><div class="spinner"></div><span>Writing brand content with AI...</span></div>
       <div id="contentResults"></div>
     </div>
   </div>
 
   <!-- SENTIMENT -->
-  <div class="panel" id="panel-sentiment">
-    <div class="topbar">
-      <div class="topbar-left">
-        <button class="hamburger" onclick="openSidebar()">☰</button>
-        <div><div class="page-title">Sentiment Analysis</div><div class="page-subtitle">IBM Watson NLU</div></div>
+  <div class="view" id="view-sentiment">
+    <div class="content-wrap">
+      <div class="section-h">
+        <span class="view-pill pill-a">◎ IBM Watson</span>
+        <div class="section-title">Sentiment Analysis</div>
+        <div class="section-sub">Analyze the emotional tone and sentiment of your brand copy.</div>
       </div>
-      <span class="tag tag-purple">◎ IBM Watson</span>
-    </div>
-    <div class="panel-body">
-      <div class="card-grid" style="margin-bottom:20px">
-        <div class="card">
-          <div class="form-group"><label>Brand Text to Analyze</label><textarea id="sentimentText" placeholder="Paste your brand description, mission statement, tagline..." style="min-height:130px"></textarea></div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <button class="btn btn-primary" onclick="analyzeSentiment()" id="sentimentBtn">◎ Analyze</button>
-            <button class="btn btn-secondary btn-sm" onclick="loadSampleText()">Load Sample</button>
-          </div>
+
+      <div class="card card-glass">
+        <div class="fg"><label>Brand Text to Analyze</label>
+          <textarea id="sentimentText" placeholder="Paste your brand description, mission statement, tagline..." style="min-height:130px"></textarea>
         </div>
-        <div class="card">
-          <div class="content-output-title">What this analyzes</div>
-          <div class="insight-item">😊 Overall sentiment (positive / neutral / negative)</div>
-          <div class="insight-item">❤️ Emotional tone (joy, trust, fear, sadness, anger)</div>
-          <div class="insight-item">🔑 Key power words in your text</div>
-          <div class="insight-item">💡 Actionable branding insights</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <button class="btn btn-p" onclick="analyzeSentiment()" id="sentimentBtn">◎ Analyze Sentiment</button>
+          <button class="btn btn-s btn-sm" onclick="loadSample()">Load Sample</button>
+          <button class="btn btn-g btn-sm" onclick="document.getElementById('sentimentText').value='';document.getElementById('sentimentResults').innerHTML=''">Clear</button>
+        </div>
+
+        <div class="divider"></div>
+        <div class="cout-title">What this analyzes</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="insight" style="margin:0">😊 Overall sentiment score</div>
+          <div class="insight" style="margin:0">❤️ Emotional breakdown</div>
+          <div class="insight" style="margin:0">🔑 Power keywords</div>
+          <div class="insight" style="margin:0">💡 Brand insights</div>
         </div>
       </div>
+
       <div class="loading" id="sentimentLoading"><div class="spinner"></div><span>Analyzing with IBM Watson...</span></div>
       <div id="sentimentResults"></div>
     </div>
   </div>
 
   <!-- ASSISTANT -->
-  <div class="panel" id="panel-assistant">
-    <div class="topbar">
-      <div class="topbar-left">
-        <button class="hamburger" onclick="openSidebar()">☰</button>
-        <div><div class="page-title">Brand Assistant</div><div class="page-subtitle">Your AI branding consultant</div></div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <span class="tag tag-purple">◬ AI</span>
-        <button class="btn btn-secondary btn-sm" onclick="clearChat()">Clear</button>
-      </div>
-    </div>
-    <div class="chat-container">
-      <div class="chat-messages" id="chatMessages">
-        <div class="chat-msg assistant">
-          <div class="chat-avatar">✦</div>
-          <div class="chat-bubble">Hello! I'm your BrandCraft AI consultant. I'm here to help you build a powerful, memorable brand from the ground up.<br><br>To get started, tell me: <strong>What kind of business or brand are you building?</strong> ✦</div>
+  <div class="view" id="view-assistant">
+    <div class="chat-view">
+      <div class="chat-msgs" id="chatMessages">
+        <div class="msg assistant">
+          <div class="avatar">✦</div>
+          <div class="bubble">Hello! I'm your BrandCraft AI consultant. I'm here to help you build a powerful, memorable brand.<br><br><strong>What kind of business or brand are you building?</strong> ✦</div>
         </div>
       </div>
-      <div class="chat-input-area">
-        <div class="chat-input-wrap"><textarea id="chatInput" placeholder="Ask me about brand naming, positioning, tone of voice..." rows="1" onkeydown="handleChatKey(event)" oninput="autoResize(this)"></textarea></div>
-        <button class="chat-send-btn" onclick="sendChat()" id="chatSendBtn">➤</button>
+      <div class="sugg-row" id="suggRow">
+        <span class="schip" onclick="sendSugg(this)">Help me name my startup</span>
+        <span class="schip" onclick="sendSugg(this)">What makes a strong brand?</span>
+        <span class="schip" onclick="sendSugg(this)">Suggest a color palette</span>
+        <span class="schip" onclick="sendSugg(this)">Review my brand positioning</span>
+      </div>
+      <div class="chat-bottom">
+        <div class="chat-input-wrap">
+          <textarea id="chatInput" placeholder="Ask about naming, positioning, tone of voice..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+        </div>
+        <button class="send-btn" onclick="sendChat()" id="chatSendBtn">➤</button>
       </div>
     </div>
   </div>
 
-</main>
+</div><!-- end .app -->
+
+<!-- BOTTOM NAVIGATION -->
+<nav class="bottom-nav">
+  <button class="nav-item active" data-tab="home" onclick="switchTab('home')">
+    <span class="nav-icon">⬡</span>
+    <span class="nav-label">Home</span>
+  </button>
+  <button class="nav-item" data-tab="names" onclick="switchTab('names')">
+    <span class="nav-icon">✎</span>
+    <span class="nav-label">Names</span>
+  </button>
+  <button class="nav-item" data-tab="logo" onclick="switchTab('logo')">
+    <span class="nav-icon">◈</span>
+    <span class="nav-label">Logo</span>
+  </button>
+  <button class="nav-item" data-tab="content" onclick="switchTab('content')">
+    <span class="nav-icon">❋</span>
+    <span class="nav-label">Content</span>
+  </button>
+  <button class="nav-item" data-tab="sentiment" onclick="switchTab('sentiment')">
+    <span class="nav-icon">◎</span>
+    <span class="nav-label">Sentiment</span>
+  </button>
+  <button class="nav-item" data-tab="assistant" onclick="switchTab('assistant')">
+    <span class="nav-icon">◬</span>
+    <span class="nav-label">Assistant</span>
+  </button>
+</nav>
+
 <div class="toast" id="toast"></div>
 
 <script>
-let chatHistory=[],currentContentType='tagline',selectedTone='professional',currentLogoBase64=null,toastTimer=null;
+// ===== STATE =====
+let chatHistory=[],currentContent='tagline',selectedTone='professional',logoB64=null;
 
-function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
-function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
+const tabTitles={home:'Dashboard',names:'Brand Names',logo:'Logo Generator',content:'Content',sentiment:'Sentiment',assistant:'Brand Assistant'};
 
-function showPanel(name) {
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('panel-'+name).classList.add('active');
-  const map={dashboard:'dashboard',names:'brand name',logo:'logo',content:'content',sentiment:'sentiment',assistant:'assistant'};
-  document.querySelectorAll('.nav-btn').forEach(b=>{if(b.textContent.trim().toLowerCase().includes(map[name]||name))b.classList.add('active');});
-  closeSidebar(); document.querySelector('.main').scrollTop=0;
+// ===== TAB SWITCHING =====
+function switchTab(tab){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const view=document.getElementById('view-'+tab);
+  const navBtn=document.querySelector('[data-tab="'+tab+'"]');
+  if(view)view.classList.add('active');
+  if(navBtn)navBtn.classList.add('active');
+  document.getElementById('topbarTitle').textContent=tabTitles[tab]||'';
+  if(view&&view.querySelector('.content-wrap')){view.querySelector('.content-wrap').scrollTop=0}
+  window.scrollTo({top:0,behavior:'instant'});
+  if(navigator.vibrate)navigator.vibrate(8);
 }
 
-document.querySelectorAll('#toneChips .chip').forEach(chip=>{
-  chip.addEventListener('click',()=>{document.querySelectorAll('#toneChips .chip').forEach(c=>c.classList.remove('selected'));chip.classList.add('selected');selectedTone=chip.dataset.val;});
+// ===== TONE CHIPS =====
+document.querySelectorAll('#toneChips .chip').forEach(c=>{
+  c.addEventListener('click',()=>{
+    document.querySelectorAll('#toneChips .chip').forEach(x=>x.classList.remove('sel'));
+    c.classList.add('sel');selectedTone=c.dataset.val;
+    c.style.transform='scale(1.12)';setTimeout(()=>c.style.transform='',220);
+  });
 });
 
-function selectContentType(type,btn){currentContentType=type;document.querySelectorAll('#contentTabs .tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');}
+function selectContent(t,btn){
+  currentContent=t;
+  document.querySelectorAll('#contentTabs .ctab').forEach(x=>x.classList.remove('active'));
+  btn.classList.add('active');
+}
 
-function showToast(msg,type='success'){
+function setNiche(v){
+  const el=document.getElementById('nameNiche');
+  el.value=v;el.focus();
+  el.style.borderColor='var(--amber)';
+  setTimeout(()=>el.style.borderColor='',800);
+}
+
+// ===== TOAST =====
+function showToast(msg,type='ok'){
   const t=document.getElementById('toast');
-  if(toastTimer)clearTimeout(toastTimer);
-  t.textContent=msg; t.className='toast '+type+' show';
-  toastTimer=setTimeout(()=>{t.classList.remove('show');t.classList.add('hide');setTimeout(()=>t.classList.remove('hide'),300);},3000);
-}
-function copyText(text){navigator.clipboard.writeText(text).then(()=>showToast('Copied to clipboard'));}
-
-async function apiCall(endpoint,data){
-  const res=await fetch('/api'+endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
-  if(!res.ok){const err=await res.json().catch(()=>({detail:'Unknown error'}));throw new Error(err.detail||'API error');}
-  return res.json();
+  t.textContent=msg;t.className='toast '+type+' show';
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3200);
 }
 
+// ===== COPY =====
+function copy(text){
+  navigator.clipboard.writeText(text).then(()=>showToast('✓ Copied to clipboard','ok'));
+}
+
+// ===== API =====
+async function apiCall(ep,data){
+  const r=await fetch('/api'+ep,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+  if(!r.ok){const e=await r.json().catch(()=>({detail:'Unknown error'}));throw new Error(e.detail||'API error')}
+  return r.json();
+}
+
+// ===== BRAND NAMES =====
 async function generateNames(){
   const niche=document.getElementById('nameNiche').value.trim();
-  if(!niche){showToast('Please enter a niche/industry','error');return;}
-  const btn=document.getElementById('namingBtn'),loading=document.getElementById('namesLoading'),results=document.getElementById('namesResults');
-  btn.disabled=true;loading.classList.add('show');results.innerHTML='';
-  try{const data=await apiCall('/brand-name',{niche,tone:selectedTone,audience:document.getElementById('nameAudience').value.trim()||'general consumers'});loading.classList.remove('show');renderNames(data.names||[]);}
-  catch(e){loading.classList.remove('show');showToast('Error: '+e.message,'error');results.innerHTML=`<div class="content-output"><div style="color:var(--magenta)">⚠ ${e.message}</div></div>`;}
+  if(!niche){showToast('Please enter a niche/industry','err');shake('nameNiche');return}
+  const btn=document.getElementById('namingBtn'),load=document.getElementById('namesLoading'),res=document.getElementById('namesResults');
+  btn.disabled=true;load.classList.add('show');res.innerHTML='';
+  try{
+    const d=await apiCall('/brand-name',{niche,tone:selectedTone,audience:document.getElementById('nameAudience').value.trim()||'general consumers'});
+    load.classList.remove('show');renderNames(d.names||[]);
+  }catch(e){
+    load.classList.remove('show');showToast('Error: '+e.message,'err');
+    res.innerHTML=`<div class="cout"><div style="color:var(--pink)">⚠ ${eh(e.message)}</div></div>`;
+  }
   btn.disabled=false;
 }
 
 function renderNames(names){
-  const container=document.getElementById('namesResults');
-  if(!names.length){container.innerHTML=`<div class="empty-state"><span class="empty-icon">✎</span><div class="empty-text">No names generated</div><div class="empty-sub">Try adjusting your niche or tone</div></div>`;return;}
-  const grid=document.createElement('div');grid.className='results-grid';
-  names.forEach((n,i)=>{const card=document.createElement('div');card.className='result-card';card.style.animationDelay=(i*.07)+'s';card.innerHTML=`<button class="copy-btn" onclick="copyText('${escAttr(n.name)}')">⎘</button><div class="brand-name-text">${escHtml(n.name)}</div><div class="brand-tagline">"${escHtml(n.tagline||'')}"</div><div class="brand-meaning">${escHtml(n.meaning||'')}</div><span class="brand-style-badge">${escHtml(n.style||'')}</span>`;grid.appendChild(card);});
-  container.appendChild(grid);
+  const c=document.getElementById('namesResults');
+  if(!names.length){c.innerHTML='<div class="empty"><div class="empty-ico">✎</div><div class="empty-t">No names generated</div><div class="empty-s">Try refining your niche</div></div>';return}
+  let h=`<div class="results-wrap"><div class="results-header"><span class="results-count">${names.length} names generated</span><button class="btn btn-s btn-sm" onclick="generateNames()">↺ Regenerate</button></div><div class="results-grid">`;
+  names.forEach((n,i)=>{
+    h+=`<div class="rcard" style="animation-delay:${i*.07}s">
+      <button class="cbtn" onclick="copy('${ea(n.name)}')">⎘</button>
+      <div class="brand-n">${eh(n.name)}</div>
+      <div class="brand-tl">"${eh(n.tagline||'')}"</div>
+      <div class="brand-m">${eh(n.meaning||'')}</div>
+      <span class="brand-badge">${eh(n.style||'')}</span>
+      <div class="rcard-actions">
+        <button class="btn btn-s btn-sm" onclick="copy('${ea(n.name+'\n'+(n.tagline||''))}')">⎘ Copy</button>
+        <button class="btn btn-g btn-sm" onclick="document.getElementById('contentBrand').value='${ea(n.name)}';switchTab('content')">→ Use in Content</button>
+      </div></div>`;
+  });
+  h+='</div></div>';c.innerHTML=h;
+  setTimeout(()=>c.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
 }
 
+// ===== LOGO =====
 async function generateLogo(){
-  const brandName=document.getElementById('logoBrandName').value.trim();
-  if(!brandName){showToast('Please enter a brand name','error');return;}
-  const btn=document.getElementById('logoBtn'),loading=document.getElementById('logoLoading'),resultDiv=document.getElementById('logoResult');
-  btn.disabled=true;loading.classList.add('show');resultDiv.style.display='none';
-  try{const data=await apiCall('/logo',{brand_name:brandName,style:document.getElementById('logoStyle').value,primary_color:document.getElementById('logoColor').value,industry:document.getElementById('logoIndustry').value||'general'});loading.classList.remove('show');if(data.success){currentLogoBase64=data.image_base64;document.getElementById('logoImg').src='data:image/png;base64,'+data.image_base64;document.getElementById('logoResultName').textContent=brandName;document.getElementById('logoResultStyle').textContent='Style: '+document.getElementById('logoStyle').value;document.getElementById('logoPromptText').textContent=data.prompt_used||'';resultDiv.style.display='flex';showToast('Logo generated successfully');}else showToast('Logo generation failed: '+(data.error||'Unknown error'),'error');}
-  catch(e){loading.classList.remove('show');showToast('Error: '+e.message,'error');}
+  const bn=document.getElementById('logoBrandName').value.trim();
+  if(!bn){showToast('Please enter a brand name','err');shake('logoBrandName');return}
+  const btn=document.getElementById('logoBtn'),load=document.getElementById('logoLoading'),res=document.getElementById('logoResult');
+  btn.disabled=true;load.classList.add('show');res.style.display='none';
+  try{
+    const d=await apiCall('/logo',{brand_name:bn,style:document.getElementById('logoStyle').value,primary_color:document.getElementById('logoColor').value,industry:document.getElementById('logoIndustry').value||'general'});
+    load.classList.remove('show');
+    if(d.success){
+      logoB64=d.image_base64;
+      document.getElementById('logoImg').src='data:image/png;base64,'+d.image_base64;
+      document.getElementById('logoResultName').textContent=bn;
+      document.getElementById('logoResultStyle').textContent='Style: '+document.getElementById('logoStyle').value;
+      document.getElementById('logoPromptText').textContent=d.prompt_used||'';
+      res.style.display='block';
+      showToast('✓ Logo generated!','ok');
+      setTimeout(()=>res.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+    }else showToast('Failed: '+(d.error||'Unknown error'),'err');
+  }catch(e){load.classList.remove('show');showToast('Error: '+e.message,'err')}
   btn.disabled=false;
 }
 
-function downloadLogo(){if(!currentLogoBase64)return;const a=document.createElement('a');a.href='data:image/png;base64,'+currentLogoBase64;a.download=(document.getElementById('logoBrandName').value||'logo')+'_logo.png';a.click();showToast('Logo downloaded');}
+function downloadLogo(){
+  if(!logoB64)return;
+  const a=document.createElement('a');a.href='data:image/png;base64,'+logoB64;
+  a.download=(document.getElementById('logoBrandName').value||'logo')+'_logo.png';a.click();
+  showToast('↓ Downloading logo...','ok');
+}
 
+// ===== CONTENT =====
 async function generateContent(){
   const brand=document.getElementById('contentBrand').value.trim(),niche=document.getElementById('contentNiche').value.trim();
-  if(!brand||!niche){showToast('Please fill in brand name and niche','error');return;}
-  const btn=document.getElementById('contentBtn'),loading=document.getElementById('contentLoading'),results=document.getElementById('contentResults');
-  btn.disabled=true;loading.classList.add('show');results.innerHTML='';
-  try{const data=await apiCall('/content',{brand_name:brand,niche,tone:document.getElementById('contentTone').value,content_type:currentContentType});loading.classList.remove('show');renderContent(data.content_type,data.data);}
-  catch(e){loading.classList.remove('show');showToast('Error: '+e.message,'error');results.innerHTML=`<div class="content-output"><div style="color:var(--magenta)">⚠ ${e.message}</div></div>`;}
+  if(!brand||!niche){showToast('Please fill in brand name and niche','err');return}
+  const btn=document.getElementById('contentBtn'),load=document.getElementById('contentLoading'),res=document.getElementById('contentResults');
+  btn.disabled=true;load.classList.add('show');res.innerHTML='';
+  try{
+    const d=await apiCall('/content',{brand_name:brand,niche,tone:document.getElementById('contentTone').value,content_type:currentContent});
+    load.classList.remove('show');renderContent(d.content_type,d.data);
+  }catch(e){
+    load.classList.remove('show');showToast('Error: '+e.message,'err');
+    res.innerHTML=`<div class="cout"><div style="color:var(--pink)">⚠ ${eh(e.message)}</div></div>`;
+  }
   btn.disabled=false;
 }
 
 function renderContent(type,data){
-  const container=document.getElementById('contentResults');
-  let html='<div class="content-output">';
+  const c=document.getElementById('contentResults');
+  let h='<div class="cout">';
   try{
-    if(type==='tagline'&&data.taglines){html+=`<div class="content-output-title">Generated Taglines</div>`;data.taglines.forEach(t=>{html+=`<div class="content-item"><div class="content-item-label">${escHtml(t.use_case||'')}</div><div class="content-item-text">${escHtml(t.text||t)}</div><button style="margin-top:9px" class="btn btn-secondary btn-sm" onclick="copyText('${escAttr(t.text||t)}')">⎘ Copy</button></div>`;});}
-    else if(type==='bio'&&data.bios){['short','medium','long'].forEach(len=>{if(data.bios[len])html+=`<div class="content-item"><div class="content-item-label">${len.charAt(0).toUpperCase()+len.slice(1)} Bio</div><div class="content-item-text">${escHtml(data.bios[len])}</div><button style="margin-top:9px" class="btn btn-secondary btn-sm" onclick="copyText('${escAttr(data.bios[len])}')">⎘ Copy</button></div>`;});}
-    else if(type==='ad_copy'&&data.ads){data.ads.forEach(ad=>{html+=`<div class="content-item"><div class="content-item-label">${escHtml(ad.platform||'Ad')}</div><div class="content-item-text"><strong>${escHtml(ad.headline||'')}</strong><br>${escHtml(ad.body||'')}<br><em style="color:var(--lime)">${escHtml(ad.cta||'')}</em></div><button style="margin-top:9px" class="btn btn-secondary btn-sm" onclick="copyText('${escAttr((ad.headline||'')+'\n'+(ad.body||'')+'\n'+(ad.cta||''))}')">⎘ Copy</button></div>`;});}
-    else if(type==='email'&&data.subject){html+=`<div class="content-item"><div class="content-item-label">Subject</div><div class="content-item-text">${escHtml(data.subject)}</div></div><div class="content-item"><div class="content-item-label">Preview</div><div class="content-item-text">${escHtml(data.preview||'')}</div></div><div class="content-item"><div class="content-item-label">Body</div><div class="content-item-text">${escHtml(data.body||'')}</div><button style="margin-top:9px" class="btn btn-secondary btn-sm" onclick="copyText('${escAttr(data.body||'')}')">⎘ Copy</button></div>`;}
-    else if(type==='social'&&data.posts){data.posts.forEach(p=>{const tags=(p.hashtags||[]).map(t=>escHtml(t)).join(' ');html+=`<div class="content-item"><div class="content-item-label">${escHtml(p.platform||'Post')}</div><div class="content-item-text">${escHtml(p.content||'')}</div><div style="margin-top:9px;color:var(--cyan);font-size:12px">${tags}</div><button style="margin-top:9px" class="btn btn-secondary btn-sm" onclick="copyText('${escAttr((p.content||'')+'\n'+(p.hashtags||[]).join(' '))}')">⎘ Copy</button></div>`;});}
-    else{html+=`<div class="content-item"><div class="content-item-text">${escHtml(JSON.stringify(data,null,2))}</div></div>`;}
-  }catch(e){html+=`<div class="content-item"><div class="content-item-text">${escHtml(JSON.stringify(data,null,2))}</div></div>`;}
-  html+='</div>';container.innerHTML=html;
+    if(type==='tagline'&&data.taglines){
+      h+=`<div class="cout-title">Generated Taglines</div>`;
+      data.taglines.forEach(t=>{h+=`<div class="citem"><div class="citem-label">${eh(t.use_case||'')}</div><div class="citem-text">${eh(t.text||t)}</div><button style="margin-top:10px" class="btn btn-s btn-sm" onclick="copy('${ea(t.text||t)}')">⎘ Copy</button></div>`});
+    }else if(type==='bio'&&data.bios){
+      ['short','medium','long'].forEach(l=>{if(data.bios[l])h+=`<div class="citem"><div class="citem-label">${l.charAt(0).toUpperCase()+l.slice(1)} Bio</div><div class="citem-text">${eh(data.bios[l])}</div><button style="margin-top:10px" class="btn btn-s btn-sm" onclick="copy('${ea(data.bios[l])}')">⎘ Copy</button></div>`});
+    }else if(type==='ad_copy'&&data.ads){
+      data.ads.forEach(a=>{h+=`<div class="citem"><div class="citem-label">${eh(a.platform||'Ad')}</div><div class="citem-text"><strong>${eh(a.headline||'')}</strong><br>${eh(a.body||'')}<br><em style="color:var(--accent)">${eh(a.cta||'')}</em></div><button style="margin-top:10px" class="btn btn-s btn-sm" onclick="copy('${ea((a.headline||'')+'\n'+(a.body||'')+'\n'+(a.cta||''))}')">⎘ Copy</button></div>`});
+    }else if(type==='email'&&data.subject){
+      h+=`<div class="citem"><div class="citem-label">Subject</div><div class="citem-text">${eh(data.subject)}</div></div>
+          <div class="citem"><div class="citem-label">Preview</div><div class="citem-text">${eh(data.preview||'')}</div></div>
+          <div class="citem"><div class="citem-label">Body</div><div class="citem-text">${eh(data.body||'')}</div><button style="margin-top:10px" class="btn btn-s btn-sm" onclick="copy('${ea(data.body||'')}')">⎘ Copy</button></div>`;
+    }else if(type==='social'&&data.posts){
+      data.posts.forEach(p=>{
+        const tags=(p.hashtags||[]).map(t=>eh(t)).join(' ');
+        h+=`<div class="citem"><div class="citem-label">${eh(p.platform||'Post')}</div><div class="citem-text">${eh(p.content||'')}</div><div style="margin-top:8px;color:var(--accent);font-size:12.5px">${tags}</div><button style="margin-top:10px" class="btn btn-s btn-sm" onclick="copy('${ea((p.content||'')+'\n'+(p.hashtags||[]).join(' '))}')">⎘ Copy</button></div>`;
+      });
+    }else{h+=`<div class="citem"><div class="citem-text">${eh(JSON.stringify(data,null,2))}</div></div>`}
+  }catch(e){h+=`<div class="citem"><div class="citem-text">${eh(JSON.stringify(data,null,2))}</div></div>`}
+  h+='</div>';c.innerHTML=h;
+  setTimeout(()=>c.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
 }
 
+// ===== SENTIMENT =====
 async function analyzeSentiment(){
   const text=document.getElementById('sentimentText').value.trim();
-  if(!text||text.length<10){showToast('Please enter at least 10 characters','error');return;}
-  const btn=document.getElementById('sentimentBtn'),loading=document.getElementById('sentimentLoading'),results=document.getElementById('sentimentResults');
-  btn.disabled=true;loading.classList.add('show');results.innerHTML='';
-  try{const data=await apiCall('/sentiment',{text});loading.classList.remove('show');renderSentiment(data);}
-  catch(e){loading.classList.remove('show');showToast('Error: '+e.message,'error');}
+  if(!text||text.length<10){showToast('Please enter at least 10 characters','err');return}
+  const btn=document.getElementById('sentimentBtn'),load=document.getElementById('sentimentLoading'),res=document.getElementById('sentimentResults');
+  btn.disabled=true;load.classList.add('show');res.innerHTML='';
+  try{
+    const d=await apiCall('/sentiment',{text});
+    load.classList.remove('show');renderSentiment(d);showToast('✓ Analysis complete!','ok');
+  }catch(e){load.classList.remove('show');showToast('Error: '+e.message,'err')}
   btn.disabled=false;
 }
 
-function loadSampleText(){document.getElementById('sentimentText').value="We believe everyone deserves access to beautiful, sustainable products that don't compromise on quality. Our mission is to make eco-friendly living simple, joyful, and accessible for modern families who care about their impact on the planet.";}
+function loadSample(){
+  document.getElementById('sentimentText').value="We believe everyone deserves access to beautiful, sustainable products that don't compromise on quality. Our mission is to make eco-friendly living simple, joyful, and accessible for modern families who care about their impact on the planet.";
+  showToast('Sample text loaded','ok');
+}
 
 function renderSentiment(data){
-  const container=document.getElementById('sentimentResults');
-  const s=data.sentiment||{},emotions=data.emotions||{},label=s.label||'neutral',score=Math.abs(s.score||0);
-  const emotionColors={joy:'#ffe84a',sadness:'#00eaff',anger:'#ff1f99',fear:'#b040ff',disgust:'#3dff72'};
-  let emotionBarsHtml='';
-  Object.entries(emotions).forEach(([emo,val])=>{const pct=Math.round(val*100),col=emotionColors[emo]||'var(--cyan)';emotionBarsHtml+=`<div class="emotion-row"><div class="emotion-name">${emo}</div><div class="emotion-bar-bg"><div class="emotion-bar-fill" style="width:${pct}%;background:${col};box-shadow:0 0 8px ${col}66"></div></div><div class="emotion-val">${pct}%</div></div>`;});
-  const badgeClass=label==='positive'?'badge-positive':label==='negative'?'badge-negative':'badge-neutral';
-  const badgeEmoji=label==='positive'?'😊':label==='negative'?'😟':'😐';
-  const insightsHtml=(data.brand_insights||[]).map(i=>`<div class="insight-item">${escHtml(i)}</div>`).join('');
-  const keywordsHtml=(data.keywords||[]).map(k=>`<span class="chip">${escHtml(k)}</span>`).join('');
-  const barColor=label==='positive'?'var(--lime)':label==='negative'?'var(--magenta)':'var(--cyan)';
-  container.innerHTML=`<div class="sentiment-result"><div class="card-grid"><div class="card"><div class="content-output-title">Sentiment Score</div><div class="sentiment-badge ${badgeClass}">${badgeEmoji} ${label.charAt(0).toUpperCase()+label.slice(1)}</div><div class="sentiment-score-bar" style="margin-top:14px"><div class="sentiment-score-fill" style="width:${Math.round(score*100)}%;background:${barColor};box-shadow:0 0 14px ${barColor}"></div></div><div style="font-size:12px;color:var(--text-muted);margin-top:5px">Confidence: ${Math.round(score*100)}%</div><div class="content-output-title" style="margin-top:18px">Dominant Emotion</div><div style="font-size:19px;font-family:var(--font-display);font-weight:800;color:var(--cyan);letter-spacing:-.02em;text-shadow:0 0 18px rgba(0,234,255,.55)">${(data.dominant_emotion||'neutral').charAt(0).toUpperCase()+(data.dominant_emotion||'neutral').slice(1)}</div>${keywordsHtml?`<div class="content-output-title" style="margin-top:14px">Key Words</div><div class="chip-group">${keywordsHtml}</div>`:''}${data.fallback?'<div style="margin-top:10px;font-size:11px;color:var(--text-dim)">ℹ Using fallback analysis.</div>':''}</div><div class="card"><div class="content-output-title">Emotion Breakdown</div><div class="emotion-bars">${emotionBarsHtml}</div></div></div><div class="card" style="margin-top:0"><div class="content-output-title">Brand Insights</div>${insightsHtml||'<div class="insight-item">No specific insights available</div>'}</div></div>`;
+  const c=document.getElementById('sentimentResults');
+  const s=data.sentiment||{},emos=data.emotions||{};
+  const label=s.label||'neutral',score=Math.abs(s.score||0);
+  const eC={joy:'#ffb700',sadness:'#60a5fa',anger:'#ff5f7e',fear:'#a78bfa',disgust:'#00e0bc'};
+  let eBars='';
+  Object.entries(emos).forEach(([e,v])=>{const p=Math.round(v*100);eBars+=`<div class="emo-row"><div class="emo-name">${e}</div><div class="emo-bar-bg"><div class="emo-bar" style="width:${p}%;background:${eC[e]||'var(--accent)'}"></div></div><div class="emo-val">${p}%</div></div>`});
+  const bC=label==='positive'?'badge-pos':label==='negative'?'badge-neg':'badge-neu';
+  const bE=label==='positive'?'😊':label==='negative'?'😟':'😐';
+  const ins=(data.brand_insights||[]).map(i=>`<div class="insight">${eh(i)}</div>`).join('');
+  const kw=(data.keywords||[]).map(k=>`<span class="chip" style="pointer-events:none">${eh(k)}</span>`).join('');
+  c.innerHTML=`<div class="sent-res">
+    <div style="display:grid;grid-template-columns:1fr;gap:14px">
+      <div class="card card-glass">
+        <div class="cout-title">Overall Sentiment</div>
+        <div class="sent-badge ${bC}" style="margin-bottom:14px">${bE} ${label.charAt(0).toUpperCase()+label.slice(1)}</div>
+        <div class="score-bar"><div class="score-fill" style="width:${Math.round(score*100)}%;background:${label==='positive'?'var(--accent)':label==='negative'?'var(--pink)':'var(--amber)'}"></div></div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Confidence: ${Math.round(score*100)}%</div>
+        <div class="cout-title">Dominant Emotion</div>
+        <div style="font-size:20px;font-family:'Syne',sans-serif;font-weight:800;color:var(--amber);margin-bottom:${kw?'14px':'0'}">${(data.dominant_emotion||'neutral').charAt(0).toUpperCase()+(data.dominant_emotion||'neutral').slice(1)}</div>
+        ${kw?`<div class="cout-title">Key Words</div><div class="chip-grp">${kw}</div>`:''}
+        ${data.fallback?'<div style="margin-top:10px;font-size:11px;color:var(--dim)">ℹ Using fallback analysis.</div>':''}
+      </div>
+      <div class="card card-glass">
+        <div class="cout-title">Emotion Breakdown</div>
+        <div class="emo-list">${eBars}</div>
+      </div>
+      <div class="card card-glass">
+        <div class="cout-title">Brand Insights</div>
+        ${ins||'<div class="insight">No specific insights available</div>'}
+      </div>
+    </div>
+  </div>`;
+  setTimeout(()=>c.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+// ===== CHAT =====
+function sendSugg(chip){
+  document.getElementById('chatInput').value=chip.textContent;
+  sendChat();
 }
 
 async function sendChat(){
-  const input=document.getElementById('chatInput');
-  const msg=input.value.trim();if(!msg)return;
-  input.value='';autoResize(input);
-  addChatMsg('user',msg);chatHistory.push({role:'user',content:msg});
-  const sendBtn=document.getElementById('chatSendBtn');sendBtn.disabled=true;showTyping();
-  try{const data=await apiCall('/assistant',{messages:chatHistory.slice(-10),message:msg});hideTyping();const reply=data.response||"Sorry, I couldn't generate a response.";addChatMsg('assistant',reply);chatHistory.push({role:'assistant',content:reply});}
-  catch(e){hideTyping();addChatMsg('assistant','⚠ Error: '+e.message);}
-  sendBtn.disabled=false;
+  const inp=document.getElementById('chatInput');
+  const msg=inp.value.trim();if(!msg)return;
+  inp.value='';autoResize(inp);
+  document.getElementById('suggRow').style.display='none';
+  addMsg('user',msg);chatHistory.push({role:'user',content:msg});
+  const btn=document.getElementById('chatSendBtn');btn.disabled=true;showTyping();
+  try{
+    const d=await apiCall('/assistant',{messages:chatHistory.slice(-10),message:msg});
+    hideTyping();const r=d.response||"Sorry, I couldn't generate a response.";
+    addMsg('assistant',r);chatHistory.push({role:'assistant',content:r});
+  }catch(e){hideTyping();addMsg('assistant','⚠ Error: '+e.message)}
+  btn.disabled=false;
 }
 
-function addChatMsg(role,content){const messages=document.getElementById('chatMessages');const div=document.createElement('div');div.className='chat-msg '+role;div.innerHTML=`<div class="chat-avatar">${role==='user'?'◉':'✦'}</div><div class="chat-bubble">${escHtml(content).replace(/\n/g,'<br>')}</div>`;messages.appendChild(div);messages.scrollTo({top:messages.scrollHeight,behavior:'smooth'});}
-function showTyping(){const messages=document.getElementById('chatMessages');const div=document.createElement('div');div.className='chat-msg assistant';div.id='typingIndicator';div.innerHTML=`<div class="chat-avatar">✦</div><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;messages.appendChild(div);messages.scrollTo({top:messages.scrollHeight,behavior:'smooth'});}
-function hideTyping(){const el=document.getElementById('typingIndicator');if(el)el.remove();}
-function clearChat(){chatHistory=[];document.getElementById('chatMessages').innerHTML=`<div class="chat-msg assistant"><div class="chat-avatar">✦</div><div class="chat-bubble">Chat cleared. Ready to help you build your brand. What are you working on? ✦</div></div>`;showToast('Chat cleared');}
-function handleChatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}}
-function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
-function escHtml(str){if(!str)return'';return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function escAttr(str){if(!str)return'';return String(str).replace(/'/g,"\\'").replace(/\n/g,'\\n');}
+function addMsg(role,content){
+  const m=document.getElementById('chatMessages');
+  const d=document.createElement('div');d.className='msg '+role;
+  d.innerHTML=`<div class="avatar">${role==='user'?'◉':'✦'}</div><div class="bubble">${eh(content).replace(/\n/g,'<br>')}</div>`;
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+function showTyping(){
+  const m=document.getElementById('chatMessages');
+  const d=document.createElement('div');d.className='msg assistant';d.id='typing';
+  d.innerHTML=`<div class="avatar">✦</div><div class="typing-ind"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div>`;
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+function hideTyping(){const e=document.getElementById('typing');if(e)e.remove()}
+function clearChat(){
+  chatHistory=[];
+  document.getElementById('chatMessages').innerHTML=`<div class="msg assistant"><div class="avatar">✦</div><div class="bubble">Chat cleared. Ready to help you build your brand. What are you working on? ✦</div></div>`;
+  document.getElementById('suggRow').style.display='flex';
+}
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat()}}
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px'}
 
-window.addEventListener('resize',()=>{if(window.innerWidth>768)closeSidebar();});
+// ===== UTILS =====
+function shake(id){
+  const e=document.getElementById(id);
+  e.style.animation='shake .4s ease';e.focus();
+  setTimeout(()=>e.style.animation='',500);
+}
+function eh(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function ea(s){if(!s)return'';return String(s).replace(/'/g,"\\'").replace(/\n/g,'\\n')}
 </script>
 </body>
 </html>
