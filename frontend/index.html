@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BrandCraft — AI Branding System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+/* ============================================
+   COSMIC NEON — Bold, Vivid, Eye-Catching
+   Electric cyan · Hot magenta · Acid lime
+   Deep violet · Blazing orange · Neon yellow
+   ============================================ */
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+
+:root {
+  --bg:  #03030d;
+  --bg2: #060618;
+  --bg3: #09091f;
+  --bg4: #0d0d28;
+  --border:        rgba(255,255,255,0.05);
+  --border-bright: rgba(255,255,255,0.1);
+  --text:       #f2f2ff;
+  --text-muted: #7a7aaa;
+  --text-dim:   #38385e;
+  /* VIVID PALETTE */
+  --cyan:    #00eaff;
+  --magenta: #ff1f99;
+  --orange:  #ff6820;
+  --lime:    #3dff72;
+  --yellow:  #ffe84a;
+  --violet:  #b040ff;
+  --pink:    #ff60c0;
+  /* Glow colors */
+  --glow-cyan:    rgba(0,234,255,0.2);
+  --glow-magenta: rgba(255,31,153,0.2);
+  --glow-violet:  rgba(176,64,255,0.2);
+  /* Shadows */
+  --shadow-sm:   0 2px 12px rgba(0,0,0,0.5);
+  --shadow-card: 0 4px 30px rgba(0,0,0,0.6);
+  --shadow-btn:  0 4px 20px rgba(0,234,255,0.35);
+  --shadow-hover:0 8px 36px rgba(0,234,255,0.55);
+  /* Layout */
+  --radius:    18px;
+  --radius-sm: 12px;
+  --radius-xs: 7px;
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'Plus Jakarta Sans', sans-serif;
+  --sidebar-w: 268px;
+  --topbar-h:  64px;
+  --t:  .2s cubic-bezier(.4,0,.2,1);
+  --ts: .4s cubic-bezier(.4,0,.2,1);
+}
+
+html { scroll-behavior:smooth; }
+
+body {
+  font-family:var(--font-body);
+  background:var(--bg); color:var(--text);
+  min-height:100vh; min-height:100dvh;
+  display:flex; overflow:hidden; position:relative;
+}
+
+/* ── AMBIENT GLOW BACKGROUND ── */
+body::before {
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 45% at 8%   2%,  rgba(0,234,255,.08)   0%,transparent 55%),
+    radial-gradient(ellipse 55% 55% at 92%  8%,  rgba(176,64,255,.10)  0%,transparent 50%),
+    radial-gradient(ellipse 65% 45% at 50% 100%, rgba(255,31,153,.07)  0%,transparent 55%),
+    radial-gradient(ellipse 40% 35% at 75%  50%, rgba(255,104,32,.04)  0%,transparent 50%);
+}
+
+/* scrollbars */
+::-webkit-scrollbar { width:4px; height:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:rgba(0,234,255,.28); border-radius:2px; }
+::-webkit-scrollbar-thumb:hover { background:rgba(0,234,255,.5); }
+
+/* ============================================  KEYFRAMES  */
+@keyframes fadeUp    { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn    { from{opacity:0} to{opacity:1} }
+@keyframes spin      { to{transform:rotate(360deg)} }
+@keyframes shimmer   { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+@keyframes bounce    { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-8px)} }
+@keyframes toastIn   { from{opacity:0;transform:translateY(14px) scale(.92)} to{opacity:1;transform:translateY(0) scale(1)} }
+@keyframes toastOut  { from{opacity:1;transform:translateY(0) scale(1)} to{opacity:0;transform:translateY(10px) scale(.92)} }
+@keyframes orbFloat  { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-26px) scale(1.07)} }
+@keyframes gradFlow  { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+@keyframes pulseDot  { 0%,100%{box-shadow:0 0 0 0 rgba(61,255,114,.5)} 50%{box-shadow:0 0 0 6px rgba(61,255,114,0)} }
+@keyframes borderPulse { 0%,100%{border-color:rgba(0,234,255,.12)} 50%{border-color:rgba(0,234,255,.35)} }
+@keyframes scanline  { 0%{background-position:0 -100%} 100%{background-position:0 300%} }
+@keyframes neonFlicker { 0%,95%,100%{opacity:1} 96%,98%{opacity:.85} }
+
+/* ============================================  OVERLAY  */
+.overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.72); z-index:90;
+  backdrop-filter:blur(6px);
+  animation:fadeIn .2s ease;
+}
+.overlay.show { display:block; }
+
+/* ============================================  SIDEBAR  */
+.sidebar {
+  width:var(--sidebar-w); min-height:100vh;
+  background:rgba(6,6,24,.95);
+  border-right:1px solid rgba(0,234,255,.07);
+  display:flex; flex-direction:column; flex-shrink:0;
+  position:fixed; left:0; top:0; bottom:0; z-index:100;
+  padding:24px 0 20px;
+  transition:transform var(--ts);
+  backdrop-filter:blur(24px);
+  box-shadow:1px 0 0 rgba(0,234,255,.05), 12px 0 60px rgba(0,0,0,.5);
+}
+/* Top rainbow line */
+.sidebar::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, var(--cyan), var(--violet), var(--magenta), var(--orange));
+  background-size:200% 100%;
+  animation:gradFlow 3s ease infinite;
+}
+
+.logo { padding:0 20px 28px; display:flex; align-items:center; gap:13px; }
+.logo-icon {
+  width:42px; height:42px;
+  background:linear-gradient(135deg, var(--cyan), var(--violet));
+  border-radius:13px; display:grid; place-items:center;
+  font-size:18px; flex-shrink:0;
+  box-shadow:0 0 24px rgba(0,234,255,.5), 0 4px 16px rgba(0,0,0,.4);
+  position:relative; overflow:hidden;
+  animation:neonFlicker 5s ease infinite;
+}
+.logo-icon::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,.22),transparent 55%); }
+
+.logo-text {
+  font-family:var(--font-display); font-weight:800; font-size:21px; letter-spacing:-.03em;
+  background:linear-gradient(135deg, var(--cyan) 0%, #c0a0ff 55%, var(--magenta) 100%);
+  background-size:200% 200%; animation:gradFlow 4s ease infinite;
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.logo-sub { font-size:9.5px; color:var(--text-dim); font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-top:1px; }
+
+.nav-section { padding:0 10px; flex:1; overflow-y:auto; }
+.nav-label { font-size:9px; font-weight:700; letter-spacing:.15em; text-transform:uppercase; color:var(--text-dim); padding:0 10px; margin-bottom:4px; margin-top:22px; }
+
+.nav-btn {
+  width:100%; display:flex; align-items:center; gap:11px;
+  padding:10px 11px; border-radius:var(--radius-sm); border:none;
+  background:transparent; color:var(--text-muted);
+  cursor:pointer; font-family:var(--font-body); font-size:13.5px; font-weight:400;
+  transition:all var(--t); text-align:left; position:relative; overflow:hidden;
+}
+.nav-btn::before {
+  content:''; position:absolute; left:0; top:0; bottom:0; width:0;
+  background:linear-gradient(90deg, rgba(0,234,255,.1), rgba(176,64,255,.06), transparent);
+  transition:width .3s ease; border-radius:var(--radius-sm);
+}
+.nav-btn:hover { color:var(--text); transform:translateX(3px); }
+.nav-btn:hover::before { width:100%; }
+.nav-btn.active {
+  background:linear-gradient(90deg, rgba(0,234,255,.1), rgba(176,64,255,.06));
+  color:#fff; font-weight:600;
+  border:1px solid rgba(0,234,255,.18);
+  box-shadow:inset 0 0 24px rgba(0,234,255,.04);
+}
+.nav-btn.active .nav-icon { color:var(--cyan); text-shadow:0 0 10px var(--cyan); }
+.nav-btn.active::after {
+  content:''; position:absolute; left:0; top:18%; bottom:18%; width:3px;
+  background:linear-gradient(180deg, var(--cyan), var(--violet));
+  border-radius:0 3px 3px 0; box-shadow:2px 0 12px var(--cyan);
+}
+.nav-icon { font-size:15px; width:22px; text-align:center; flex-shrink:0; transition:all var(--t); }
+.nav-btn:hover .nav-icon { transform:scale(1.15); }
+
+.sidebar-footer { padding:16px 20px 0; border-top:1px solid rgba(255,255,255,.05); }
+.api-status { display:flex; align-items:center; gap:9px; font-size:11.5px; color:var(--text-muted); font-weight:500; }
+.status-dot { width:8px; height:8px; border-radius:50%; background:var(--lime); animation:pulseDot 2.5s infinite; flex-shrink:0; }
+
+/* ============================================  HAMBURGER  */
+.hamburger {
+  display:none; width:38px; height:38px; border-radius:var(--radius-sm);
+  border:1px solid var(--border); background:var(--bg2); color:var(--text);
+  cursor:pointer; align-items:center; justify-content:center;
+  font-size:17px; flex-shrink:0; transition:all var(--t);
+}
+.hamburger:hover { border-color:var(--cyan); color:var(--cyan); box-shadow:0 0 14px rgba(0,234,255,.3); }
+
+/* ============================================  MAIN  */
+.main { margin-left:var(--sidebar-w); flex:1; height:100vh; height:100dvh; overflow-y:auto; display:flex; flex-direction:column; min-width:0; position:relative; z-index:1; }
+
+/* ============================================  TOPBAR  */
+.topbar {
+  padding:0 28px; height:var(--topbar-h);
+  border-bottom:1px solid rgba(0,234,255,.07);
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  background:rgba(3,3,13,.88);
+  position:sticky; top:0; z-index:50;
+  backdrop-filter:blur(24px); flex-shrink:0;
+}
+.topbar-left { display:flex; align-items:center; gap:12px; min-width:0; flex:1; }
+.page-title { font-family:var(--font-display); font-size:clamp(15px,2vw,18px); font-weight:700; letter-spacing:-.025em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.page-subtitle { font-size:11.5px; color:var(--text-muted); margin-top:2px; white-space:nowrap; }
+
+.tag { display:inline-flex; align-items:center; gap:5px; padding:4px 12px; border-radius:20px; font-size:10.5px; font-weight:700; letter-spacing:.05em; flex-shrink:0; border:1px solid transparent; }
+.tag-purple { background:rgba(176,64,255,.12); color:#d080ff; border-color:rgba(176,64,255,.25); text-shadow:0 0 10px rgba(176,64,255,.6); }
+.tag-pink   { background:rgba(255,31,153,.12); color:#ff80c8; border-color:rgba(255,31,153,.25); text-shadow:0 0 10px rgba(255,31,153,.6); }
+.tag-green  { background:rgba(61,255,114,.1);  color:#60ff90; border-color:rgba(61,255,114,.2);  text-shadow:0 0 10px rgba(61,255,114,.6); }
+
+/* ============================================  PANELS  */
+.panel { display:none; flex-direction:column; flex:1; min-width:0; }
+.panel.active { display:flex; animation:fadeUp .32s cubic-bezier(.4,0,.2,1); }
+.panel-body { padding:28px; flex:1; overflow-y:auto; }
+
+/* ============================================  CARDS  */
+.card {
+  background:rgba(9,9,31,.75);
+  border:1px solid rgba(255,255,255,.05);
+  border-radius:var(--radius); padding:22px;
+  transition:border-color var(--t), box-shadow var(--t), transform var(--t);
+  position:relative; overflow:hidden;
+  backdrop-filter:blur(10px);
+}
+/* Subtle corner glow */
+.card::before {
+  content:''; position:absolute; top:-1px; left:-1px; width:55%; height:55%;
+  background:radial-gradient(ellipse at 0 0, rgba(0,234,255,.05), transparent 65%);
+  pointer-events:none;
+}
+.card:hover { border-color:rgba(0,234,255,.2); box-shadow:0 0 0 1px rgba(0,234,255,.06), var(--shadow-card); transform:translateY(-1px); }
+.card-grid   { display:grid; grid-template-columns:1fr 1fr;     gap:18px; margin-bottom:20px; }
+.card-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; margin-bottom:20px; }
+
+/* ============================================  FORMS  */
+.form-group { margin-bottom:16px; }
+label { display:block; font-size:10px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--text-muted); margin-bottom:7px; }
+input[type="text"], textarea, select {
+  width:100%; background:rgba(6,6,24,.85); border:1px solid rgba(255,255,255,.06);
+  border-radius:var(--radius-sm); color:var(--text); font-family:var(--font-body);
+  font-size:14px; padding:11px 14px; outline:none;
+  transition:border-color var(--t), box-shadow var(--t), background var(--t); -webkit-appearance:none;
+}
+input:focus, textarea:focus, select:focus {
+  border-color:var(--cyan);
+  box-shadow:0 0 0 3px rgba(0,234,255,.13), inset 0 1px 3px rgba(0,0,0,.3);
+  background:rgba(0,234,255,.03);
+}
+input::placeholder, textarea::placeholder { color:var(--text-dim); }
+textarea { resize:vertical; min-height:90px; line-height:1.6; }
+select { cursor:pointer; }
+select option { background:#0a0a20; color:var(--text); }
+
+/* ============================================  BUTTONS  */
+.btn {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:10px 22px; border-radius:var(--radius-sm); border:none;
+  font-family:var(--font-body); font-size:13.5px; font-weight:700;
+  cursor:pointer; transition:all var(--t); white-space:nowrap;
+  position:relative; overflow:hidden; letter-spacing:.01em;
+}
+.btn::after { content:''; position:absolute; inset:0; background:rgba(255,255,255,0); transition:background var(--t); }
+.btn:hover::after { background:rgba(255,255,255,.06); }
+
+/* Primary — eye-catching cyan-violet-magenta */
+.btn-primary {
+  background:linear-gradient(135deg, var(--cyan) 0%, #7050ff 55%, var(--violet) 100%);
+  color:#000; box-shadow:var(--shadow-btn);
+}
+.btn-primary:hover { transform:translateY(-2px); box-shadow:var(--shadow-hover); filter:brightness(1.08); }
+.btn-primary:active { transform:translateY(0); filter:none; }
+
+.btn-secondary {
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.09); color:var(--text-muted);
+}
+.btn-secondary:hover { border-color:rgba(0,234,255,.32); background:rgba(0,234,255,.07); color:var(--cyan); }
+.btn-sm   { padding:7px 14px; font-size:12px; gap:5px; }
+.btn-full { width:100%; justify-content:center; }
+.btn:disabled { opacity:.4; cursor:not-allowed; transform:none !important; box-shadow:none !important; filter:none !important; }
+
+/* ============================================  LOADING  */
+.loading { display:none; align-items:center; gap:14px; padding:22px 20px; color:var(--text-muted); font-size:13.5px; animation:fadeIn .2s ease; }
+.loading.show { display:flex; }
+.spinner { width:22px; height:22px; border:2px solid rgba(0,234,255,.15); border-top-color:var(--cyan); border-radius:50%; animation:spin .75s linear infinite; flex-shrink:0; box-shadow:0 0 10px rgba(0,234,255,.3); }
+
+/* ============================================  SECTION  */
+.section-title { font-family:var(--font-display); font-size:clamp(16px,2vw,20px); font-weight:800; letter-spacing:-.03em; }
+.section-desc  { font-size:13px; color:var(--text-muted); margin-top:5px; line-height:1.65; }
+
+/* ============================================  TABS  */
+.tab-group {
+  display:flex; gap:4px; flex-wrap:wrap; margin-bottom:18px;
+  padding:4px; background:rgba(0,0,0,.4); border:1px solid rgba(255,255,255,.05);
+  border-radius:50px; width:fit-content; max-width:100%;
+}
+.tab { padding:6px 16px; border-radius:50px; border:none; background:transparent; color:var(--text-muted); font-family:var(--font-body); font-size:12.5px; font-weight:500; cursor:pointer; transition:all var(--t); white-space:nowrap; }
+.tab:hover { color:var(--text); }
+.tab.active { background:linear-gradient(135deg, var(--cyan), var(--violet)); color:#000; font-weight:700; box-shadow:0 2px 14px rgba(0,234,255,.35); }
+
+/* ============================================  RESULTS  */
+.results-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; margin-top:20px; }
+.result-card {
+  background:rgba(9,9,31,.82); border:1px solid rgba(255,255,255,.05);
+  border-radius:var(--radius); padding:22px; position:relative; overflow:hidden;
+  transition:all var(--t); animation:fadeUp .4s ease both;
+  backdrop-filter:blur(8px);
+}
+.result-card:hover {
+  border-color:rgba(0,234,255,.28); transform:translateY(-4px);
+  box-shadow:0 0 0 1px rgba(0,234,255,.08), 0 18px 50px rgba(0,0,0,.5), 0 0 40px rgba(0,234,255,.04);
+}
+.result-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, var(--cyan), var(--violet), var(--magenta));
+  opacity:0; transition:opacity var(--t);
+}
+.result-card:hover::before { opacity:1; }
+.result-card::after {
+  content:''; position:absolute; top:-30px; right:-30px; width:100px; height:100px; border-radius:50%;
+  background:radial-gradient(circle, rgba(0,234,255,.06), transparent 65%); pointer-events:none;
+}
+.brand-name-text {
+  font-family:var(--font-display); font-size:22px; font-weight:800; letter-spacing:-.03em; margin-bottom:5px;
+  background:linear-gradient(135deg, var(--text) 40%, rgba(0,234,255,.75));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.brand-tagline { font-size:12.5px; color:var(--text-muted); font-style:italic; margin-bottom:10px; line-height:1.5; }
+.brand-meaning { font-size:12.5px; color:var(--text-muted); line-height:1.65; margin-bottom:14px; }
+.brand-style-badge {
+  display:inline-block; font-size:10px; font-weight:700; letter-spacing:.09em; text-transform:uppercase;
+  padding:3px 10px; border-radius:20px;
+  background:rgba(0,234,255,.1); color:var(--cyan); border:1px solid rgba(0,234,255,.2);
+}
+.copy-btn {
+  position:absolute; top:13px; right:13px; width:28px; height:28px;
+  display:grid; place-items:center; border-radius:var(--radius-xs);
+  border:1px solid rgba(255,255,255,.07); background:rgba(0,0,0,.45);
+  color:var(--text-muted); cursor:pointer; font-size:12px; transition:all var(--t); opacity:0;
+}
+.result-card:hover .copy-btn { opacity:1; }
+.copy-btn:hover { border-color:var(--cyan); color:var(--cyan); background:rgba(0,234,255,.08); transform:scale(1.08); box-shadow:0 0 10px rgba(0,234,255,.3); }
+
+/* ============================================  CONTENT OUTPUT  */
+.content-output { background:rgba(9,9,31,.82); border:1px solid rgba(255,255,255,.05); border-radius:var(--radius); padding:22px; margin-top:16px; animation:fadeUp .3s ease; backdrop-filter:blur(8px); }
+.content-output-title { font-size:9.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--text-dim); margin-bottom:14px; }
+.content-item { padding:14px 16px; background:rgba(6,6,24,.75); border:1px solid rgba(255,255,255,.05); border-radius:var(--radius-sm); margin-bottom:10px; line-height:1.7; transition:border-color var(--t); }
+.content-item:hover { border-color:rgba(0,234,255,.18); }
+.content-item-label { font-size:9.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--cyan); margin-bottom:6px; text-shadow:0 0 10px rgba(0,234,255,.4); }
+.content-item-text { color:var(--text); line-height:1.75; white-space:pre-wrap; word-break:break-word; font-size:13.5px; }
+
+/* ============================================  LOGO  */
+.logo-result { margin-top:20px; display:flex; gap:22px; flex-wrap:wrap; }
+.logo-preview { width:270px; height:270px; background:rgba(9,9,31,.8); border:1px solid rgba(255,255,255,.05); border-radius:var(--radius); display:grid; place-items:center; overflow:hidden; flex-shrink:0; transition:border-color var(--t); }
+.logo-preview:hover { border-color:rgba(0,234,255,.22); }
+.logo-preview img { width:100%; height:100%; object-fit:contain; }
+.logo-info { flex:1; min-width:200px; }
+.logo-prompt-text { font-size:12px; color:var(--text-muted); line-height:1.75; word-break:break-word; }
+
+/* ============================================  SENTIMENT  */
+.sentiment-result { margin-top:20px; animation:fadeUp .3s ease; }
+.sentiment-score-bar { height:8px; background:rgba(0,0,0,.5); border-radius:4px; margin:10px 0; overflow:hidden; }
+.sentiment-score-fill { height:100%; border-radius:4px; transition:width 1s cubic-bezier(.4,0,.2,1); position:relative; overflow:hidden; }
+.sentiment-score-fill::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent); animation:shimmer 2s infinite; }
+.emotion-bars { display:flex; flex-direction:column; gap:11px; margin-top:14px; }
+.emotion-row { display:flex; align-items:center; gap:10px; }
+.emotion-name { font-size:12px; color:var(--text-muted); width:65px; flex-shrink:0; text-transform:capitalize; font-weight:500; }
+.emotion-bar-bg { flex:1; height:6px; background:rgba(0,0,0,.5); border-radius:3px; overflow:hidden; }
+.emotion-bar-fill { height:100%; border-radius:3px; transition:width .9s cubic-bezier(.4,0,.2,1); }
+.emotion-val { font-size:11px; color:var(--text-dim); width:34px; text-align:right; flex-shrink:0; }
+.sentiment-badge { display:inline-flex; align-items:center; gap:8px; padding:8px 18px; border-radius:30px; font-size:14px; font-weight:700; font-family:var(--font-display); letter-spacing:-.01em; border:1px solid transparent; }
+.badge-positive { background:rgba(61,255,114,.1); color:var(--lime); border-color:rgba(61,255,114,.2); }
+.badge-negative { background:rgba(255,31,153,.1); color:var(--magenta); border-color:rgba(255,31,153,.2); }
+.badge-neutral  { background:rgba(0,234,255,.1); color:var(--cyan); border-color:rgba(0,234,255,.15); }
+.insight-item { padding:11px 15px; background:rgba(6,6,24,.7); border-left:3px solid var(--cyan); border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin-bottom:9px; font-size:13px; line-height:1.65; color:var(--text-muted); transition:all var(--t); }
+.insight-item:hover { color:var(--text); border-left-color:var(--magenta); background:rgba(0,234,255,.03); }
+
+/* ============================================  CHAT  */
+.chat-container { display:flex; flex-direction:column; flex:1; min-height:0; overflow:hidden; }
+.chat-messages {
+  flex:1; overflow-y:auto; padding:24px 20px; display:flex; flex-direction:column; gap:16px;
+  background:
+    radial-gradient(ellipse 65% 38% at 85% 8%, rgba(0,234,255,.04) 0%,transparent 55%),
+    radial-gradient(ellipse 55% 40% at 15% 92%, rgba(176,64,255,.04) 0%,transparent 55%);
+}
+.chat-msg { display:flex; gap:11px; max-width:80%; animation:fadeUp .25s ease; }
+.chat-msg.user { margin-left:auto; flex-direction:row-reverse; }
+.chat-avatar { width:34px; height:34px; border-radius:50%; display:grid; place-items:center; font-size:13px; flex-shrink:0; align-self:flex-end; }
+.chat-msg.user      .chat-avatar { background:linear-gradient(135deg,var(--magenta),var(--orange)); box-shadow:0 0 18px rgba(255,31,153,.45); }
+.chat-msg.assistant .chat-avatar { background:linear-gradient(135deg,var(--cyan),var(--violet));   box-shadow:0 0 18px rgba(0,234,255,.4); }
+.chat-bubble { padding:12px 16px; border-radius:18px; font-size:13.5px; line-height:1.72; max-width:100%; word-break:break-word; }
+.chat-msg.user .chat-bubble      { background:linear-gradient(135deg,var(--magenta),var(--orange)); color:#fff; border-bottom-right-radius:4px; box-shadow:0 4px 20px rgba(255,31,153,.32); }
+.chat-msg.assistant .chat-bubble { background:rgba(9,9,31,.92); border:1px solid rgba(0,234,255,.12); color:var(--text); border-bottom-left-radius:4px; box-shadow:var(--shadow-sm), inset 0 0 24px rgba(0,234,255,.02); }
+.chat-input-area { padding:14px 20px 20px; border-top:1px solid rgba(255,255,255,.05); background:rgba(3,3,13,.92); display:flex; gap:10px; align-items:flex-end; }
+.chat-input-wrap { flex:1; }
+#chatInput { width:100%; background:rgba(9,9,31,.92); border:1px solid rgba(255,255,255,.07); border-radius:14px; color:var(--text); font-family:var(--font-body); font-size:14px; padding:12px 16px; outline:none; resize:none; min-height:48px; max-height:120px; line-height:1.55; overflow-y:auto; transition:border-color var(--t), box-shadow var(--t); }
+#chatInput:focus { border-color:var(--cyan); box-shadow:0 0 0 3px rgba(0,234,255,.13); }
+.chat-send-btn { width:46px; height:46px; border-radius:14px; border:none; background:linear-gradient(135deg,var(--cyan),var(--violet)); color:#000; display:grid; place-items:center; cursor:pointer; font-size:16px; transition:all var(--t); flex-shrink:0; box-shadow:0 4px 18px rgba(0,234,255,.38); }
+.chat-send-btn:hover { transform:scale(1.08) rotate(12deg); box-shadow:0 6px 28px rgba(0,234,255,.6); }
+.chat-send-btn:active { transform:scale(.95); }
+.chat-send-btn:disabled { opacity:.4; transform:none; cursor:not-allowed; box-shadow:none; }
+.typing-indicator { display:flex; gap:5px; align-items:center; padding:13px 17px; background:rgba(9,9,31,.92); border:1px solid rgba(0,234,255,.12); border-radius:18px; border-bottom-left-radius:4px; width:fit-content; }
+.typing-dot { width:6px; height:6px; background:var(--cyan); border-radius:50%; animation:bounce 1.2s infinite ease-in-out; box-shadow:0 0 6px var(--cyan); }
+.typing-dot:nth-child(2){animation-delay:.2s} .typing-dot:nth-child(3){animation-delay:.4s}
+
+/* ============================================  DASHBOARD  */
+.welcome-banner {
+  border-radius:var(--radius); padding:32px 36px; margin-bottom:22px;
+  position:relative; overflow:hidden; border:1px solid rgba(0,234,255,.14);
+  background:linear-gradient(135deg,
+    rgba(0,234,255,.09) 0%,
+    rgba(176,64,255,.08) 35%,
+    rgba(255,31,153,.07) 70%,
+    rgba(255,104,32,.05) 100%);
+}
+/* Glowing orbs */
+.welcome-banner::before {
+  content:''; position:absolute; right:-70px; top:-70px;
+  width:280px; height:280px; border-radius:50%;
+  background:radial-gradient(circle, rgba(0,234,255,.18), transparent 65%);
+  animation:orbFloat 7s ease-in-out infinite; pointer-events:none;
+}
+.welcome-banner::after {
+  content:'✦'; position:absolute; right:36px; top:50%; transform:translateY(-50%);
+  font-size:90px; opacity:.05; font-family:var(--font-display); pointer-events:none;
+}
+.welcome-title {
+  font-family:var(--font-display); font-size:clamp(21px,3vw,28px); font-weight:800;
+  letter-spacing:-.04em; margin-bottom:8px;
+  background:linear-gradient(135deg, #ffffff 15%, var(--cyan) 50%, var(--magenta) 100%);
+  background-size:200% 200%; animation:gradFlow 4s ease infinite;
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.welcome-desc { font-size:13.5px; color:var(--text-muted); max-width:520px; line-height:1.65; }
+.welcome-actions { display:flex; gap:8px; margin-top:20px; flex-wrap:wrap; }
+.quick-action {
+  display:flex; align-items:center; gap:7px; padding:9px 16px;
+  background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.08);
+  border-radius:var(--radius-sm); font-size:12.5px; color:var(--text-muted);
+  cursor:pointer; transition:all var(--t); font-family:var(--font-body); font-weight:500;
+}
+.quick-action:hover {
+  background:rgba(0,234,255,.08); border-color:rgba(0,234,255,.32); color:var(--cyan);
+  transform:translateY(-2px); box-shadow:0 4px 20px rgba(0,234,255,.16), 0 0 0 1px rgba(0,234,255,.08);
+  text-shadow:0 0 10px rgba(0,234,255,.5);
+}
+.quick-action:active { transform:translateY(0); }
+
+/* Stats */
+.overview-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:22px; }
+.stat-card {
+  background:rgba(9,9,31,.78); border:1px solid rgba(255,255,255,.05);
+  border-radius:var(--radius); padding:22px; transition:all var(--t);
+  cursor:pointer; position:relative; overflow:hidden; backdrop-filter:blur(8px);
+}
+.stat-card::after { content:''; position:absolute; top:0; right:0; width:110px; height:110px; border-radius:50%; background:radial-gradient(circle at 100% 0%, rgba(0,234,255,.06),transparent 60%); pointer-events:none; }
+.stat-card:hover { border-color:rgba(0,234,255,.22); transform:translateY(-4px); box-shadow:0 0 0 1px rgba(0,234,255,.07), 0 14px 44px rgba(0,0,0,.45); }
+/* Vivid colored bottom borders */
+.stat-card:nth-child(1){ border-bottom:2px solid rgba(0,234,255,.5); }
+.stat-card:nth-child(2){ border-bottom:2px solid rgba(255,31,153,.5); }
+.stat-card:nth-child(3){ border-bottom:2px solid rgba(61,255,114,.5); }
+.stat-card:nth-child(4){ border-bottom:2px solid rgba(255,232,74,.5); }
+.stat-card:nth-child(5){ border-bottom:2px solid rgba(176,64,255,.5); }
+.stat-card:nth-child(6){ border-bottom:2px solid rgba(255,104,32,.5); }
+.stat-icon  { font-size:22px; margin-bottom:12px; display:block; }
+.stat-title { font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--text-dim); margin-bottom:4px; }
+.stat-value { font-family:var(--font-display); font-size:27px; font-weight:800; letter-spacing:-.025em; }
+.stat-desc  { font-size:11.5px; color:var(--text-muted); margin-top:4px; line-height:1.4; }
+
+/* ============================================  TOAST  */
+.toast {
+  position:fixed; bottom:24px; right:24px; padding:13px 20px;
+  background:rgba(9,9,31,.97); border:1px solid rgba(255,255,255,.07);
+  border-radius:var(--radius-sm); font-size:13px; color:var(--text);
+  display:flex; align-items:center; gap:10px;
+  z-index:1000; opacity:0; pointer-events:none; max-width:320px;
+  box-shadow:0 8px 40px rgba(0,0,0,.65); backdrop-filter:blur(20px);
+}
+.toast.show { animation:toastIn .3s cubic-bezier(.34,1.56,.64,1) forwards; pointer-events:auto; opacity:1; }
+.toast.hide { animation:toastOut .25s ease forwards; }
+.toast.success { border-color:rgba(61,255,114,.3); box-shadow:0 8px 40px rgba(0,0,0,.65), 0 0 24px rgba(61,255,114,.1); }
+.toast.success::before { content:'✓'; color:var(--lime); font-weight:800; text-shadow:0 0 10px var(--lime); }
+.toast.error   { border-color:rgba(255,31,153,.3); box-shadow:0 8px 40px rgba(0,0,0,.65), 0 0 24px rgba(255,31,153,.1); }
+.toast.error::before   { content:'✕'; color:var(--magenta); font-weight:800; text-shadow:0 0 10px var(--magenta); }
+
+/* ============================================  MISC  */
+.main::-webkit-scrollbar-thumb { background:rgba(0,234,255,.2); }
+.empty-state { text-align:center; padding:64px 20px; color:var(--text-dim); animation:fadeIn .4s ease; }
+.empty-icon { font-size:46px; margin-bottom:14px; opacity:.25; display:block; }
+.empty-text { font-size:14px; color:var(--text-muted); font-weight:600; }
+.empty-sub  { font-size:12.5px; color:var(--text-dim); margin-top:4px; }
+.chip-group { display:flex; flex-wrap:wrap; gap:7px; margin-top:8px; }
+.chip {
+  padding:5px 14px; border-radius:20px; font-size:12px;
+  background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.07);
+  color:var(--text-muted); cursor:pointer; transition:all var(--t); font-weight:500;
+}
+.chip:hover { border-color:rgba(0,234,255,.3); color:var(--cyan); background:rgba(0,234,255,.07); transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,234,255,.1); }
+.chip.selected { background:linear-gradient(135deg,rgba(0,234,255,.15),rgba(176,64,255,.1)); border-color:rgba(0,234,255,.35); color:var(--cyan); font-weight:600; box-shadow:0 0 14px rgba(0,234,255,.15); }
+code { background:rgba(0,234,255,.07); border:1px solid rgba(0,234,255,.15); padding:2px 7px; border-radius:5px; font-size:11.5px; font-family:'SF Mono','Fira Code',monospace; color:var(--cyan); text-shadow:0 0 8px rgba(0,234,255,.3); }
+
+/* ============================================  RESPONSIVE  */
+@media(min-width:1440px){.panel-body{padding:36px}.welcome-title{font-size:32px}}
+@media(max-width:1100px){:root{--sidebar-w:230px}.card-grid-3{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){:root{--sidebar-w:250px}.card-grid{grid-template-columns:1fr}.card-grid-3{grid-template-columns:1fr 1fr}.overview-grid{grid-template-columns:1fr 1fr}.logo-result{flex-direction:column}.logo-preview{width:100%;height:260px}.logo-info{width:100%}.chat-msg{max-width:90%}}
+@media(max-width:768px){.sidebar{transform:translateX(-100%);box-shadow:8px 0 50px rgba(0,0,0,.75)}.sidebar.open{transform:translateX(0)}.hamburger{display:flex}.main{margin-left:0;width:100%}.topbar{padding:0 16px}.page-title{font-size:16px}.page-subtitle,.tag{display:none}.panel-body{padding:14px}.card{padding:16px}.card-grid,.card-grid-3{grid-template-columns:1fr}.overview-grid{grid-template-columns:1fr 1fr}.welcome-banner{padding:18px 20px}.welcome-banner::after{display:none}.results-grid{grid-template-columns:1fr}.logo-result{flex-direction:column}.logo-preview{width:100%;height:220px}.chat-messages{padding:14px}.chat-msg{max-width:92%}.chat-input-area{padding:10px 12px 16px}.tab-group{width:100%}.tab{padding:6px 12px;font-size:12px}.btn{padding:9px 16px;font-size:13px}.toast{bottom:16px;right:16px;max-width:calc(100vw - 32px)}}
+@media(max-width:480px){.overview-grid{grid-template-columns:1fr 1fr}.panel-body{padding:10px}.card{padding:14px}.results-grid{grid-template-columns:1fr}}
+@media(max-width:360px){.overview-grid{grid-template-columns:1fr}.page-title{font-size:14px}.welcome-actions{flex-direction:column}.quick-action{width:100%;justify-content:center}}
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="logo">
+    <div class="logo-icon">✦</div>
+    <div>
+      <div class="logo-text">BrandCraft</div>
+      <div class="logo-sub">AI Branding System</div>
+    </div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Overview</div>
+    <button class="nav-btn active" onclick="showPanel('dashboard')"><span class="nav-icon">⬡</span> Dashboard</button>
+    <div class="nav-label">Tools</div>
+    <button class="nav-btn" onclick="showPanel('names')"><span class="nav-icon">✎</span> Brand Name Generator</button>
+    <button class="nav-btn" onclick="showPanel('logo')"><span class="nav-icon">◈</span> Logo Generator</button>
+    <button class="nav-btn" onclick="showPanel('content')"><span class="nav-icon">❋</span> Content Automation</button>
+    <button class="nav-btn" onclick="showPanel('sentiment')"><span class="nav-icon">◎</span> Sentiment Analysis</button>
+    <button class="nav-btn" onclick="showPanel('assistant')"><span class="nav-icon">◬</span> Brand Assistant</button>
+  </div>
+  <div class="sidebar-footer">
+    <div class="api-status"><div class="status-dot"></div>API Connected</div>
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- DASHBOARD -->
+  <div class="panel active" id="panel-dashboard">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="openSidebar()">☰</button>
+        <div><div class="page-title">Welcome to BrandCraft</div><div class="page-subtitle">Your AI-powered branding workspace</div></div>
+      </div>
+      <span class="tag tag-purple">✦ Generative AI</span>
+    </div>
+    <div class="panel-body">
+      <div class="welcome-banner">
+        <div class="welcome-title">Build brands that matter ✦</div>
+        <div class="welcome-desc">From brand name to complete identity — generate, automate, and refine your brand with AI, Stable Diffusion, and IBM Watson.</div>
+        <div class="welcome-actions">
+          <button class="quick-action" onclick="showPanel('names')">✎ Generate Names</button>
+          <button class="quick-action" onclick="showPanel('logo')">◈ Create Logo</button>
+          <button class="quick-action" onclick="showPanel('content')">❋ Write Content</button>
+          <button class="quick-action" onclick="showPanel('assistant')">◬ Chat Assistant</button>
+        </div>
+      </div>
+      <div class="overview-grid">
+        <div class="stat-card" onclick="showPanel('names')">
+          <span class="stat-icon">✎</span>
+          <div class="stat-title">Brand Names</div>
+          <div class="stat-value" style="color:var(--cyan);text-shadow:0 0 20px rgba(0,234,255,.55)">AI</div>
+          <div class="stat-desc">Powered by OpenRouter</div>
+        </div>
+        <div class="stat-card" onclick="showPanel('logo')">
+          <span class="stat-icon">◈</span>
+          <div class="stat-title">Logo Generation</div>
+          <div class="stat-value" style="color:var(--magenta);text-shadow:0 0 20px rgba(255,31,153,.55)">SD</div>
+          <div class="stat-desc">Stable Diffusion XL</div>
+        </div>
+        <div class="stat-card" onclick="showPanel('content')">
+          <span class="stat-icon">❋</span>
+          <div class="stat-title">Content Types</div>
+          <div class="stat-value" style="color:var(--lime);text-shadow:0 0 20px rgba(61,255,114,.55)">5</div>
+          <div class="stat-desc">Taglines, Bios, Ads, Emails, Social</div>
+        </div>
+        <div class="stat-card" onclick="showPanel('sentiment')">
+          <span class="stat-icon">◎</span>
+          <div class="stat-title">Sentiment</div>
+          <div class="stat-value" style="color:var(--yellow);text-shadow:0 0 20px rgba(255,232,74,.55)">IBM</div>
+          <div class="stat-desc">Watson NLU</div>
+        </div>
+        <div class="stat-card" onclick="showPanel('assistant')">
+          <span class="stat-icon">◬</span>
+          <div class="stat-title">Brand Assistant</div>
+          <div class="stat-value" style="background:linear-gradient(135deg,var(--cyan),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">AI</div>
+          <div class="stat-desc">Conversational consultant</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">⬡</span>
+          <div class="stat-title">Tech Stack</div>
+          <div class="stat-value" style="font-size:14px;color:var(--orange);-webkit-text-fill-color:var(--orange);text-shadow:0 0 16px rgba(255,104,32,.55)">FastAPI</div>
+          <div class="stat-desc">+ OpenRouter · HuggingFace · IBM</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="content-output-title">How to get started</div>
+        <div class="card-grid">
+          <div class="insight-item">1. Add API keys to your <code>.env</code> file</div>
+          <div class="insight-item">2. Run <code>uvicorn main:app --reload</code></div>
+          <div class="insight-item">3. Open <strong>Brand Name Generator</strong> to start</div>
+          <div class="insight-item">4. Use <strong>Brand Assistant</strong> for guided strategy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BRAND NAMES -->
+  <div class="panel" id="panel-names">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="openSidebar()">☰</button>
+        <div><div class="page-title">Brand Name Generator</div><div class="page-subtitle">AI-powered brand naming</div></div>
+      </div>
+      <span class="tag tag-purple">✦ AI</span>
+    </div>
+    <div class="panel-body">
+      <div class="card-grid">
+        <div class="card">
+          <div class="section-title" style="margin-bottom:18px">Your Brand Brief</div>
+          <div class="form-group"><label>Business Niche / Industry *</label><input type="text" id="nameNiche" placeholder="e.g. sustainable fashion, AI productivity tools" /></div>
+          <div class="form-group">
+            <label>Brand Tone</label>
+            <div class="chip-group" id="toneChips">
+              <span class="chip selected" data-val="professional">Professional</span>
+              <span class="chip" data-val="playful">Playful</span>
+              <span class="chip" data-val="bold">Bold</span>
+              <span class="chip" data-val="minimalist">Minimalist</span>
+              <span class="chip" data-val="luxurious">Luxurious</span>
+              <span class="chip" data-val="friendly">Friendly</span>
+              <span class="chip" data-val="innovative">Innovative</span>
+              <span class="chip" data-val="trustworthy">Trustworthy</span>
+            </div>
+          </div>
+          <div class="form-group"><label>Target Audience</label><input type="text" id="nameAudience" placeholder="e.g. millennials, B2B companies, health-conscious families" /></div>
+          <button class="btn btn-primary btn-full" onclick="generateNames()" id="namingBtn"><span>✦</span> Generate Names</button>
+        </div>
+        <div class="card">
+          <div style="font-size:9.5px;color:var(--text-dim);margin-bottom:14px;font-weight:700;letter-spacing:.12em;text-transform:uppercase">Pro Tips</div>
+          <div class="insight-item">Be specific — "sustainable footwear for athletes" works better than "shoes"</div>
+          <div class="insight-item">Your audience tunes the naming style — B2B vs casual D2C</div>
+          <div class="insight-item">Try different tone combos to explore name styles</div>
+          <div class="insight-item">Always check trademark availability before using a name</div>
+        </div>
+      </div>
+      <div class="loading" id="namesLoading"><div class="spinner"></div><span>Crafting brand names with AI...</span></div>
+      <div id="namesResults"></div>
+    </div>
+  </div>
+
+  <!-- LOGO -->
+  <div class="panel" id="panel-logo">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="openSidebar()">☰</button>
+        <div><div class="page-title">Logo Generator</div><div class="page-subtitle">Stable Diffusion via HuggingFace</div></div>
+      </div>
+      <span class="tag tag-pink">◈ SD XL</span>
+    </div>
+    <div class="panel-body">
+      <div class="card" style="margin-bottom:20px">
+        <div class="section-title" style="margin-bottom:18px">Logo Configuration</div>
+        <div class="card-grid">
+          <div>
+            <div class="form-group"><label>Brand Name *</label><input type="text" id="logoBrandName" placeholder="e.g. Zenith, Nexus, Bloom" /></div>
+            <div class="form-group"><label>Industry</label><input type="text" id="logoIndustry" placeholder="e.g. technology, wellness" /></div>
+          </div>
+          <div>
+            <div class="form-group"><label>Logo Style</label>
+              <select id="logoStyle">
+                <option value="minimalist">Minimalist — Clean, simple</option>
+                <option value="modern" selected>Modern — Bold, professional</option>
+                <option value="playful">Playful — Colorful, fun</option>
+                <option value="luxury">Luxury — Elegant, premium</option>
+                <option value="tech">Tech — Futuristic, gradient</option>
+                <option value="organic">Organic — Natural, earthy</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Color Direction</label>
+              <select id="logoColor">
+                <option value="deep blue and white">Deep blue & white</option>
+                <option value="black and gold">Black & gold</option>
+                <option value="vibrant purple and pink gradient">Purple & pink</option>
+                <option value="forest green and cream">Forest green & cream</option>
+                <option value="coral and warm white">Coral & warm white</option>
+                <option value="midnight black and electric blue">Midnight & electric blue</option>
+                <option value="terracotta and beige">Terracotta & beige</option>
+                <option value="monochrome">Monochrome</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="generateLogo()" id="logoBtn">◈ Generate Logo</button>
+          <span style="font-size:11.5px;color:var(--text-dim)">⏱ 20–60 seconds · Requires HF_TOKEN</span>
+        </div>
+      </div>
+      <div class="loading" id="logoLoading"><div class="spinner"></div><span>Generating with Stable Diffusion...</span></div>
+      <div class="logo-result" id="logoResult" style="display:none">
+        <div class="logo-preview"><img id="logoImg" src="" alt="Generated logo" /></div>
+        <div class="logo-info">
+          <div class="card" style="margin-bottom:14px">
+            <div class="content-output-title">Generated Logo</div>
+            <div style="font-size:19px;font-family:var(--font-display);font-weight:800;margin-bottom:4px;letter-spacing:-.02em" id="logoResultName"></div>
+            <div style="font-size:11.5px;color:var(--text-muted)" id="logoResultStyle"></div>
+          </div>
+          <div class="card"><div class="content-output-title">Prompt Used</div><div class="logo-prompt-text" id="logoPromptText"></div></div>
+          <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-primary btn-sm" onclick="downloadLogo()">↓ Download</button>
+            <button class="btn btn-secondary btn-sm" onclick="generateLogo()">↺ Regenerate</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="panel" id="panel-content">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="openSidebar()">☰</button>
+        <div><div class="page-title">Content Automation</div><div class="page-subtitle">Taglines, bios, ads, emails & social</div></div>
+      </div>
+      <span class="tag tag-green">❋ AI</span>
+    </div>
+    <div class="panel-body">
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-grid">
+          <div>
+            <div class="form-group"><label>Brand Name *</label><input type="text" id="contentBrand" placeholder="e.g. Zenith" /></div>
+            <div class="form-group"><label>Niche / Industry *</label><input type="text" id="contentNiche" placeholder="e.g. AI productivity tools" /></div>
+          </div>
+          <div>
+            <div class="form-group"><label>Brand Tone</label>
+              <select id="contentTone">
+                <option value="professional">Professional</option>
+                <option value="playful and fun">Playful & Fun</option>
+                <option value="bold and energetic">Bold & Energetic</option>
+                <option value="warm and friendly">Warm & Friendly</option>
+                <option value="luxurious and refined">Luxurious & Refined</option>
+                <option value="minimalist and clean">Minimalist & Clean</option>
+                <option value="innovative and forward-thinking">Innovative</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="tab-group" id="contentTabs">
+          <button class="tab active" data-type="tagline" onclick="selectContentType('tagline',this)">Taglines</button>
+          <button class="tab" data-type="bio" onclick="selectContentType('bio',this)">Brand Bio</button>
+          <button class="tab" data-type="ad_copy" onclick="selectContentType('ad_copy',this)">Ad Copy</button>
+          <button class="tab" data-type="email" onclick="selectContentType('email',this)">Email</button>
+          <button class="tab" data-type="social" onclick="selectContentType('social',this)">Social</button>
+        </div>
+        <button class="btn btn-primary" onclick="generateContent()" id="contentBtn">❋ Generate Content</button>
+      </div>
+      <div class="loading" id="contentLoading"><div class="spinner"></div><span>Writing brand content with AI...</span></div>
+      <div id="contentResults"></div>
+    </div>
+  </div>
+
+  <!-- SENTIMENT -->
+  <div class="panel" id="panel-sentiment">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="openSidebar()">☰</button>
+        <div><div class="page-title">Sentiment Analysis</div><div class="page-subtitle">IBM Watson NLU</div></div>
+      </div>
+      <span class="tag tag-purple">◎ IBM Watson</span>
+    </div>
+    <div class="panel-body">
+      <div class="card-grid" style="margin-bottom:20px">
+        <div class="card">
+          <div class="form-group"><label>Brand Text to Analyze</label><textarea id="sentimentText" placeholder="Paste your brand description, mission statement, tagline..." style="min-height:130px"></textarea></div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="analyzeSentiment()" id="sentimentBtn">◎ Analyze</button>
+            <button class="btn btn-secondary btn-sm" onclick="loadSampleText()">Load Sample</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="content-output-title">What this analyzes</div>
+          <div class="insight-item">😊 Overall sentiment (positive / neutral / negative)</div>
+          <div class="insight-item">❤️ Emotional tone (joy, trust, fear, sadness, anger)</div>
+          <div class="insight-item">🔑 Key power words in your text</div>
+          <div class="insight-item">💡 Actionable branding insights</div>
+        </div>
+      </div>
+      <div class="loading" id="sentimentLoading"><div class="spinner"></div><span>Analyzing with IBM Watson...</span></div>
+      <div id="sentimentResults"></div>
+    </div>
+  </div>
+
+  <!-- ASSISTANT -->
+  <div class="panel" id="panel-assistant">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="openSidebar()">☰</button>
+        <div><div class="page-title">Brand Assistant</div><div class="page-subtitle">Your AI branding consultant</div></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="tag tag-purple">◬ AI</span>
+        <button class="btn btn-secondary btn-sm" onclick="clearChat()">Clear</button>
+      </div>
+    </div>
+    <div class="chat-container">
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-msg assistant">
+          <div class="chat-avatar">✦</div>
+          <div class="chat-bubble">Hello! I'm your BrandCraft AI consultant. I'm here to help you build a powerful, memorable brand from the ground up.<br><br>To get started, tell me: <strong>What kind of business or brand are you building?</strong> ✦</div>
+        </div>
+      </div>
+      <div class="chat-input-area">
+        <div class="chat-input-wrap"><textarea id="chatInput" placeholder="Ask me about brand naming, positioning, tone of voice..." rows="1" onkeydown="handleChatKey(event)" oninput="autoResize(this)"></textarea></div>
+        <button class="chat-send-btn" onclick="sendChat()" id="chatSendBtn">➤</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+let chatHistory=[],currentContentType='tagline',selectedTone='professional',currentLogoBase64=null,toastTimer=null;
+
+function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
+function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
+
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  const map={dashboard:'dashboard',names:'brand name',logo:'logo',content:'content',sentiment:'sentiment',assistant:'assistant'};
+  document.querySelectorAll('.nav-btn').forEach(b=>{if(b.textContent.trim().toLowerCase().includes(map[name]||name))b.classList.add('active');});
+  closeSidebar(); document.querySelector('.main').scrollTop=0;
+}
+
+document.querySelectorAll('#toneChips .chip').forEach(chip=>{
+  chip.addEventListener('click',()=>{document.querySelectorAll('#toneChips .chip').forEach(c=>c.classList.remove('selected'));chip.classList.add('selected');selectedTone=chip.dataset.val;});
+});
+
+function selectContentType(type,btn){currentContentType=type;document.querySelectorAll('#contentTabs .tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');}
+
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast');
+  if(toastTimer)clearTimeout(toastTimer);
+  t.textContent=msg; t.className='toast '+type+' show';
+  toastTimer=setTimeout(()=>{t.classList.remove('show');t.classList.add('hide');setTimeout(()=>t.classList.remove('hide'),300);},3000);
+}
+function copyText(text){navigator.clipboard.writeText(text).then(()=>showToast('Copied to clipboard'));}
+
+async function apiCall(endpoint,data){
+  const res=await fetch('/api'+endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+  if(!res.ok){const err=await res.json().catch(()=>({detail:'Unknown error'}));throw new Error(err.detail||'API error');}
+  return res.json();
+}
+
+async function generateNames(){
+  const niche=document.getElementById('nameNiche').value.trim();
+  if(!niche){showToast('Please enter a niche/industry','error');return;}
+  const btn=document.getElementById('namingBtn'),loading=document.getElementById('namesLoading'),results=document.getElementById('namesResults');
+  btn.disabled=true;loading.classList.add('show');results.innerHTML='';
+  try{const data=await apiCall('/brand-name',{niche,tone:selectedTone,audience:document.getElementById('nameAudience').value.trim()||'general consumers'});loading.classList.remove('show');renderNames(data.names||[]);}
+  catch(e){loading.classList.remove('show');showToast('Error: '+e.message,'error');results.innerHTML=`<div class="content-output"><div style="color:var(--magenta)">⚠ ${e.message}</div></div>`;}
+  btn.disabled=false;
+}
+
+function renderNames(names){
+  const container=document.getElementById('namesResults');
+  if(!names.length){container.innerHTML=`<div class="empty-state"><span class="empty-icon">✎</span><div class="empty-text">No names generated</div><div class="empty-sub">Try adjusting your niche or tone</div></div>`;return;}
+  const grid=document.createElement('div');grid.className='results-grid';
+  names.forEach((n,i)=>{const card=document.createElement('div');card.className='result-card';card.style.animationDelay=(i*.07)+'s';card.innerHTML=`<button class="copy-btn" onclick="copyText('${escAttr(n.name)}')">⎘</button><div class="brand-name-text">${escHtml(n.name)}</div><div class="brand-tagline">"${escHtml(n.tagline||'')}"</div><div class="brand-meaning">${escHtml(n.meaning||'')}</div><span class="brand-style-badge">${escHtml(n.style||'')}</span>`;grid.appendChild(card);});
+  container.appendChild(grid);
+}
+
+async function generateLogo(){
+  const brandName=document.getElementById('logoBrandName').value.trim();
+  if(!brandName){showToast('Please enter a brand name','error');return;}
+  const btn=document.getElementById('logoBtn'),loading=document.getElementById('logoLoading'),resultDiv=document.getElementById('logoResult');
+  btn.disabled=true;loading.classList.add('show');resultDiv.style.display='none';
+  try{const data=await apiCall('/logo',{brand_name:brandName,style:document.getElementById('logoStyle').value,primary_color:document.getElementById('logoColor').value,industry:document.getElementById('logoIndustry').value||'general'});loading.classList.remove('show');if(data.success){currentLogoBase64=data.image_base64;document.getElementById('logoImg').src='data:image/png;base64,'+data.image_base64;document.getElementById('logoResultName').textContent=brandName;document.getElementById('logoResultStyle').textContent='Style: '+document.getElementById('logoStyle').value;document.getElementById('logoPromptText').textContent=data.prompt_used||'';resultDiv.style.display='flex';showToast('Logo generated successfully');}else showToast('Logo generation failed: '+(data.error||'Unknown error'),'error');}
+  catch(e){loading.classList.remove('show');showToast('Error: '+e.message,'error');}
+  btn.disabled=false;
+}
+
+function downloadLogo(){if(!currentLogoBase64)return;const a=document.createElement('a');a.href='data:image/png;base64,'+currentLogoBase64;a.download=(document.getElementById('logoBrandName').value||'logo')+'_logo.png';a.click();showToast('Logo downloaded');}
+
+async function generateContent(){
+  const brand=document.getElementById('contentBrand').value.trim(),niche=document.getElementById('contentNiche').value.trim();
+  if(!brand||!niche){showToast('Please fill in brand name and niche','error');return;}
+  const btn=document.getElementById('contentBtn'),loading=document.getElementById('contentLoading'),results=document.getElementById('contentResults');
+  btn.disabled=true;loading.classList.add('show');results.innerHTML='';
+  try{const data=await apiCall('/content',{brand_name:brand,niche,tone:document.getElementById('contentTone').value,content_type:currentContentType});loading.classList.remove('show');renderContent(data.content_type,data.data);}
+  catch(e){loading.classList.remove('show');showToast('Error: '+e.message,'error');results.innerHTML=`<div class="content-output"><div style="color:var(--magenta)">⚠ ${e.message}</div></div>`;}
+  btn.disabled=false;
+}
+
+function renderContent(type,data){
+  const container=document.getElementById('contentResults');
+  let html='<div class="content-output">';
+  try{
+    if(type==='tagline'&&data.taglines){html+=`<div class="content-output-title">Generated Taglines</div>`;data.taglines.forEach(t=>{html+=`<div class="content-item"><div class="content-item-label">${escHtml(t.use_case||'')}</div><div class="content-item-text">${escHtml(t.text||t)}</div><button style="margin-top:9px" class="btn btn-secondary btn-sm" onclick="copyText('${escAttr(t.text||t)}')">⎘ Copy</button></div>`;});}
+    else if(type==='bio'&&data.bios){['short','medium','long'].forEach(len=>{if(data.bios[len])html+=`<div class="content-item"><div class="content-item-label">${len.charAt(0).toUpperCase()+len.slice(1)} Bio</div><div class="content-item-text">${escHtml(data.bios[len])}</div><button style="margin-top:9px" class="btn btn-secondary btn-sm" onclick="copyText('${escAttr(data.bios[len])}')">⎘ Copy</button></div>`;});}
+    else if(type==='ad_copy'&&data.ads){data.ads.forEach(ad=>{html+=`<div class="content-item"><div class="content-item-label">${escHtml(ad.platform||'Ad')}</div><div class="content-item-text"><strong>${escHtml(ad.headline||'')}</strong><br>${escHtml(ad.body||'')}<br><em style="color:var(--lime)">${escHtml(ad.cta||'')}</em></div><button style="margin-top:9px" class="btn btn-secondary btn-sm" onclick="copyText('${escAttr((ad.headline||'')+'\n'+(ad.body||'')+'\n'+(ad.cta||''))}')">⎘ Copy</button></div>`;});}
+    else if(type==='email'&&data.subject){html+=`<div class="content-item"><div class="content-item-label">Subject</div><div class="content-item-text">${escHtml(data.subject)}</div></div><div class="content-item"><div class="content-item-label">Preview</div><div class="content-item-text">${escHtml(data.preview||'')}</div></div><div class="content-item"><div class="content-item-label">Body</div><div class="content-item-text">${escHtml(data.body||'')}</div><button style="margin-top:9px" class="btn btn-secondary btn-sm" onclick="copyText('${escAttr(data.body||'')}')">⎘ Copy</button></div>`;}
+    else if(type==='social'&&data.posts){data.posts.forEach(p=>{const tags=(p.hashtags||[]).map(t=>escHtml(t)).join(' ');html+=`<div class="content-item"><div class="content-item-label">${escHtml(p.platform||'Post')}</div><div class="content-item-text">${escHtml(p.content||'')}</div><div style="margin-top:9px;color:var(--cyan);font-size:12px">${tags}</div><button style="margin-top:9px" class="btn btn-secondary btn-sm" onclick="copyText('${escAttr((p.content||'')+'\n'+(p.hashtags||[]).join(' '))}')">⎘ Copy</button></div>`;});}
+    else{html+=`<div class="content-item"><div class="content-item-text">${escHtml(JSON.stringify(data,null,2))}</div></div>`;}
+  }catch(e){html+=`<div class="content-item"><div class="content-item-text">${escHtml(JSON.stringify(data,null,2))}</div></div>`;}
+  html+='</div>';container.innerHTML=html;
+}
+
+async function analyzeSentiment(){
+  const text=document.getElementById('sentimentText').value.trim();
+  if(!text||text.length<10){showToast('Please enter at least 10 characters','error');return;}
+  const btn=document.getElementById('sentimentBtn'),loading=document.getElementById('sentimentLoading'),results=document.getElementById('sentimentResults');
+  btn.disabled=true;loading.classList.add('show');results.innerHTML='';
+  try{const data=await apiCall('/sentiment',{text});loading.classList.remove('show');renderSentiment(data);}
+  catch(e){loading.classList.remove('show');showToast('Error: '+e.message,'error');}
+  btn.disabled=false;
+}
+
+function loadSampleText(){document.getElementById('sentimentText').value="We believe everyone deserves access to beautiful, sustainable products that don't compromise on quality. Our mission is to make eco-friendly living simple, joyful, and accessible for modern families who care about their impact on the planet.";}
+
+function renderSentiment(data){
+  const container=document.getElementById('sentimentResults');
+  const s=data.sentiment||{},emotions=data.emotions||{},label=s.label||'neutral',score=Math.abs(s.score||0);
+  const emotionColors={joy:'#ffe84a',sadness:'#00eaff',anger:'#ff1f99',fear:'#b040ff',disgust:'#3dff72'};
+  let emotionBarsHtml='';
+  Object.entries(emotions).forEach(([emo,val])=>{const pct=Math.round(val*100),col=emotionColors[emo]||'var(--cyan)';emotionBarsHtml+=`<div class="emotion-row"><div class="emotion-name">${emo}</div><div class="emotion-bar-bg"><div class="emotion-bar-fill" style="width:${pct}%;background:${col};box-shadow:0 0 8px ${col}66"></div></div><div class="emotion-val">${pct}%</div></div>`;});
+  const badgeClass=label==='positive'?'badge-positive':label==='negative'?'badge-negative':'badge-neutral';
+  const badgeEmoji=label==='positive'?'😊':label==='negative'?'😟':'😐';
+  const insightsHtml=(data.brand_insights||[]).map(i=>`<div class="insight-item">${escHtml(i)}</div>`).join('');
+  const keywordsHtml=(data.keywords||[]).map(k=>`<span class="chip">${escHtml(k)}</span>`).join('');
+  const barColor=label==='positive'?'var(--lime)':label==='negative'?'var(--magenta)':'var(--cyan)';
+  container.innerHTML=`<div class="sentiment-result"><div class="card-grid"><div class="card"><div class="content-output-title">Sentiment Score</div><div class="sentiment-badge ${badgeClass}">${badgeEmoji} ${label.charAt(0).toUpperCase()+label.slice(1)}</div><div class="sentiment-score-bar" style="margin-top:14px"><div class="sentiment-score-fill" style="width:${Math.round(score*100)}%;background:${barColor};box-shadow:0 0 14px ${barColor}"></div></div><div style="font-size:12px;color:var(--text-muted);margin-top:5px">Confidence: ${Math.round(score*100)}%</div><div class="content-output-title" style="margin-top:18px">Dominant Emotion</div><div style="font-size:19px;font-family:var(--font-display);font-weight:800;color:var(--cyan);letter-spacing:-.02em;text-shadow:0 0 18px rgba(0,234,255,.55)">${(data.dominant_emotion||'neutral').charAt(0).toUpperCase()+(data.dominant_emotion||'neutral').slice(1)}</div>${keywordsHtml?`<div class="content-output-title" style="margin-top:14px">Key Words</div><div class="chip-group">${keywordsHtml}</div>`:''}${data.fallback?'<div style="margin-top:10px;font-size:11px;color:var(--text-dim)">ℹ Using fallback analysis.</div>':''}</div><div class="card"><div class="content-output-title">Emotion Breakdown</div><div class="emotion-bars">${emotionBarsHtml}</div></div></div><div class="card" style="margin-top:0"><div class="content-output-title">Brand Insights</div>${insightsHtml||'<div class="insight-item">No specific insights available</div>'}</div></div>`;
+}
+
+async function sendChat(){
+  const input=document.getElementById('chatInput');
+  const msg=input.value.trim();if(!msg)return;
+  input.value='';autoResize(input);
+  addChatMsg('user',msg);chatHistory.push({role:'user',content:msg});
+  const sendBtn=document.getElementById('chatSendBtn');sendBtn.disabled=true;showTyping();
+  try{const data=await apiCall('/assistant',{messages:chatHistory.slice(-10),message:msg});hideTyping();const reply=data.response||"Sorry, I couldn't generate a response.";addChatMsg('assistant',reply);chatHistory.push({role:'assistant',content:reply});}
+  catch(e){hideTyping();addChatMsg('assistant','⚠ Error: '+e.message);}
+  sendBtn.disabled=false;
+}
+
+function addChatMsg(role,content){const messages=document.getElementById('chatMessages');const div=document.createElement('div');div.className='chat-msg '+role;div.innerHTML=`<div class="chat-avatar">${role==='user'?'◉':'✦'}</div><div class="chat-bubble">${escHtml(content).replace(/\n/g,'<br>')}</div>`;messages.appendChild(div);messages.scrollTo({top:messages.scrollHeight,behavior:'smooth'});}
+function showTyping(){const messages=document.getElementById('chatMessages');const div=document.createElement('div');div.className='chat-msg assistant';div.id='typingIndicator';div.innerHTML=`<div class="chat-avatar">✦</div><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;messages.appendChild(div);messages.scrollTo({top:messages.scrollHeight,behavior:'smooth'});}
+function hideTyping(){const el=document.getElementById('typingIndicator');if(el)el.remove();}
+function clearChat(){chatHistory=[];document.getElementById('chatMessages').innerHTML=`<div class="chat-msg assistant"><div class="chat-avatar">✦</div><div class="chat-bubble">Chat cleared. Ready to help you build your brand. What are you working on? ✦</div></div>`;showToast('Chat cleared');}
+function handleChatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}}
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
+function escHtml(str){if(!str)return'';return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function escAttr(str){if(!str)return'';return String(str).replace(/'/g,"\\'").replace(/\n/g,'\\n');}
+
+window.addEventListener('resize',()=>{if(window.innerWidth>768)closeSidebar();});
+</script>
+</body>
+</html>
