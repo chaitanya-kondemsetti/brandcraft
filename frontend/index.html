@@ -882,9 +882,110 @@ textarea{resize:vertical;min-height:100px;line-height:1.65}
 /* Intersection Observer reveal */
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .6s cubic-bezier(.4,0,.2,1), transform .6s cubic-bezier(.4,0,.2,1)}
 .reveal.visible{opacity:1;transform:translateY(0)}
+.announcement-bar {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    z-index: 50;
+    background: linear-gradient(90deg, #0a1628 0%, #0d1f1a 50%, #0a1628 100%);
+    border-top: 1px solid rgba(0, 224, 188, 0.12);
+    border-bottom: 1px solid rgba(0, 224, 188, 0.12);
+}
+
+.announcement-bar::before,
+.announcement-bar::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 80px;
+    z-index: 2;
+    pointer-events: none;
+}
+.announcement-bar::before {
+    left: 0;
+    background: linear-gradient(90deg, #0a1628, transparent);
+}
+.announcement-bar::after {
+    right: 0;
+    background: linear-gradient(270deg, #0a1628, transparent);
+}
+
+.glow-line-top {
+    position: absolute;
+    left: 0; right: 0;
+    top: 0;
+    height: 1px;
+    z-index: 3;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(0,224,188,0.6), rgba(255,183,0,0.4), transparent);
+    animation: glowSweep 4s ease-in-out infinite;
+}
+.glow-line-bottom {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 0;
+    height: 1px;
+    z-index: 3;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(0,224,188,0.3), transparent);
+}
+
+@keyframes glowSweep {
+    0%   { opacity: 0.4; }
+    50%  { opacity: 1; }
+    100% { opacity: 0.4; }
+}
+
+.announcement-track {
+    display: flex;
+    flex-wrap: nowrap;    
+    width: max-content;
+    animation: seamlessScroll 20s linear infinite;
+    padding: 10px 0;
+}
+.announcement-track:hover {
+    animation-play-state: paused;
+}
+
+.announcement-text {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: rgba(170, 220, 210, 0.85);
+    flex-shrink: 0;        /* ADD THIS */
+    min-width: 100vw;      /* ADD THIS — ensures no gap */
+}
+
+.ann-dot {
+    color: var(--accent);
+    font-size: 13px;
+    animation: dotPulse 2.5s ease-in-out infinite;
+}
+@keyframes dotPulse {
+    0%, 100% { filter: drop-shadow(0 0 4px rgba(0,224,188,0.6)); }
+    50%       { filter: drop-shadow(0 0 10px rgba(0,224,188,1)); }
+}
+
+.ann-sep {
+    color: rgba(0, 224, 188, 0.25);
+    font-weight: 300;
+}
+
+@keyframes seamlessScroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
 </style>
 </head>
 <body>
+  <div class="announcement-bar">
+  <div class="announcement-text">
+     From Idea to Identity - Instantly with BrandCraft
+  </div>
+</div>
 
 <!-- Background orbs for depth -->
 <div class="orb orb-1"></div>
@@ -903,7 +1004,28 @@ textarea{resize:vertical;min-height:100px;line-height:1.65}
 </header>
 
 <div class="app">
-
+  <div class="announcement-bar">
+  <div class="glow-line-top"></div>
+  <div class="glow-line-bottom"></div>
+  <div class="announcement-track">
+    <div class="announcement-text">
+      <span class="ann-dot">✦</span> From Idea to Identity — Instantly with BrandCraft!
+      &nbsp;&nbsp;&nbsp;
+      <span class="ann-sep">|</span>
+      &nbsp;&nbsp;&nbsp;
+      <span class="ann-dot">◈</span> Translate your Ideas into Powerful Brands with AI
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    </div>
+    <div class="announcement-text" aria-hidden="true">
+      <span class="ann-dot">✦</span> From Idea to Identity — Instantly with BrandCraft!
+      &nbsp;&nbsp;&nbsp;
+      <span class="ann-sep">|</span>
+      &nbsp;&nbsp;&nbsp;
+      <span class="ann-dot">◈</span> Translate your Ideas into Powerful Brands with AI
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    </div>
+  </div>
+</div>
   <!-- HOME -->
   <div class="view active" id="view-home">
     <div class="content-wrap">
