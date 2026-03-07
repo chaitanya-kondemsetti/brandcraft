@@ -1,15 +1,15 @@
 services:
   - type: web
-    name: coderefine-ai
+    name: brandcraft
     runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: OPENROUTER_API_KEY
-        sync: false          # Set this manually in Render dashboard
-      - key: OPENROUTER_MODEL
-        value: arcee-ai/trinity-large-preview:free
-      - key: OPENROUTER_BASE_URL
-        value: https://openrouter.ai/api/v1/chat/completions
-      - key: DEBUG
-        value: false
+        sync: false
+      - key: HF_TOKEN
+        sync: false
+      - key: IBM_API_KEY
+        sync: false
+      - key: IBM_URL
+        sync: false

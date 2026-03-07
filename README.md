@@ -1,142 +1,120 @@
-# ⚡ CodeRefine AI
-### Generative AI-Powered Code Review & Optimization Engine
+# ✦ BrandCraft — Generative AI-Powered Branding Automation System
 
-> **Problem Statement:** CodeRefine : Generative AI-Powered Code Review & Optimization Engine  
-> **Technologies:** FastAPI · JavaScript · OpenRouter LLM · Uvicorn
+A full-stack AI branding platform that automates brand name generation, logo creation, content writing, sentiment analysis, and brand consulting — powered by Gemini, Stable Diffusion, and IBM Watson.
 
 ---
 
-## 🏗️ Project Structure
+## 🚀 Quick Start (5 minutes)
 
-```
-coderefine/
-├── main.py                        # FastAPI app entry point
-├── requirements.txt               # Python dependencies
-├── .env.example                   # Environment template
-├── start.sh                       # One-command startup
-│
-├── backend/
-│   ├── config.py                  # Settings (API key, model, host)
-│   │
-│   ├── models/
-│   │   └── schemas.py             # All Pydantic request/response models
-│   │
-│   ├── services/
-│   │   ├── llm_service.py         # OpenRouter API client (core)
-│   │   ├── analysis_service.py    # Bug detection, complexity, quality
-│   │   ├── optimizer_service.py   # AI code rewriter
-│   │   ├── explain_service.py     # Plain-English code explanation
-│   │   ├── security_service.py    # OWASP security audit
-│   │   └── chat_service.py        # Conversational AI about code
-│   │
-│   └── routes/
-│       ├── health.py              # GET  /api/health
-│       ├── analyze.py             # POST /api/analyze
-│       ├── optimize.py            # POST /api/optimize
-│       ├── explain.py             # POST /api/explain
-│       ├── security.py            # POST /api/security
-│       └── chat.py                # POST /api/chat
-│
-└── frontend/
-    └── index.html                 # Full dashboard UI (served at /)
+### 1. Clone & Setup
+
+```bash
+cd brandcraft
+pip install -r requirements.txt
 ```
 
----
+### 2. Configure API Keys
 
-## 🚀 Quick Start
-
-### 1. Get an OpenRouter API Key (free)
-Go to **https://openrouter.ai/keys** → Create account → Copy key
-
-### 2. Set up environment
 ```bash
 cp .env.example .env
-# Edit .env — paste your OPENROUTER_API_KEY
+# Edit .env with your keys (see below)
 ```
 
-### 3. Install & run
+### 3. Run the App
+
 ```bash
-pip install -r requirements.txt
-uvicorn main:app --reload
+cd backend
+uvicorn main:app --reload --port 8000
 ```
 
-Or just:
-```bash
-bash start.sh
-```
-
-### 4. Open the app
-- **Dashboard:** http://localhost:8000
-- **API Docs (Swagger):** http://localhost:8000/docs
-- **ReDoc:** http://localhost:8000/redoc
+Open: **http://localhost:8000**
 
 ---
 
-## 🤖 API Endpoints
+## 🔑 Getting API Keys
 
-| Method | Route | Description |
-|--------|-------|-------------|
-| `GET`  | `/api/health` | Health check + OpenRouter connectivity |
-| `POST` | `/api/analyze` | Bug detection, complexity, quality score |
-| `POST` | `/api/optimize` | AI code rewriter (fixes all issues) |
-| `POST` | `/api/explain` | Plain English explanation |
-| `POST` | `/api/security` | OWASP Top 10 security audit |
-| `POST` | `/api/chat` | Multi-turn conversational AI |
-| `GET`  | `/` | Serves frontend dashboard |
+### Gemini API (Required — Free)
+1. Go to https://aistudio.google.com/app/apikey
+2. Click "Create API Key"
+3. Copy into `GEMINI_API_KEY`
 
-### Example: Analyze code
+### Hugging Face Token (Required for Logo — Free)
+1. Create account at https://huggingface.co
+2. Go to Settings > Access Tokens
+3. Create a token with **Read** permissions
+4. Copy into `HF_TOKEN`
+
+### IBM Watson NLU (Optional — Free Tier)
+1. Go to https://cloud.ibm.com/catalog/services/natural-language-understanding
+2. Create a **Lite** (free) instance
+3. Go to Manage > Credentials
+4. Copy API key → `IBM_API_KEY`
+5. Copy the URL → `IBM_URL`
+> If IBM keys are not set, the app falls back to basic keyword-based sentiment analysis automatically.
+
+---
+
+## 📁 Project Structure
+
+```
+brandcraft/
+├── backend/
+│   ├── main.py                  # FastAPI app entry point
+│   ├── routes/
+│   │   ├── brand_name.py        # POST /api/brand-name
+│   │   ├── logo.py              # POST /api/logo
+│   │   ├── content.py           # POST /api/content
+│   │   ├── sentiment.py         # POST /api/sentiment
+│   │   └── assistant.py         # POST /api/assistant
+│   └── services/
+│       ├── gemini_service.py    # Gemini AI integration
+│       ├── diffusion_service.py # Hugging Face SD integration
+│       └── ibm_service.py       # IBM Watson NLU integration
+├── frontend/
+│   └── index.html               # Complete SPA (HTML + CSS + JS)
+├── requirements.txt
+├── .env.example
+└── README.md
+```
+
+---
+
+## 🛠 Features
+
+| Feature | Endpoint | Powered By |
+|---|---|---|
+| Brand Name Generator | `POST /api/brand-name` | Gemini 1.5 Flash |
+| Logo Generator | `POST /api/logo` | Stable Diffusion XL |
+| Content Automation | `POST /api/content` | Gemini 1.5 Flash |
+| Sentiment Analysis | `POST /api/sentiment` | IBM Watson NLU |
+| Brand Assistant | `POST /api/assistant` | Gemini 1.5 Flash |
+
+---
+
+## 🧪 Test the API
+
+Use the interactive Swagger docs at: **http://localhost:8000/docs**
+
+Or test with curl:
 ```bash
-curl -X POST http://localhost:8000/api/analyze \
+# Generate brand names
+curl -X POST http://localhost:8000/api/brand-name \
   -H "Content-Type: application/json" \
-  -d '{
-    "code": "def sort(arr):\n    for i in range(len(arr)):\n        for j in range(len(arr)-i-1):\n            if arr[j] < arr[j+1]:\n                arr[j],arr[j+1]=arr[j+1],arr[j]\n    return",
-    "language": "auto"
-  }'
-```
+  -d '{"niche": "sustainable coffee", "tone": "friendly", "audience": "millennials"}'
 
-### Example: Chat about code
-```bash
-curl -X POST http://localhost:8000/api/chat \
+# Generate content
+curl -X POST http://localhost:8000/api/content \
   -H "Content-Type: application/json" \
-  -d '{
-    "code": "def sort(arr): ...",
-    "language": "Python",
-    "message": "Why is this code slow?",
-    "history": []
-  }'
+  -d '{"brand_name": "Bloom", "niche": "organic coffee", "content_type": "tagline", "tone": "warm"}'
 ```
 
 ---
 
-## 🤖 Supported LLM Models (OpenRouter)
+## ⚡ Tech Stack
 
-Change `OPENROUTER_MODEL` in `.env`:
-
-| Model | Best For | Speed |
-|-------|----------|-------|
-| `qwen/qwen-2.5-coder-32b-instruct:free` | **Code tasks (recommended)** | Fast |
-| `meta-llama/llama-3.3-70b-instruct:free` | General reasoning | Fast |
-| `google/gemma-3-27b-it:free` | Balanced | Medium |
-| `deepseek/deepseek-r1:free` | Deep reasoning | Slow |
-| `mistralai/mistral-7b-instruct:free` | Lightweight | Very fast |
-
----
-
-## 🌐 Supported Languages
-
-Python · JavaScript · TypeScript · Java · C++ · Go · Rust · PHP · Ruby · Swift
-
----
-
-## 🔐 Features
-
-- **Bug Detection** — logic errors, wrong comparators, null dereferences, bare returns
-- **Warning Analysis** — bad practices, debug statements, raw types
-- **Code Optimization** — AI rewrites to production-ready code with type hints + docstrings
-- **Big-O Complexity** — time and space complexity with before/after comparison
-- **Security Audit** — OWASP Top 10: SQL injection, XSS, hardcoded secrets, insecure HTTP
-- **Code Explanation** — plain English breakdown of algorithms and data flow
-- **AI Chat** — multi-turn conversation about your code
-- **Side-by-Side Diff** — colour-coded before/after view
-- **Dark/Light Theme** — persisted in localStorage
-- **Keyboard shortcut** — `Ctrl+Enter` to run analysis
+- **Backend**: FastAPI + Uvicorn (Python)
+- **Frontend**: Vanilla HTML/CSS/JS (single file SPA)
+- **AI Models**:
+  - Google Gemini 1.5 Flash — text generation
+  - Stable Diffusion XL — image generation via HuggingFace API
+  - IBM Watson NLU — sentiment & emotion analysis
